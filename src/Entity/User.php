@@ -67,10 +67,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'user')]
     private Collection $avis;
 
+    /**
+     * @var Collection<int, Covoiturage>
+     */
+    #[ORM\ManyToMany(targetEntity: Covoiturage::class, mappedBy: 'user')]
+    private Collection $covoiturages;
+
     public function __construct()
     {
         $this->Voiture = new ArrayCollection();
         $this->avis = new ArrayCollection();
+        $this->covoiturages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -287,6 +294,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($avi->getUser() === $this) {
                 $avi->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Covoiturage>
+     */
+    public function getCovoiturages(): Collection
+    {
+        return $this->covoiturages;
+    }
+
+    public function addCovoiturage(Covoiturage $covoiturage): static
+    {
+        if (!$this->covoiturages->contains($covoiturage)) {
+            $this->covoiturages->add($covoiturage);
+            $covoiturage->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCovoiturage(Covoiturage $covoiturage): static
+    {
+        if ($this->covoiturages->removeElement($covoiturage)) {
+            $covoiturage->removeUser($this);
         }
 
         return $this;
