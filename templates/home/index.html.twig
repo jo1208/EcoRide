@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="hero">
+	<div id="alert-container"></div>
+	<div class="overlay">
+		<h1>Voyager ensemble, préservez la planète</h1>
+		<p>EcoRide est une plateforme de covoiturage écologique visant à réduire l'impact environnemental des
+			                déplacements en voiture.</p>
+	</div>
+	<div class="search-box">
+		<input type="text" placeholder="Départ" id="depart">
+		<input type="text" placeholder="Arrivée" id="arrivee">
+		<input type="date" id="date">
+		<button id="searchBtn">Rechercher</button>
+	</div>
+</section>
+
+<section class="benefits">
+	<div class="benefit">
+		<h3>Sécurité</h3>
+		<p>Nous accordons une grande importance à la sécurité de notre communauté de covoitureurs.</p>
+	</div>
+	<div class="benefit">
+		<h3>Sociable</h3>
+		<p>Permet de rencontrer d'autres personnes et de voyager dans une atmosphère conviviale.</p>
+	</div>
+	<div class="benefit">
+		<h3>Écologique</h3>
+		<p>Nous nous engageons à promouvoir le covoiturage comme un moyen pour réduire l'empreinte carbone.</p>
+	</div>
+</section>
+
+<section class="how-it-works">
+<img src="{{ asset('images/image.png') }}" alt="how-it-works">
+
+
+</section>
+
+{% endblock %}

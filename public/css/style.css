@@ -1,0 +1,188 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f3;
+}
+
+header {
+    background-color: #C7E0C8;
+    padding: 1rem;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+}
+
+
+nav div:first-child {
+    /* S'assure que le logo est bien à gauche */
+    display: flex;
+    align-items: center;
+}
+
+nav div:first-child img {
+    width: 50px;
+    /* Ajuste cette valeur selon la taille désirée */
+    height: auto;
+    /* Conserve les proportions de l'image */
+}
+
+nav a {
+    text-decoration: none;
+    color: #000;
+    margin: 0 1rem;
+}
+
+.hero {
+    position: relative;
+    background-image: url('../images/image_fond.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    padding: 6rem 1rem 4rem;
+    text-align: center;
+    min-height: 300px;
+}
+
+h3 {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.search-box {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.hero .overlay {
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 5rem;
+    padding-bottom: 8rem;
+    border-radius: 10px;
+}
+
+.search-box input,
+.search-box button {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.search-box button {
+    background-color: #3ba66b;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.benefits {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem 1rem;
+}
+
+.benefit {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.how-it-works img {
+    width: 100%;
+    height: auto;
+    max-width: 800px;
+    margin: 0 auto;
+    display: block;
+    padding-bottom: 25px;
+}
+
+.footer {
+    background-color: #1a4f34;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
+
+@media(max-width: 1000px) {
+    nav {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    nav div:first-child {
+        justify-content: flex-start;
+        /* Cela garde le logo aligné à gauche */
+        margin-bottom: 1rem;
+        /* Un peu d'espace entre le logo et les liens */
+    }
+
+    nav .nav-links {
+        justify-content: center;
+        /* Centrer les liens de navigation */
+        width: 100%;
+        /* Les liens prennent toute la largeur disponible */
+    }
+
+
+    .overlay {
+        padding-top: 15rem;
+        padding-bottom: 5rem;
+    }
+
+    .search-box {
+        flex-direction: row;
+    }
+
+    .benefits {
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+        ;
+    }
+
+    .benefit {
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        width: 180px;
+        height: 130px;
+        font-size: x-small;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .footer {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
