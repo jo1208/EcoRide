@@ -8,12 +8,12 @@
 		<p>EcoRide est une plateforme de covoiturage écologique visant à réduire l'impact environnemental des
 			                déplacements en voiture.</p>
 	</div>
-	<div class="search-box">
-		<input type="text" placeholder="Départ" id="depart">
-		<input type="text" placeholder="Arrivée" id="arrivee">
-		<input type="date" id="date">
-		<button id="searchBtn">Rechercher</button>
-	</div>
+	<form class="search-box" method="get" action="{{ path('app_covoiturage') }}">
+		<input type="text" name="lieu_depart" placeholder="Départ">
+		<input type="text" name="lieu_arrivee" placeholder="Arrivée">
+		<input type="date" name="date">
+		<button type="submit">Rechercher</button>
+	</form>
 </section>
 
 <section class="benefits">
