@@ -43,34 +43,22 @@ class Covoiturage
     #[ORM\Column]
     private ?float $prix_personne = null;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'covoiturages')]
-    private Collection $user;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $conducteur = null;
 
-
-    public function getConducteur(): ?User
-    {
-        return $this->conducteur;
-    }
-
-    public function setConducteur(?User $conducteur): static
-    {
-        $this->conducteur = $conducteur;
-        return $this;
-    }
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'covoiturages')]
+    private Collection $passagers;
 
     #[ORM\ManyToOne(inversedBy: 'covoiturages')]
     private ?Voiture $Voiture = null;
 
     public function __construct()
     {
-        $this->user = new ArrayCollection();
+        $this->passagers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,11 +70,9 @@ class Covoiturage
     {
         return $this->date_depart;
     }
-
     public function setDateDepart(\DateTimeInterface $date_depart): static
     {
         $this->date_depart = $date_depart;
-
         return $this;
     }
 
@@ -94,11 +80,9 @@ class Covoiturage
     {
         return $this->heure_depart;
     }
-
     public function setHeureDepart(\DateTimeInterface $heure_depart): static
     {
         $this->heure_depart = $heure_depart;
-
         return $this;
     }
 
@@ -106,11 +90,9 @@ class Covoiturage
     {
         return $this->lieu_depart;
     }
-
     public function setLieuDepart(string $lieu_depart): static
     {
         $this->lieu_depart = $lieu_depart;
-
         return $this;
     }
 
@@ -118,11 +100,9 @@ class Covoiturage
     {
         return $this->date_arrivee;
     }
-
     public function setDateArrivee(\DateTimeInterface $date_arrivee): static
     {
         $this->date_arrivee = $date_arrivee;
-
         return $this;
     }
 
@@ -130,11 +110,9 @@ class Covoiturage
     {
         return $this->heure_arrivee;
     }
-
     public function setHeureArrivee(\DateTimeInterface $heure_arrivee): static
     {
         $this->heure_arrivee = $heure_arrivee;
-
         return $this;
     }
 
@@ -142,11 +120,9 @@ class Covoiturage
     {
         return $this->lieu_arrivee;
     }
-
     public function setLieuArrivee(string $lieu_arrivee): static
     {
         $this->lieu_arrivee = $lieu_arrivee;
-
         return $this;
     }
 
@@ -154,11 +130,9 @@ class Covoiturage
     {
         return $this->statut;
     }
-
     public function setStatut(string $statut): static
     {
         $this->statut = $statut;
-
         return $this;
     }
 
@@ -166,11 +140,9 @@ class Covoiturage
     {
         return $this->nb_place;
     }
-
     public function setNbPlace(int $nb_place): static
     {
         $this->nb_place = $nb_place;
-
         return $this;
     }
 
@@ -178,35 +150,39 @@ class Covoiturage
     {
         return $this->prix_personne;
     }
-
     public function setPrixPersonne(float $prix_personne): static
     {
         $this->prix_personne = $prix_personne;
+        return $this;
+    }
 
+    public function getConducteur(): ?User
+    {
+        return $this->conducteur;
+    }
+    public function setConducteur(?User $conducteur): static
+    {
+        $this->conducteur = $conducteur;
         return $this;
     }
 
     /**
      * @return Collection<int, User>
      */
-    public function getUser(): Collection
+    public function getPassagers(): Collection
     {
-        return $this->user;
+        return $this->passagers;
     }
-
-    public function addUser(User $user): static
+    public function addPassager(User $user): static
     {
-        if (!$this->user->contains($user)) {
-            $this->user->add($user);
+        if (!$this->passagers->contains($user)) {
+            $this->passagers->add($user);
         }
-
         return $this;
     }
-
-    public function removeUser(User $user): static
+    public function removePassager(User $user): static
     {
-        $this->user->removeElement($user);
-
+        $this->passagers->removeElement($user);
         return $this;
     }
 
@@ -214,11 +190,9 @@ class Covoiturage
     {
         return $this->Voiture;
     }
-
     public function setVoiture(?Voiture $Voiture): static
     {
         $this->Voiture = $Voiture;
-
         return $this;
     }
 }
