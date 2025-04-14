@@ -55,6 +55,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $note = null;
+
+    public function getNote(): ?float
+    {
+        return $this->note;
+    }
+
+
+
     /**
      * @var Collection<int, Voiture>
      */

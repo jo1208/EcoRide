@@ -151,4 +151,17 @@ class Voiture
 
         return $this;
     }
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $ecologique = false;
+
+    public function isEcologique(): ?bool
+    {
+        return $this->ecologique;
+    }
+
+    public function setEcologique(bool $ecologique): static
+    {
+        $this->ecologique = $ecologique;
+        return $this;
+    }
 }
