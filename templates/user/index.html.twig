@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-5 bg-light">
+
+		<div
+			class="row">
+			<!-- Inscription Form -->
+			<div class="col-md-6 mb-4">
+				<div class="form-section inscription p-4 bg-light rounded shadow-sm">
+					<h1 class="text-center text-success">Inscription</h1>
+					{{ form_start(form, {'attr': {'class': 'form' }}) }}
+
+					<div class="mb-3">
+						{{ form_label(form.pseudo, null, {'attr': {'class': 'form-label text-success'}}) }}
+						{{ form_widget(form.pseudo, {'attr': {'class': 'form-control border-success'}}) }}
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.email, null, {'attr': {'class': 'form-label text-success'}}) }}
+						{{ form_widget(form.email, {'attr': {'class': 'form-control border-success'}}) }}
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.password, null, {'attr': {'class': 'form-label text-success'}}) }}
+						{{ form_widget(form.password, {'attr': {'class': 'form-control border-success'}}) }}
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.nom, null, {'attr': {'class': 'form-label text-success'}}) }}
+						{{ form_widget(form.nom, {'attr': {'class': 'form-control border-success'}}) }}
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.prenom, null, {'attr': {'class': 'form-label text-success'}}) }}
+						{{ form_widget(form.prenom, {'attr': {'class': 'form-control border-success'}}) }}
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.telephone, null, {'attr': {'class': 'form-label text-success'}}) }}
+						{{ form_widget(form.telephone, {'attr': {'class': 'form-control border-success'}}) }}
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.adresse, null, {'attr': {'class': 'form-label text-success'}}) }}
+						{{ form_widget(form.adresse, {'attr': {'class': 'form-control border-success'}}) }}
+					</div>
+
+					<div class="mb-3">
+						{{ form_label(form.date_naissance, null, {'attr': {'class': 'form-label text-success'}}) }}
+						{{ form_widget(form.date_naissance, {'attr': {'class': 'form-control border-success'}}) }}
+					</div>
+
+
+
+
+
+
+
+
+					<div class="d-grid gap-2">
+						<button type="submit" class="btn btn-success">Connexion</button>
+					</div>
+
+
+					{{ form_end(form) }}
+				</div>
+			</div>
+
+			<!-- Connexion Form -->
+			<div class="col-md-6 mb-4">
+				<div class="form-section connexion p-4 bg-light rounded shadow-sm">
+					<h1 class="text-center text-success">Connexion</h1>
+					<form action="#" method="POST">
+						<div class="mb-3">
+							<label for="login" class="form-label text-success">Pseudo / e-mail</label>
+							<input type="text" id="login" name="login" class="form-control border-success" required>
+						</div>
+						<div class="mb-3">
+							<label for="password" class="form-label text-success">Mot de passe</label>
+							<input type="password" id="password" name="password" class="form-control border-success" required>
+						</div>
+						<div class="d-grid gap-2">
+							<button type="submit" class="btn btn-success">Connexion</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('css/user.css') }}">
+{% endblock %}

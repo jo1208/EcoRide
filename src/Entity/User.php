@@ -56,9 +56,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $pseudo = null;
 
     /**
-     * @var Collection<int, voiture>
+     * @var Collection<int, Voiture>
      */
-    #[ORM\OneToMany(targetEntity: voiture::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Voiture::class, mappedBy: 'user')]
     private Collection $Voiture;
 
     /**
@@ -240,14 +240,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, voiture>
+     * @return Collection<int, Voiture>
      */
     public function getVoiture(): Collection
     {
         return $this->Voiture;
     }
 
-    public function addVoiture(voiture $voiture): static
+    public function addVoiture(Voiture $voiture): static
     {
         if (!$this->Voiture->contains($voiture)) {
             $this->Voiture->add($voiture);
@@ -257,7 +257,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeVoiture(voiture $voiture): static
+    public function removeVoiture(Voiture $voiture): static
     {
         if ($this->Voiture->removeElement($voiture)) {
             // set the owning side to null (unless already changed)
