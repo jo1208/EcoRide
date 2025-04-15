@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Voiture;
-
+use App\Entity\Preference;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -65,6 +65,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToMany(targetEntity: Covoiturage::class, mappedBy: 'passagers')]
     private Collection $covoituragesEnPassager;
+
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Preference $preference = null;
 
     public function __construct()
     {
@@ -267,5 +270,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getCovoituragesEnPassager(): Collection
     {
         return $this->covoituragesEnPassager;
+    }
+
+    public function getPreference(): ?Preference
+    {
+        return $this->preference;
+    }
+
+    public function setPreference(?Preference $preference): static
+    {
+
+        if ($preference && $preference->getUser() !== $this) {
+            $preference->setUser($this);
+        }
+
+        $this->preference = $preference;
+        return $this;
     }
 }
