@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250401112357 extends AbstractMigration
+final class Version20250415135005 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,10 +21,7 @@ final class Version20250401112357 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            CREATE TABLE avis (id INT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT NULL, commentaire VARCHAR(255) NOT NULL, note INT NOT NULL, statut VARCHAR(255) NOT NULL, INDEX IDX_8F91ABF0A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
-        SQL);
-        $this->addSql(<<<'SQL'
-            ALTER TABLE avis ADD CONSTRAINT FK_8F91ABF0A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)
+            ALTER TABLE preference ADD autres LONGTEXT DEFAULT NULL
         SQL);
     }
 
@@ -32,10 +29,7 @@ final class Version20250401112357 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE avis DROP FOREIGN KEY FK_8F91ABF0A76ED395
-        SQL);
-        $this->addSql(<<<'SQL'
-            DROP TABLE avis
+            ALTER TABLE preference DROP autres
         SQL);
     }
 }

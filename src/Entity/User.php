@@ -9,6 +9,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\Voiture;
+use App\Entity\Preference;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -22,15 +24,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
@@ -49,35 +45,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $date_naissance = null;
 
-    #[ORM\Column(type: Types::BLOB)]
+    #[ORM\Column(type: Types::BLOB, nullable: true)]
     private $photo = null;
 
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
 
-    /**
-     * @var Collection<int, Voiture>
-     */
-    #[ORM\OneToMany(targetEntity: Voiture::class, mappedBy: 'user')]
-    private Collection $Voiture;
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $note = null;
 
-    /**
-     * @var Collection<int, Avis>
-     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Voiture::class, cascade: ['persist', 'remove'])]
+    private Collection $voitures;
+
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'user')]
     private Collection $avis;
 
-    /**
-     * @var Collection<int, Covoiturage>
-     */
-    #[ORM\ManyToMany(targetEntity: Covoiturage::class, mappedBy: 'user')]
-    private Collection $covoiturages;
+    #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Covoiturage::class)]
+    private Collection $covoituragesConduits;
+
+    #[ORM\ManyToMany(targetEntity: Covoiturage::class, mappedBy: 'passagers')]
+    private Collection $covoituragesEnPassager;
+
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Preference $preference = null;
 
     public function __construct()
     {
-        $this->Voiture = new ArrayCollection();
+        $this->voitures = new ArrayCollection();
         $this->avis = new ArrayCollection();
-        $this->covoiturages = new ArrayCollection();
+        $this->covoituragesConduits = new ArrayCollection();
+        $this->covoituragesEnPassager = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -93,47 +90,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     *
-     * @return list<string>
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -142,18 +119,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials(): void
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
+    public function eraseCredentials(): void {}
 
     public function getNom(): ?string
     {
@@ -163,7 +132,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -175,7 +143,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -187,7 +154,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
-
         return $this;
     }
 
@@ -199,7 +165,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAdresse(string $adresse): static
     {
         $this->adresse = $adresse;
-
         return $this;
     }
 
@@ -211,7 +176,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDateNaissance(string $date_naissance): static
     {
         $this->date_naissance = $date_naissance;
-
         return $this;
     }
 
@@ -223,7 +187,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhoto($photo): static
     {
         $this->photo = $photo;
-
         return $this;
     }
 
@@ -235,22 +198,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPseudo(string $pseudo): static
     {
         $this->pseudo = $pseudo;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Voiture>
-     */
-    public function getVoiture(): Collection
+    public function getNote(): ?float
     {
-        return $this->Voiture;
+        return $this->note;
+    }
+
+    /**
+     * @return Collection<int, \App\Entity\Voiture>
+     */
+
+    public function getVoitures(): Collection
+    {
+        return $this->voitures;
     }
 
     public function addVoiture(Voiture $voiture): static
     {
-        if (!$this->Voiture->contains($voiture)) {
-            $this->Voiture->add($voiture);
+        if (!$this->voitures->contains($voiture)) {
+            $this->voitures->add($voiture);
             $voiture->setUser($this);
         }
 
@@ -259,8 +227,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeVoiture(Voiture $voiture): static
     {
-        if ($this->Voiture->removeElement($voiture)) {
-            // set the owning side to null (unless already changed)
+        if ($this->voitures->removeElement($voiture)) {
             if ($voiture->getUser() === $this) {
                 $voiture->setUser(null);
             }
@@ -269,9 +236,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Avis>
-     */
     public function getAvis(): Collection
     {
         return $this->avis;
@@ -290,7 +254,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeAvi(Avis $avi): static
     {
         if ($this->avis->removeElement($avi)) {
-            // set the owning side to null (unless already changed)
             if ($avi->getUser() === $this) {
                 $avi->setUser(null);
             }
@@ -299,30 +262,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Covoiturage>
-     */
-    public function getCovoiturages(): Collection
+    public function getCovoituragesConduits(): Collection
     {
-        return $this->covoiturages;
+        return $this->covoituragesConduits;
     }
 
-    public function addCovoiturage(Covoiturage $covoiturage): static
+    public function getCovoituragesEnPassager(): Collection
     {
-        if (!$this->covoiturages->contains($covoiturage)) {
-            $this->covoiturages->add($covoiturage);
-            $covoiturage->addUser($this);
-        }
-
-        return $this;
+        return $this->covoituragesEnPassager;
     }
 
-    public function removeCovoiturage(Covoiturage $covoiturage): static
+    public function getPreference(): ?Preference
     {
-        if ($this->covoiturages->removeElement($covoiturage)) {
-            $covoiturage->removeUser($this);
+        return $this->preference;
+    }
+
+    public function setPreference(?Preference $preference): static
+    {
+
+        if ($preference && $preference->getUser() !== $this) {
+            $preference->setUser($this);
         }
 
+        $this->preference = $preference;
         return $this;
     }
 }

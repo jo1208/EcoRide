@@ -1,0 +1,44 @@
+body {
+    background-color: #FBF8F7;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #C7E0C8;
+    padding: 1rem 0;
+}
+
+.nav-link {
+    color: #000 !important;
+    font-weight: 500;
+}
+
+.search-section,
+.results-section {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.filter-btn {
+    background-color: #E7F6E8;
+    border: none;
+    color: #000;
+    font-weight: 500;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.card img {
+    width: 60px;
+    border-radius: 50%;
+}
+

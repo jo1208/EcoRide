@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes préférences
+{% endblock %}
+
+{% block body %}
+	<div class="container py-5" style="max-width: 700px;">
+		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle" style="background-color: #FBF8F7;">
+			<h2 class="text-center mb-4 text-success">Mes préférences</h2>
+
+			{% if preference %}
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">Fumeur :
+						{{ preference.fumeur ? 'Oui' : 'Non' }}</li>
+					<li class="list-group-item">Animaux :
+						{{ preference.animal ? 'Acceptés' : 'Non acceptés' }}</li>
+					<li class="list-group-item">Musique :
+						{{ preference.musique ? 'Avec musique' : 'Sans musique' }}</li>
+
+					{% if preference.autres %}
+						<li class="list-group-item">Autres :
+							{{ preference.autres }}</li>
+					{% endif %}
+				</ul>
+			{% else %}
+				<p class="text-muted">Vous n'avez pas encore défini vos préférences.</p>
+			{% endif %}
+
+
+
+			<div class="text-center mt-4">
+				<a href="{{ path('app_preference_edit') }}" class="btn btn-success px-4">Modifier mes préférences</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

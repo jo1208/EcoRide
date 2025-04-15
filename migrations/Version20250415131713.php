@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250401121718 extends AbstractMigration
+final class Version20250415131713 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,13 +21,13 @@ final class Version20250401121718 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE covoiturage ADD voiture_id INT DEFAULT NULL
+            ALTER TABLE preference ADD user_id INT NOT NULL
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE covoiturage ADD CONSTRAINT FK_28C79E89181A8BA FOREIGN KEY (voiture_id) REFERENCES voiture (id)
+            ALTER TABLE preference ADD CONSTRAINT FK_5D69B053A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE INDEX IDX_28C79E89181A8BA ON covoiturage (voiture_id)
+            CREATE UNIQUE INDEX UNIQ_5D69B053A76ED395 ON preference (user_id)
         SQL);
     }
 
@@ -35,13 +35,13 @@ final class Version20250401121718 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE covoiturage DROP FOREIGN KEY FK_28C79E89181A8BA
+            ALTER TABLE preference DROP FOREIGN KEY FK_5D69B053A76ED395
         SQL);
         $this->addSql(<<<'SQL'
-            DROP INDEX IDX_28C79E89181A8BA ON covoiturage
+            DROP INDEX UNIQ_5D69B053A76ED395 ON preference
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE covoiturage DROP voiture_id
+            ALTER TABLE preference DROP user_id
         SQL);
     }
 }

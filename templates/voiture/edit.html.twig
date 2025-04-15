@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le véhicule
+{% endblock %}
+
+{% block body %}
+	<main class="container py-5">
+		<h2 class="mb-4 text-center">Modifier le véhicule</h2>
+
+		<div class="card p-4 shadow-sm rounded">
+			{{ form_start(form) }}
+
+			<div class="row">
+				<div class="col-md-6 mb-3">
+					<label class="form-label">{{ form.modele.vars.label }}</label>
+					{{ form_widget(form.modele, {'attr': {'class': 'form-control'}}) }}
+				</div>
+				<div class="col-md-6 mb-3">
+					<label class="form-label">{{ form.immatriculation.vars.label }}</label>
+					{{ form_widget(form.immatriculation, {'attr': {'class': 'form-control'}}) }}
+				</div>
+				<div class="col-md-6 mb-3">
+					<label class="form-label">{{ form.couleur.vars.label }}</label>
+					{{ form_widget(form.couleur, {'attr': {'class': 'form-control'}}) }}
+				</div>
+				<div class="col-md-6 mb-3">
+					<label class="form-label">{{ form.date_premiere_immatriculation.vars.label }}</label>
+					{{ form_widget(form.date_premiere_immatriculation, {'attr': {'class': 'form-control'}}) }}
+				</div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">{{ form.nb_place.vars.label }}</label>
+                    {{ form_widget(form.nb_place, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-check">
+                        {{ form_widget(form.ecologique, {'attr': {'class': 'form-check-input'}}) }}
+                        <label class="form-check-label">
+                            {{ form.ecologique.vars.label }}
+                        </label>
+                    </div>
+                </div>
+			</div>
+
+			<div class="text-end mt-3">
+				<button class="btn btn-success">Enregistrer</button>
+			</div>
+
+			{{ form_end(form) }}
+		</div>
+	</main>
+{% endblock %}
+
+

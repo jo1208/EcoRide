@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil
+{% endblock %}
+
+{% block body %}
+	<div
+		class="container my-4" style="background-color: #FBF8F7; border-radius: 15px; padding: 30px;">
+
+		<!-- Avatar + Nom + Note -->
+		<div class="text-center mb-4">
+			<img src="{{ asset('images/avatar-default.png') }}" alt="Avatar" width="120" class="rounded-circle">
+			<h2 class="mt-3">{{ user.pseudo }}</h2>
+			<div class="d-flex justify-content-center align-items-center gap-2">
+				<span class="text-success fs-4">★</span>
+				<span class="fs-5">{{ user.note|default('5') }}/5 - 41 avis</span>
+			</div>
+		</div>
+
+		<!-- Statut -->
+		<div class="d-flex justify-content-center mb-3">
+			<span class="me-3">Je suis :</span>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="checkbox" id="chauffeur" disabled>
+				<label class="form-check-label" for="chauffeur">Chauffeur</label>
+			</div>
+			<div class="form-check form-check-inline">
+				<input class="form-check-input" type="checkbox" id="passager" checked disabled>
+				<label class="form-check-label" for="passager">Passager</label>
+			</div>
+		</div>
+
+		<!-- Onglets -->
+		<ul class="nav nav-tabs justify-content-center mb-4 border-bottom border-success">
+            <li class="nav-item">
+            <a class="nav-link" href="{{ path('covoiturage_new') }}">Créer un trajet</a>
+            </li>
+			<li class="nav-item">
+			<a class="nav-link text-success" href="http://localhost:8000/profil/vehicule">Véhicules</a>
+
+
+			</li>
+			<li class="nav-item">
+			<a class="nav-link text-success" href="http://localhost:8000/profil/preference">Préférences</a>
+
+			</li>
+			<li class="nav-item">
+				<a class="nav-link text-success active fw-bold" href="#">Information</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link text-success" href="#">Historique</a>
+			</li>
+		</ul>
+
+		<!-- Bloc information -->
+		<div class="bg-white p-4 rounded shadow-sm" style="border-left: 5px solid #3ba66b;">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h4 class="mb-0 fw-bold">Information personelle</h4>
+                <a href="{{ path('app_profil_edit') }}" class="btn btn-outline-success btn-sm px-3">Modifier</a>
+			</div>
+			<div class="row">
+				<div class="col-md-1 text-center">
+					<i class="bi bi-person-circle" style="font-size: 3rem; color: #3ba66b;"></i>
+				</div>
+				<div class="col-md-11">
+					<p>
+						<strong>Pseudo :</strong>
+						{{ user.pseudo }}</p>
+					<p>
+						<strong>Nom :</strong>
+						{{ user.nom }}</p>
+					<p>
+						<strong>Prénom :</strong>
+						{{ user.prenom }}</p>
+					<p>
+						<strong>E-mail :</strong>
+						{{ user.email }}</p>
+					<p>
+						<strong>Téléphone :</strong>
+						{{ user.telephone }}</p>
+					<p>
+						<strong>Date de naissance :</strong>
+						{{ user.dateNaissance }}</p>
+					<p>
+						<strong>Adresse :</strong>
+						{{ user.adresse }}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+
