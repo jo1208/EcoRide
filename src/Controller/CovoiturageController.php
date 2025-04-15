@@ -1,9 +1,11 @@
 <?php
 
-
 namespace App\Controller;
 
+use App\Entity\Covoiturage;
+use App\Form\CovoiturageType;
 use App\Repository\CovoiturageRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +29,29 @@ class CovoiturageController extends AbstractController
         $trajets = $repo->findWithFilters($filters);
 
         return $this->render('covoiturage/index.html.twig', [
-            'trajets' => $trajets,
+            'trajets' => $trajets, // ✅ Transmis à la vue Twig
+        ]);
+    }
+
+    #[Route('/covoiturage/nouveau', name: 'covoiturage_new')]
+    public function new(Request $request, EntityManagerInterface $em): Response
+    {
+        $trajet = new Covoiturage();
+        $form = $this->createForm(CovoiturageType::class, $trajet);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $trajet->setConducteur($this->getUser());
+            $em->persist($trajet);
+            $em->flush();
+
+            $this->addFlash('success', 'Trajet créé avec succès ✅');
+            return $this->redirectToRoute('app_profil');
+        }
+
+        return $this->render('covoiturage/new.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

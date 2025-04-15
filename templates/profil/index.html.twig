@@ -32,9 +32,9 @@
 
 		<!-- Onglets -->
 		<ul class="nav nav-tabs justify-content-center mb-4 border-bottom border-success">
-			<li class="nav-item">
-				<a class="nav-link text-success" href="#">Trajet</a>
-			</li>
+            <li class="nav-item">
+            <a class="nav-link" href="{{ path('covoiturage_new') }}">Créer un trajet</a>
+            </li>
 			<li class="nav-item">
 				<a class="nav-link text-success" href="#">Véhicules</a>
 			</li>
@@ -53,11 +53,7 @@
 		<div class="bg-white p-4 rounded shadow-sm" style="border-left: 5px solid #3ba66b;">
 			<div class="d-flex justify-content-between align-items-center mb-3">
 				<h4 class="mb-0 fw-bold">Information personelle</h4>
-<a href="{{ path('app_profil_edit') }}" class="btn btn-outline-success btn-sm px-3">Modifier</a>
-
-
-
-
+                <a href="{{ path('app_profil_edit') }}" class="btn btn-outline-success btn-sm px-3">Modifier</a>
 			</div>
 			<div class="row">
 				<div class="col-md-1 text-center">
