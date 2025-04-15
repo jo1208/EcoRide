@@ -14,6 +14,19 @@
 				</div>
 			{% endfor %}
 
+            <script>
+                // Supprime l'alerte après 3 secondes
+            setTimeout(function () {
+            const alert = document.querySelector('.alert');
+            if (alert) {
+            alert.classList.remove('show');
+            alert.classList.add('fade');
+            setTimeout(() => alert.remove(), 300); // Supprime complètement du DOM
+            }
+            }, 3000);
+            </script>
+
+
             {{ form_start(form) }}
             <div class="row gy-4">
                 <div class="col-md-6">

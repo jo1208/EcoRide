@@ -34,7 +34,7 @@ class Covoiturage
     #[ORM\Column(length: 255)]
     private ?string $lieu_arrivee = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $statut = null;
 
     #[ORM\Column]

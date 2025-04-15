@@ -29,21 +29,11 @@ class CovoiturageType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('lieu_arrivee')
-            ->add('statut')
             ->add('nb_place')
             ->add('prix_personne')
-            ->add('conducteur', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
-            ])
-            ->add('passagers', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'id',
-                'multiple' => true,
-            ])
             ->add('Voiture', EntityType::class, [
                 'class' => Voiture::class,
-                'choice_label' => 'id',
+                'choice_label' => 'modele',
             ])
         ;
     }

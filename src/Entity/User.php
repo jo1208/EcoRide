@@ -9,6 +9,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\Voiture;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -52,8 +54,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $note = null;
 
-    #[ORM\OneToMany(targetEntity: Voiture::class, mappedBy: 'user')]
-    private Collection $Voiture;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Voiture::class, cascade: ['persist', 'remove'])]
+    private Collection $voitures;
 
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'user')]
     private Collection $avis;
@@ -66,7 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->Voiture = new ArrayCollection();
+        $this->voitures = new ArrayCollection();
         $this->avis = new ArrayCollection();
         $this->covoituragesConduits = new ArrayCollection();
         $this->covoituragesEnPassager = new ArrayCollection();
@@ -81,6 +83,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->email;
     }
+
     public function setEmail(string $email): static
     {
         $this->email = $email;
@@ -109,6 +112,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->password;
     }
+
     public function setPassword(string $password): static
     {
         $this->password = $password;
@@ -121,6 +125,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->nom;
     }
+
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
@@ -131,6 +136,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->prenom;
     }
+
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
@@ -141,6 +147,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->telephone;
     }
+
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
@@ -151,6 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->adresse;
     }
+
     public function setAdresse(string $adresse): static
     {
         $this->adresse = $adresse;
@@ -161,6 +169,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->date_naissance;
     }
+
     public function setDateNaissance(string $date_naissance): static
     {
         $this->date_naissance = $date_naissance;
@@ -171,6 +180,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->photo;
     }
+
     public function setPhoto($photo): static
     {
         $this->photo = $photo;
@@ -181,6 +191,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->pseudo;
     }
+
     public function setPseudo(string $pseudo): static
     {
         $this->pseudo = $pseudo;
@@ -192,25 +203,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->note;
     }
 
-    public function getVoiture(): Collection
+    /**
+     * @return Collection<int, \App\Entity\Voiture>
+     */
+
+    public function getVoitures(): Collection
     {
-        return $this->Voiture;
+        return $this->voitures;
     }
+
     public function addVoiture(Voiture $voiture): static
     {
-        if (!$this->Voiture->contains($voiture)) {
-            $this->Voiture->add($voiture);
+        if (!$this->voitures->contains($voiture)) {
+            $this->voitures->add($voiture);
             $voiture->setUser($this);
         }
+
         return $this;
     }
+
     public function removeVoiture(Voiture $voiture): static
     {
-        if ($this->Voiture->removeElement($voiture)) {
+        if ($this->voitures->removeElement($voiture)) {
             if ($voiture->getUser() === $this) {
                 $voiture->setUser(null);
             }
         }
+
         return $this;
     }
 
@@ -218,14 +237,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->avis;
     }
+
     public function addAvi(Avis $avi): static
     {
         if (!$this->avis->contains($avi)) {
             $this->avis->add($avi);
             $avi->setUser($this);
         }
+
         return $this;
     }
+
     public function removeAvi(Avis $avi): static
     {
         if ($this->avis->removeElement($avi)) {
@@ -233,6 +255,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $avi->setUser(null);
             }
         }
+
         return $this;
     }
 
