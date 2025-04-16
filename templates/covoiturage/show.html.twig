@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du covoiturage
+{% endblock %}
+
+{% block body %}
+	<main class="container py-5" style="max-width: 900px;">
+		<div class="bg-white p-4 rounded shadow-sm border">
+			<h2 class="mb-4 text-success text-center">Détail du covoiturage</h2>
+
+			<!-- Infos Covoiturage -->
+			<div class="mb-4">
+				<h4 class="text-success">Trajet</h4>
+				<p>
+					<strong>Départ :</strong>
+					{{ covoiturage.lieuDepart }}
+					à
+					{{ covoiturage.heureDepart|date('H:i') }}
+					le
+					{{ covoiturage.dateDepart|date('d/m/Y') }}</p>
+				<p>
+					<strong>Arrivée :</strong>
+					{{ covoiturage.lieuArrivee }}
+					à
+					{{ covoiturage.heureArrivee|date('H:i') }}
+					le
+					{{ covoiturage.dateArrivee|date('d/m/Y') }}</p>
+				<p>
+					<strong>Prix par personne :</strong>
+					{{ covoiturage.prixPersonne|number_format(2, ',', '.') }}
+					€</p>
+				<p>
+					<strong>Places restantes :</strong>
+					{{ covoiturage.nbPlace > 0 ? covoiturage.nbPlace : 'Complet 🚫' }}</p>
+			</div>
+
+			<!-- Infos Voiture -->
+			{% if voiture %}
+				<div class="mb-4">
+					<h4 class="text-success">Véhicule</h4>
+					<p>
+						<strong>Modèle :</strong>
+						{{ voiture.modele }}</p>
+					<p>
+						<strong>Marque :</strong>
+						{{ voiture.marque ?? 'Non précisée' }}</p>
+                    <p>
+                        <strong>Électrique :</strong>
+                        {{ voiture.ecologique ? 'Oui ⚡' : 'Non' }}</p>
+
+
+					<p>
+						<strong>Couleur :</strong>
+						{{ voiture.couleur }}</p>
+				</div>
+			{% endif %}
+
+			<!-- Infos Conducteur -->
+			<div class="mb-4">
+				<h4 class="text-success">Conducteur</h4>
+				<p>
+					<strong>Pseudo :</strong>
+					{{ conducteur.pseudo }}</p>
+				<p>
+					<strong>Note moyenne :</strong>
+					{{ conducteur.note ?? 'Non noté' }}/5</p>
+			</div>
+
+			<!-- Préférences -->
+			{% if preference %}
+				<div class="mb-4">
+					<h4 class="text-success">Préférences du conducteur</h4>
+					<ul>
+						<li>Fumeur :
+							{{ preference.fumeur ? 'Oui' : 'Non' }}</li>
+						<li>Animaux :
+							{{ preference.animal ? 'Acceptés' : 'Non acceptés' }}</li>
+						<li>Musique :
+							{{ preference.musique ? 'Oui' : 'Non' }}</li>
+						{% if preference.autres %}
+							<li>Autres :
+								{{ preference.autres }}</li>
+						{% endif %}
+					</ul>
+				</div>
+			{% endif %}
+
+			<!-- Avis -->
+			{% if avis is not empty %}
+				<div class="mb-4">
+					<h4 class="text-success">Avis reçus</h4>
+					<ul class="list-group">
+						{% for a in avis %}
+							<li class="list-group-item">
+								⭐
+								{{ a.note }}/5 -
+								<em>{{ a.commentaire }}</em>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% else %}
+				<p class="text-muted">Aucun avis pour ce conducteur.</p>
+			{% endif %}
+
+			<!-- Bouton Participer -->
+			{% if covoiturage.nbPlace > 0 %}
+				<div class="text-center mt-4">
+<a href="{{ path('app_participer_covoiturage', { id: covoiturage.id }) }}" class="btn btn-success btn-lg">Participer à ce trajet</a>
+
+				</div>
+			{% endif %}
+		</div>
+	</main>
+{% endblock %}
+

@@ -196,4 +196,21 @@ class CovoiturageController extends AbstractController
 
         return $this->redirectToRoute('app_mes_trajets');
     }
+
+    #[Route('/covoiturage/{id}', name: 'covoiturage_show')]
+    public function show(Covoiturage $covoiturage): Response
+    {
+        $conducteur = $covoiturage->getConducteur();
+        $voiture = $covoiturage->getVoiture();
+        $avis = $conducteur->getAvis();
+        $preference = $conducteur->getPreference();
+
+        return $this->render('covoiturage/show.html.twig', [
+            'covoiturage' => $covoiturage,
+            'conducteur' => $conducteur,
+            'voiture' => $voiture,
+            'avis' => $avis,
+            'preference' => $preference,
+        ]);
+    }
 }
