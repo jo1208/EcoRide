@@ -35,7 +35,10 @@
 									{{ trajet.nbPlace > 0 ? '🟢 Disponible' : '🔴 Complet' }}
 								</span>
 							</div>
-							<a href="{{ path('app_annuler_trajet_conducteur', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm">Annuler</a>
+                            <a href="{{ path('covoiturage_annuler', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm mt-2" onclick="return confirm('Êtes-vous sûr de vouloir annuler votre participation ?');">
+                                Annuler ma participation
+                            </a>
+
 						</div>
 					</div>
 				{% endfor %}
@@ -63,7 +66,8 @@
 								Conducteur :
 								{{ trajet.conducteur.pseudo }}
 							</div>
-							<a href="{{ path('app_annuler_trajet_passager', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm">Annuler</a>
+<a href="{{ path('covoiturage_annuler', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm">Annuler</a>
+
 						</div>
 					</div>
 				{% endfor %}

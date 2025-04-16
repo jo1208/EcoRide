@@ -173,4 +173,27 @@ class CovoiturageController extends AbstractController
 
         return $this->redirectToRoute('app_covoiturage');
     }
+
+    #[Route('/covoiturage/annuler/{id}', name: 'covoiturage_annuler')]
+    public function annulerParticipation(Covoiturage $covoiturage, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if ($covoiturage->getPassagers()->contains($user)) {
+            $covoiturage->removePassager($user);
+            $covoiturage->setNbPlace(($covoiturage->getNbPlace() ?? 0) + 1);
+
+            // 🔍 Debug : vérifier les données avant la sauvegarde
+
+
+            $em->persist($covoiturage);
+            $em->flush();
+
+            $this->addFlash('success', 'Vous avez annulé votre participation. ✅');
+        } else {
+            $this->addFlash('danger', 'Vous ne participez pas à ce trajet.');
+        }
+
+        return $this->redirectToRoute('app_mes_trajets');
+    }
 }
