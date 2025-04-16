@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class EditProfilType extends AbstractType
 {
@@ -27,6 +28,14 @@ class EditProfilType extends AbstractType
             ->add('telephone', TextType::class)
             ->add('adresse', TextType::class)
             ->add('dateNaissance', TextType::class)
+            ->add('isChauffeur', CheckboxType::class, [
+                'label' => 'Je souhaite être chauffeur',
+                'required' => false,
+            ])
+            ->add('isPassager', CheckboxType::class, [
+                'label' => 'Je souhaite être passager',
+                'required' => false,
+            ])
         ;
     }
 

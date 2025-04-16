@@ -19,10 +19,15 @@ class ProfilController extends AbstractController
     {
         $user = $this->getUser();
 
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
         return $this->render('profil/index.html.twig', [
             'user' => $user,
         ]);
     }
+
 
     #[Route('/profil/modifier', name: 'app_profil_edit')]
     public function edit(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
@@ -48,5 +53,24 @@ class ProfilController extends AbstractController
         return $this->render('profil/edit.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/profil/roles', name: 'app_choix_role', methods: ['POST'])]
+    public function updateRoles(Request $request, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        $roles = $request->request->all('roles');
+
+        // Si l'utilisateur coche "chauffeur" mais n'a pas de voiture
+        if (in_array('ROLE_CHAUFFEUR', $roles) && $user->getVoitures()->isEmpty()) {
+            $this->addFlash('danger', 'Vous devez enregistrer au moins un véhicule pour devenir chauffeur.');
+            return $this->redirectToRoute('app_profil');
+        }
+
+        $user->setRoles($roles);
+        $em->flush();
+
+        $this->addFlash('success', 'Rôles mis à jour avec succès ✅');
+        return $this->redirectToRoute('app_profil');
     }
 }

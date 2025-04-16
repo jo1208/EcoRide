@@ -1,0 +1,67 @@
+<div
+	class="container my-4" style="background-color: #FBF8F7; border-radius: 15px; padding: 30px;">
+	<!-- Avatar + Nom + Note -->
+	<div class="text-center mb-4">
+		<img src="{{ asset('images/avatar-default.png') }}" alt="Avatar" width="120" class="rounded-circle">
+		<h2 class="mt-3">{{ app.user.pseudo }}</h2>
+		<div class="d-flex justify-content-center align-items-center gap-2">
+			<span class="text-success fs-4">★</span>
+			<span class="fs-5">{{ app.user.note|default('5') }}/5 - 41 avis</span>
+		</div>
+	</div>
+
+	<!-- Flash Messages -->
+	{% for message in app.flashes('danger') %}
+		<div class="alert alert-danger text-center">{{ message }}</div>
+	{% endfor %}
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success text-center">{{ message }}</div>
+	{% endfor %}
+
+	<!-- Rôles -->
+	<form method="post" action="{{ path('app_choix_role') }}">
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="ROLE_CHAUFFEUR" name="roles[]" id="chauffeur" {{ 'ROLE_CHAUFFEUR' in app.user.roles ? 'checked' : '' }}>
+			<label class="form-check-label" for="chauffeur">Je suis chauffeur</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox" value="ROLE_PASSAGER" name="roles[]" id="passager" {{ 'ROLE_PASSAGER' in app.user.roles ? 'checked' : '' }}>
+			<label class="form-check-label" for="passager">Je suis passager</label>
+		</div>
+
+		{% if 'ROLE_CHAUFFEUR' in app.user.roles and app.user.voitures is empty %}
+			<div class="alert alert-warning text-center mt-3">
+				🚗 Vous avez sélectionné le rôle
+				<strong>chauffeur</strong>, mais vous n'avez encore enregistré aucun véhicule.<br>
+				<a href="{{ path('app_voiture_add') }}" class="btn btn-sm btn-success mt-2">Ajouter un véhicule</a>
+			</div>
+		{% endif %}
+
+		<button class="btn btn-success mt-3">Mettre à jour mes rôles</button>
+	</form>
+
+	<!-- Navigation onglets -->
+	<ul class="nav nav-tabs justify-content-center mb-4 border-bottom border-success">
+		<li class="nav-item">
+			<a class="nav-link text-success" href="{{ path('app_historique') }}">Historique</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link text-success" href="{{ path('app_profil') }}">Informations</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link text-success" href="{{ path('covoiturage_new') }}">Créer un trajet</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link text-success" href="{{ path('app_voiture') }}">Véhicules</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link text-success" href="{{ path('app_preference') }}">Préférences</a>
+		</li>
+        <li class="nav-item">
+<a class="nav-link text-success" href="{{ path('app_mes_trajets') }}">Mes Trajets</a>
+
+        </li>
+
+	</ul>
+</div>
+

@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Covoiturage
+{% endblock %}
+
+{% block body %}
+	<main class="container py-4">
+		<section class="search-section">
+			<h2>Covoiturage</h2>
+			<form method="get" action="{{ path('app_covoiturage') }}" class="row g-3">
+
+				<div class="col-md-3 mb-4">
+					<input type="text" name="lieu_depart" class="form-control" placeholder="Départ" value="{{ app.request.get('lieu_depart') }}">
+				</div>
+
+				<div class="col-md-3 mb-4">
+					<input type="text" name="lieu_arrivee" class="form-control" placeholder="Arrivée" value="{{ app.request.get('lieu_arrivee') }}">
+				</div>
+
+				<div class="col-md-3 mb-4">
+					<input type="date" name="date" class="form-control" value="{{ app.request.get('date') }}">
+				</div>
+
+				<div class="col-md-3 mb-4">
+					<button class="btn btn-success w-100">Rechercher</button>
+				</div>
+
+				<div class="col-md-2 mb-4">
+					<input type="number" name="prix_max" class="form-control" placeholder="Prix max (€)" value="{{ app.request.get('prix_max') }}">
+				</div>
+
+				<div class="col-md-2 mb-4">
+					<input type="number" name="duree_max" class="form-control" placeholder="Durée max (min)" value="{{ app.request.get('duree_max') }}">
+				</div>
+
+				<div class="col-md-2 mb-4">
+					<select name="note_min" class="form-control">
+						<option value="">Note min</option>
+						{% for i in 1..5 %}
+							<option value="{{ i }}" {% if app.request.get('note_min') == i %} selected {% endif %}>{{ i }}
+								⭐</option>
+						{% endfor %}
+					</select>
+				</div>
+
+				<div class="col-md-2 form-check mt-2 d-flex align-items-center mb-4">
+					<input class="form-check-input" type="checkbox" name="ecologique" value="1" {% if app.request.get('ecologique') %} checked {% endif %}>
+					<label class="form-check-label ms-2">Écologique</label>
+				</div>
+
+			</form>
+
+
+		</section>
+
+		<section class="results-section mt-4">
+			<h3>Trajets disponibles</h3>
+
+			{% for trajet in trajets %}
+				<div class="card p-3 mb-3" data-prix="{{ trajet.prixPersonne }}" data-note="{{ trajet.voiture and trajet.voiture.note is defined ? trajet.voiture.note : 4 }}" data-eco="{{ trajet.voiture and trajet.voiture.isEcologique is defined and trajet.voiture.isEcologique ? '1' : '0' }}" data-duree="{% set duree = trajet.heureDepart.diff(trajet.heureArrivee) %}{{ duree.h * 60 + duree.i }}">
+
+
+					<div class="row align-items-center">
+						<div class="col-auto">
+							<img src="{{ asset('images/avatar.png') }}" alt="Avatar">
+						</div>
+						<div class="col">
+							<div>
+								<strong>{{ trajet.dateDepart|date('d/m/Y') }}</strong>
+							</div>
+							<div>{{ trajet.lieuDepart }}
+								-
+								{{ trajet.lieuArrivee }}</div>
+							<div>
+								{{ trajet.heureDepart|date('H:i') }}
+								-
+								{{ trajet.heureArrivee|date('H:i') }}
+								<small class="text-muted">
+									({{ trajet.heureDepart.diff(trajet.heureArrivee).h }}h{{ trajet.heureDepart.diff(trajet.heureArrivee).i }})
+								</small>
+							</div>
+							<div>
+								{{ trajet.voiture and trajet.voiture.type is defined ? trajet.voiture.type : 'Voiture' }}
+
+								-
+								{{ trajet.nbPlace }}
+								places
+							</div>
+						</div>
+						<div class="col-auto text-right">
+							<div class="h5">{{ trajet.prixPersonne|number_format(2, ',', '.') }}
+								€</div>
+							<button class="btn btn-outline-secondary btn-sm">Détails</button>
+							<button class="btn btn-success btn-sm mt-2">Participer</button>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<p>Aucun trajet trouvé.</p>
+			{% endfor %}
+		</section>
+	</main>
+
+{% endblock %}

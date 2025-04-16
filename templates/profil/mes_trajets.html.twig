@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil
+{% endblock %}
+
+{% block body %}
+{% include 'profil/_profil_layout.html.twig' %}
+
+	<div class="container py-5">
+		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle">
+			<h2 class="text-success text-center mb-4">Mes trajets à venir</h2>
+
+			{# Trajets en tant que conducteur #}
+			<h4 class="text-success mt-4">En tant que conducteur</h4>
+			{% if trajetsConducteur is empty %}
+				<p class="text-muted">Aucun trajet à venir.</p>
+			{% else %}
+				{% for trajet in trajetsConducteur %}
+					<div class="list-group-item mb-3 border rounded p-3">
+						<div class="d-flex justify-content-between align-items-center">
+							<div>
+								<strong>{{ trajet.dateDepart|date('d/m/Y') }}</strong>
+								|
+								{{ trajet.lieuDepart }}
+								→
+								{{ trajet.lieuArrivee }}
+								<br>
+								{{ trajet.heureDepart|date('H:i') }}
+								-
+								{{ trajet.heureArrivee|date('H:i') }}
+								<br>
+								{{ trajet.nbPlace }}
+								place(s) restante(s)
+								<span class="badge {{ trajet.nbPlace > 0 ? 'bg-success' : 'bg-danger' }} ms-2">
+									{{ trajet.nbPlace > 0 ? '🟢 Disponible' : '🔴 Complet' }}
+								</span>
+							</div>
+							<a href="{{ path('app_annuler_trajet_conducteur', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm">Annuler</a>
+						</div>
+					</div>
+				{% endfor %}
+			{% endif %}
+
+			{# Trajets en tant que passager #}
+			<h4 class="text-primary mt-5">En tant que passager</h4>
+			{% if trajetsPassager is empty %}
+				<p class="text-muted">Aucune réservation à venir.</p>
+			{% else %}
+				{% for trajet in trajetsPassager %}
+					<div class="list-group-item mb-3 border rounded p-3">
+						<div class="d-flex justify-content-between align-items-center">
+							<div>
+								<strong>{{ trajet.dateDepart|date('d/m/Y') }}</strong>
+								|
+								{{ trajet.lieuDepart }}
+								→
+								{{ trajet.lieuArrivee }}
+								<br>
+								{{ trajet.heureDepart|date('H:i') }}
+								-
+								{{ trajet.heureArrivee|date('H:i') }}
+								<br>
+								Conducteur :
+								{{ trajet.conducteur.pseudo }}
+							</div>
+							<a href="{{ path('app_annuler_trajet_passager', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm">Annuler</a>
+						</div>
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
