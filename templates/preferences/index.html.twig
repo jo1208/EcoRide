@@ -1,9 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes préférences
+{% block title %}Mon Profil
 {% endblock %}
 
 {% block body %}
+{% include 'profil/_profil_layout.html.twig' %}
+
 	<div class="container py-5" style="max-width: 700px;">
 		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle" style="background-color: #FBF8F7;">
 			<h2 class="text-center mb-4 text-success">Mes préférences</h2>

@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil
+{% endblock %}
+
+{% block body %}
+{% include 'profil/_profil_layout.html.twig' %}
+
+	<div class="container py-5" style="max-width: 800px;">
+		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle" style="background-color: #FBF8F7;">
+			<h2 class="mb-4 text-success text-center">Historique de mes trajets</h2>
+
+			{% if trajetsConducteur is empty and trajetsPassager is empty %}
+				<p class="text-muted text-center">Vous n'avez effectué aucun trajet pour le moment.</p>
+			{% endif %}
+
+			{% if trajetsConducteur is not empty %}
+				<h4 class="text-success mb-3">
+					<i class="bi bi-steering-wheel me-2"></i>En tant que conducteur</h4>
+				<div class="list-group mb-4">
+					{% for trajet in trajetsConducteur %}
+						<div class="list-group-item list-group-item-action mb-2 border rounded">
+							<div class="d-flex justify-content-between">
+								<strong>{{ trajet.dateDepart|date('d F Y') }}</strong>
+								<span class="badge bg-success">Conducteur</span>
+							</div>
+							<div>{{ trajet.lieuDepart }}
+								→
+								{{ trajet.lieuArrivee }}</div>
+							<div>
+								{{ trajet.heureDepart|date('H:i') }}
+								-
+								{{ trajet.heureArrivee|date('H:i') }}
+								<small class="text-muted ms-2">{{ trajet.nbPlace }}
+									place(s)</small>
+							</div>
+							<div class="text-muted">
+								{{ trajet.prixPersonne|number_format(2, ',', '.') }}
+								€
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+
+			{% if trajetsPassager is not empty %}
+				<h4 class="text-success mb-3">
+					<i class="bi bi-person-fill me-2"></i>En tant que passager</h4>
+				<div class="list-group">
+					{% for trajet in trajetsPassager %}
+						<div class="list-group-item list-group-item-action mb-2 border rounded">
+							<div class="d-flex justify-content-between">
+								<strong>{{ trajet.dateDepart|date('d F Y') }}</strong>
+								<span class="badge bg-secondary">Passager</span>
+							</div>
+							<div>{{ trajet.lieuDepart }}
+								→
+								{{ trajet.lieuArrivee }}</div>
+							<div>
+								{{ trajet.heureDepart|date('H:i') }}
+								-
+								{{ trajet.heureArrivee|date('H:i') }}
+							</div>
+							<div class="text-muted">
+								Conducteur :
+								{{ trajet.conducteur.pseudo }}
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+

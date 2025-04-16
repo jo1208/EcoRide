@@ -25,12 +25,15 @@ class VoitureController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        // 👇 PLUS de restriction sur le rôle ici
         $voitures = $user->getVoitures();
 
         return $this->render('voiture/index.html.twig', [
             'voitures' => $voitures,
         ]);
     }
+
+
 
 
 

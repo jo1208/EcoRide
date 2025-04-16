@@ -51,6 +51,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isChauffeur = false;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isPassager = true;
+
+
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $note = null;
 
@@ -60,9 +67,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'user')]
     private Collection $avis;
 
+    /**
+     * @var Collection<int, \App\Entity\Covoiturage>
+     */
+
     #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Covoiturage::class)]
     private Collection $covoituragesConduits;
 
+    /**
+     * @var Collection<int, \App\Entity\Covoiturage>
+     */
     #[ORM\ManyToMany(targetEntity: Covoiturage::class, mappedBy: 'passagers')]
     private Collection $covoituragesEnPassager;
 
@@ -200,6 +214,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->pseudo = $pseudo;
         return $this;
     }
+
+    public function isChauffeur(): bool
+    {
+        return $this->isChauffeur;
+    }
+
+    public function setIsChauffeur(bool $isChauffeur): static
+    {
+        $this->isChauffeur = $isChauffeur;
+        return $this;
+    }
+
+    public function isPassager(): bool
+    {
+        return $this->isPassager;
+    }
+
+    public function setIsPassager(bool $isPassager): static
+    {
+        $this->isPassager = $isPassager;
+        return $this;
+    }
+
 
     public function getNote(): ?float
     {
