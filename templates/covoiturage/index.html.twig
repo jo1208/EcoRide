@@ -79,19 +79,30 @@
 									({{ trajet.heureDepart.diff(trajet.heureArrivee).h }}h{{ trajet.heureDepart.diff(trajet.heureArrivee).i }})
 								</small>
 							</div>
-							<div>
-								{{ trajet.voiture and trajet.voiture.type is defined ? trajet.voiture.type : 'Voiture' }}
+                            <div>
+                                {{ trajet.voiture and trajet.voiture.type is defined ? trajet.voiture.type : 'Voiture' }}
+                                -
+                                {% if trajet.nbPlace == 0 %}
+                                    <span class="badge bg-danger">COMPLET</span>
+                                {% else %}
+                                    {{ trajet.nbPlace }}
+                                    place{{ trajet.nbPlace > 1 ? 's' : '' }}
+                                {% endif %}
+                            </div>
 
-								-
-								{{ trajet.nbPlace }}
-								places
-							</div>
+
 						</div>
 						<div class="col-auto text-right">
 							<div class="h5">{{ trajet.prixPersonne|number_format(2, ',', '.') }}
 								€</div>
-							<button class="btn btn-outline-secondary btn-sm">Détails</button>
-							<button class="btn btn-success btn-sm mt-2">Participer</button>
+                            <a href="{{ path('covoiturage_show', { id: trajet.id }) }}" class="btn btn-outline-secondary btn-sm">Détails</a>
+                            <form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
+                            <button class="btn btn-success btn-sm mt-2" {% if trajet.nbPlace == 0 %} disabled {% endif %}>
+                                Participer
+                            </button>
+
+                            </form>
+
 						</div>
 					</div>
 				</div>
