@@ -91,7 +91,10 @@
 							<div class="h5">{{ trajet.prixPersonne|number_format(2, ',', '.') }}
 								€</div>
 							<button class="btn btn-outline-secondary btn-sm">Détails</button>
-							<button class="btn btn-success btn-sm mt-2">Participer</button>
+                            <form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
+                                <button class="btn btn-success btn-sm mt-2">Participer</button>
+                            </form>
+
 						</div>
 					</div>
 				</div>

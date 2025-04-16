@@ -107,6 +107,7 @@ class CovoiturageController extends AbstractController
         return $this->render('profil/mes_trajets.html.twig', [
             'trajetsConducteur' => $trajetsConducteur,
             'trajetsPassager' => $trajetsPassager,
+
         ]);
     }
 
@@ -142,5 +143,34 @@ class CovoiturageController extends AbstractController
 
         $this->addFlash('success', 'Vous avez quitté le trajet avec succès ✅');
         return $this->redirectToRoute('app_mes_trajets');
+    }
+
+    #[Route('/covoiturage/{id}/participer', name: 'app_participer_covoiturage', methods: ['POST'])]
+    public function participer(Covoiturage $covoiturage, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            $this->addFlash('danger', 'Veuillez vous connecter pour participer.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($covoiturage->getPassagers()->contains($user)) {
+            $this->addFlash('warning', 'Vous participez déjà à ce trajet.');
+        } elseif ($covoiturage->getNbPlace() <= 0) {
+            $this->addFlash('danger', 'Ce trajet est complet.');
+        } elseif ($covoiturage->getConducteur() === $user) {
+            $this->addFlash('danger', 'Vous êtes le conducteur de ce trajet.');
+        } else {
+            $covoiturage->addPassager($user);
+            $covoiturage->setNbPlace($covoiturage->getNbPlace() - 1);
+
+            $em->persist($covoiturage);
+            $em->flush();
+
+            $this->addFlash('success', 'Vous avez rejoint ce trajet 🚗');
+        }
+
+        return $this->redirectToRoute('app_covoiturage');
     }
 }
