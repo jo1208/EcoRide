@@ -7,9 +7,14 @@
 	<main class="container py-4">
 		<section class="search-section">
 			<h2>Covoiturage</h2>
-			<form
-				method="get" action="{{ path('app_covoiturage') }}" class="row g-3">
-				<!-- Filtres de recherche -->
+
+			{% if formIncomplete %}
+				<div class="alert alert-warning text-center">
+					⚠️ Veuillez remplir le lieu de départ, le lieu d'arrivée et la date pour lancer une recherche.
+				</div>
+			{% endif %}
+
+			<form method="get" action="{{ path('app_covoiturage') }}" class="row g-3">
 				<div class="col-md-3 mb-4">
 					<input type="text" name="lieu_depart" class="form-control" placeholder="Départ" value="{{ app.request.get('lieu_depart') }}">
 				</div>
@@ -22,6 +27,7 @@
 				<div class="col-md-3 mb-4">
 					<button class="btn btn-success w-100">Rechercher</button>
 				</div>
+
 				<div class="col-md-2 mb-4">
 					<input type="number" name="prix_max" class="form-control" placeholder="Prix max (€)" value="{{ app.request.get('prix_max') }}">
 				</div>
@@ -51,26 +57,41 @@
 				<div class="card p-3 mb-3">
 					<div class="row align-items-center">
 						<div class="col-auto">
-							<img src="{{ asset('images/avatar.png') }}" alt="Avatar">
+							<img src="{{ asset('images/avatar.png') }}" alt="Avatar" class="rounded" width="60">
 						</div>
 						<div class="col">
 							<div>
-								<strong>{{ trajet.dateDepart|date('d/m/Y') }}</strong>
-							</div>
-							<div>{{ trajet.lieuDepart }}
+								<strong>Conducteur :</strong>
+								{{ trajet.conducteur.pseudo }}
+								(⭐
+								{{ trajet.conducteur.note|default('Aucune Note') }}/5)</div>
+							<div>
+								<strong>Date :</strong>
+								{{ trajet.dateDepart|date('d/m/Y') }}</div>
+							<div>
+								<strong>Trajet :</strong>
+								{{ trajet.lieuDepart }}
 								-
 								{{ trajet.lieuArrivee }}</div>
 							<div>
+								<strong>Horaire :</strong>
 								{{ trajet.heureDepart|date('H:i') }}
 								-
 								{{ trajet.heureArrivee|date('H:i') }}
-								<small class="text-muted">
-									({{ trajet.heureDepart.diff(trajet.heureArrivee).h }}h{{ trajet.heureDepart.diff(trajet.heureArrivee).i }})
-								</small>
+								<small class="text-muted">({{ trajet.heureDepart.diff(trajet.heureArrivee).h }}h{{ trajet.heureDepart.diff(trajet.heureArrivee).i }})</small>
 							</div>
 							<div>
-								{{ trajet.voiture and trajet.voiture.type is defined ? trajet.voiture.type : 'Voiture' }}
+								<strong>Véhicule :</strong>
+								{{ trajet.voiture.modele ?? 'Non précisé' }}
 								-
+								<strong>Écologique :</strong>
+								{% if trajet.voiture and trajet.voiture.ecologique %}
+									Oui ⚡
+								{% else %}
+									Non
+								{% endif %}
+							</div>
+							<div>
 								{% if trajet.nbPlace == 0 %}
 									<span class="badge bg-danger">COMPLET</span>
 								{% else %}
@@ -79,17 +100,35 @@
 								{% endif %}
 							</div>
 						</div>
+
 						<div class="col-auto text-right">
 							<div class="h5">{{ trajet.prixPersonne|number_format(2, ',', '.') }}
 								€</div>
 
 							<a href="{{ path('covoiturage_show', { id: trajet.id }) }}" class="btn btn-outline-secondary btn-sm">Détails</a>
 
-							<button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#confirmParticipationModal{{ trajet.id }}" {% if trajet.nbPlace == 0 %} disabled {% endif %}>
+							{% set user = app.user %}
+							{% set creditsOk = user and (user.credits >= trajet.prixPersonne) %}
+
+							<button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#confirmParticipationModal{{ trajet.id }}" {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}>
 								Participer
 							</button>
 
-							{# Modal de confirmation #}
+							{% if user is null %}
+								<div class="text-danger small mt-2">
+									❌ Vous devez
+									<a href="{{ path('app_login') }}" class="text-success text-decoration-underline">vous connecter</a>
+									ou
+									<a href="{{ path('app_user') }}" class="text-success text-decoration-underline">créer un compte</a>
+									pour participer.
+								</div>
+							{% elseif not creditsOk %}
+								<div class="text-danger small mt-2">
+									❌ Vous n'avez pas assez de crédits pour ce trajet.
+								</div>
+							{% endif %}
+
+							<!-- Modal de confirmation -->
 							<div class="modal fade" id="confirmParticipationModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmParticipationLabel{{ trajet.id }}" aria-hidden="true">
 								<div class="modal-dialog">
 									<div class="modal-content">
@@ -104,11 +143,11 @@
 											Voulez-vous vraiment continuer ?
 										</div>
 										<div class="modal-footer">
-										<form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
-											<input type="hidden" name="_token" value="{{ csrf_token('participer_' ~ trajet.id) }}">
-											<button type="submit" class="btn btn-success">Confirmer</button>
-										</form>
-										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+											<form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('participer_' ~ trajet.id) }}">
+												<button type="submit" class="btn btn-success">Confirmer</button>
+											</form>
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
 										</div>
 									</div>
 								</div>
@@ -118,7 +157,15 @@
 					</div>
 				</div>
 			{% else %}
-				<p>Aucun trajet trouvé.</p>
+				<p class="text-center">Aucun trajet trouvé.</p>
+
+				{% if propositionNouvelleDate %}
+					<div class="alert alert-info text-center mt-3">
+						🚗 Aucun trajet trouvé pour votre recherche, mais un trajet est disponible le
+						<strong>{{ propositionNouvelleDate|date('d/m/Y') }}</strong>.<br>
+						Essayez d'adapter votre date pour trouver votre voyage !
+					</div>
+				{% endif %}
 			{% endfor %}
 		</section>
 	</main>

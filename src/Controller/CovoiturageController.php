@@ -26,12 +26,51 @@ class CovoiturageController extends AbstractController
             'ecologique' => $request->query->get('ecologique'),
         ];
 
-        $trajets = $repo->findWithFilters($filters);
+        $trajets = [];
+        $formIncomplete = false;
+        $propositionNouvelleDate = null;
+
+        if ($filters['lieu_depart'] && $filters['lieu_arrivee'] && $filters['date']) {
+            $trajets = $repo->findWithFilters($filters);
+
+            // ✅ Filtrage durée_max en PHP
+            if (!empty($filters['duree_max'])) {
+                $trajets = array_filter($trajets, function ($trajet) use ($filters) {
+                    $depart = $trajet->getHeureDepart();
+                    $arrivee = $trajet->getHeureArrivee();
+
+                    if (!$depart || !$arrivee) {
+                        return false;
+                    }
+
+                    $minutesDepart = ($depart->format('H') * 60) + $depart->format('i');
+                    $minutesArrivee = ($arrivee->format('H') * 60) + $arrivee->format('i');
+                    $duree = $minutesArrivee - $minutesDepart;
+
+                    return $duree <= $filters['duree_max'];
+                });
+            }
+
+            // ✅ Si aucun trajet, proposer une nouvelle date
+            if (empty($trajets)) {
+                $firstAvailable = $repo->findFirstAvailable();
+                if ($firstAvailable) {
+                    $propositionNouvelleDate = $firstAvailable->getDateDepart();
+                }
+            }
+        } else {
+            $formIncomplete = true;
+        }
 
         return $this->render('covoiturage/index.html.twig', [
-            'trajets' => $trajets, // ✅ Transmis à la vue Twig
+            'trajets' => $trajets,
+            'formIncomplete' => $formIncomplete,
+            'propositionNouvelleDate' => $propositionNouvelleDate,
         ]);
     }
+
+
+
 
     #[Route('/covoiturage/nouveau', name: 'covoiturage_new')]
     public function new(Request $request, EntityManagerInterface $em): Response

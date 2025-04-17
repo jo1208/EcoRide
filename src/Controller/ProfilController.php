@@ -61,18 +61,27 @@ class ProfilController extends AbstractController
         $user = $this->getUser();
         $roles = $request->request->all('roles');
 
-        // Si l'utilisateur coche "chauffeur" mais n'a pas de voiture
-        if (in_array('ROLE_CHAUFFEUR', $roles) && $user->getVoitures()->isEmpty()) {
-            $this->addFlash('danger', 'Vous devez enregistrer au moins un véhicule pour devenir chauffeur.');
-            return $this->redirectToRoute('app_profil');
+        // Vérifier que s'il veut devenir chauffeur, il a bien une voiture ET des préférences
+        if (in_array('ROLE_CHAUFFEUR', $roles)) {
+            if ($user->getVoitures()->isEmpty()) {
+                $this->addFlash('danger', '🚗 Vous devez enregistrer au moins un véhicule pour devenir chauffeur.');
+                return $this->redirectToRoute('app_profil');
+            }
+
+            if (!$user->getPreference()) {
+                $this->addFlash('danger', '⚙️ Vous devez compléter vos préférences de conducteur pour devenir chauffeur.');
+                return $this->redirectToRoute('app_profil');
+            }
         }
 
+        // Tout est OK ✅ On met à jour les rôles
         $user->setRoles($roles);
         $em->flush();
 
-        $this->addFlash('success', 'Rôles mis à jour avec succès ✅');
+        $this->addFlash('success', 'Vos rôles ont été mis à jour avec succès ✅');
         return $this->redirectToRoute('app_profil');
     }
+
 
     #[Route('/profil/avis', name: 'app_profil_avis')]
     public function showAvis(): Response

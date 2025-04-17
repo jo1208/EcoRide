@@ -29,7 +29,7 @@ class UserController extends AbstractController
             // Hash du mot de passe AVANT enregistrement
             $hashedPassword = $this->passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
-
+            $user->setCredits(20);
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
@@ -39,31 +39,5 @@ class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'form' => $form->createView(),
         ]);
-    }
-
-    #[Route('/profil/update-roles', name: 'app_update_roles', methods: ['POST'])]
-    public function updateRoles(Request $request, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
-        $roles = [];
-
-        if ($request->request->get('isChauffeur')) {
-            $roles[] = 'ROLE_CHAUFFEUR';
-        }
-
-        if ($request->request->get('isPassager')) {
-            $roles[] = 'ROLE_PASSAGER';
-        }
-
-        if (empty($roles)) {
-            $roles[] = 'ROLE_USER'; // rôle de base
-        }
-
-        $user->setRoles($roles);
-        $em->flush();
-
-        $this->addFlash('success', 'Vos rôles ont été mis à jour ✅');
-
-        return $this->redirectToRoute('app_profil');
     }
 }

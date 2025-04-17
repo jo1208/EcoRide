@@ -45,13 +45,9 @@ class CovoiturageRepository extends ServiceEntityRepository
                 ->setParameter('prix_max', $filters['prix_max']);
         }
 
-        if (!empty($filters['duree_max'])) {
-            $qb->andWhere('(HOUR(c.heure_arrivee) * 60 + MINUTE(c.heure_arrivee)) - (HOUR(c.heure_depart) * 60 + MINUTE(c.heure_depart)) <= :duree_max')
-                ->setParameter('duree_max', $filters['duree_max']);
-        }
-
         if (!empty($filters['note_min'])) {
-            $qb->andWhere('v.note >= :note_min')
+            $qb->join('c.conducteur', 'u')
+                ->andWhere('u.note >= :note_min')
                 ->setParameter('note_min', $filters['note_min']);
         }
 
@@ -60,5 +56,17 @@ class CovoiturageRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findFirstAvailable(): ?Covoiturage
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.date_depart >= :now')
+            ->andWhere('c.nb_place > 0')
+            ->setParameter('now', new \DateTime())
+            ->orderBy('c.date_depart', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

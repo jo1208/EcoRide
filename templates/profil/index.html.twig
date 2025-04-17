@@ -33,8 +33,9 @@
 						{{ user.telephone }}</p>
 					<p>
 						<strong>Date de naissance :</strong>
-						{{ user.dateNaissance }}</p>
-					<p>
+						{{ user.dateNaissance ? user.dateNaissance|date('d/m/Y') : 'Non renseignée' }}
+					</p>
+
 						<strong>Adresse :</strong>
 						{{ user.adresse }}</p>
 				</div>
