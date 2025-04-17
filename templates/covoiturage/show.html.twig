@@ -47,8 +47,6 @@
                     <p>
                         <strong>Électrique :</strong>
                         {{ voiture.ecologique ? 'Oui ⚡' : 'Non' }}</p>
-
-
 					<p>
 						<strong>Couleur :</strong>
 						{{ voiture.couleur }}</p>
@@ -106,7 +104,19 @@
 			<!-- Bouton Participer -->
 			{% if covoiturage.nbPlace > 0 %}
 				<div class="text-center mt-4">
-<a href="{{ path('app_participer_covoiturage', { id: covoiturage.id }) }}" class="btn btn-success btn-lg">Participer à ce trajet</a>
+                <form method="post" action="{{ path('app_participer_covoiturage', { id: covoiturage.id }) }}" onsubmit="return confirm('Participer à ce trajet va déduire {{ covoiturage.prixPersonne|number_format(2, ',', '.') }} crédits. Confirmez-vous ?')">
+                    <button class="btn btn-success btn-sm mt-2" {% if covoiturage.nbPlace == 0 %} disabled {% endif %}>
+                        Participer
+                    </button>
+                </form>
+
+
+
+
+
+
+
+
 
 				</div>
 			{% endif %}

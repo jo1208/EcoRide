@@ -24,7 +24,7 @@ class ProfilController extends AbstractController
         }
 
         return $this->render('profil/index.html.twig', [
-            'user' => $user,
+            'user' => $this->getUser(),
         ]);
     }
 
@@ -72,5 +72,16 @@ class ProfilController extends AbstractController
 
         $this->addFlash('success', 'Rôles mis à jour avec succès ✅');
         return $this->redirectToRoute('app_profil');
+    }
+
+    #[Route('/profil/avis', name: 'app_profil_avis')]
+    public function showAvis(): Response
+    {
+        $user = $this->getUser();
+        $avis = $user->getAvis(); // Récupère les avis associés à l'utilisateur
+
+        return $this->render('profil/avis.html.twig', [
+            'avis' => $avis,
+        ]);
     }
 }

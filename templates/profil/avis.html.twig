@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes avis
+{% endblock %}
+
+{% block body %}
+	<div class="container py-5">
+		<div class="bg-white p-4 rounded shadow-sm">
+			<h2 class="text-center text-success mb-4">Mes avis</h2>
+
+			{% if avis is empty %}
+				<p class="text-center text-muted">Vous n'avez reçu aucun avis pour le moment.</p>
+			{% else %}
+				<ul class="list-group">
+					{% for a in avis %}
+						<li class="list-group-item">
+							<strong>Note :</strong>
+							{{ a.note }}
+							⭐<br>
+							<strong>Commentaire :</strong>
+							{{ a.commentaire|default('Aucun commentaire') }}<br>
+							<small class="text-muted">Publié le
+								{{ a.date|date('d/m/Y') }}</small>
+						</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+
+			<div class="text-center mt-4">
+				<a href="{{ path('app_profil') }}" class="btn btn-outline-success">Retour au profil</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

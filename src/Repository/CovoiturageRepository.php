@@ -20,7 +20,10 @@ class CovoiturageRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('c')
             ->leftJoin('c.Voiture', 'v')
-            ->addSelect('v');
+            ->addSelect('v')
+            ->where('c.date_depart >= :today') // ✅ N'afficher que les trajets futurs
+            ->setParameter('today', new \DateTime())
+            ->orderBy('c.date_depart', 'ASC'); // ✅ Tri du plus proche au plus lointain
 
         if (!empty($filters['lieu_depart'])) {
             $qb->andWhere('c.lieu_depart LIKE :lieu_depart')
@@ -43,7 +46,6 @@ class CovoiturageRepository extends ServiceEntityRepository
         }
 
         if (!empty($filters['duree_max'])) {
-            // Calcul de durée en minutes
             $qb->andWhere('(HOUR(c.heure_arrivee) * 60 + MINUTE(c.heure_arrivee)) - (HOUR(c.heure_depart) * 60 + MINUTE(c.heure_depart)) <= :duree_max')
                 ->setParameter('duree_max', $filters['duree_max']);
         }

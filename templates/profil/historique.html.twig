@@ -4,7 +4,8 @@
 {% endblock %}
 
 {% block body %}
-{% include 'profil/_profil_layout.html.twig' %}
+{% include 'profil/_profil_layout.html.twig'  with { user: app.user } %}
+
 
 	<div class="container py-5" style="max-width: 800px;">
 		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle" style="background-color: #FBF8F7;">

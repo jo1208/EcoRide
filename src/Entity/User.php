@@ -61,6 +61,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $note = null;
 
+    #[ORM\Column(type: 'integer')]
+    private int $credits = 20;
+
+
+
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Voiture::class, cascade: ['persist', 'remove'])]
     private Collection $voitures;
 
@@ -242,6 +247,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->note;
     }
+    public function getNoteMoyenne(): ?float
+    {
+        if ($this->avis->isEmpty()) {
+            return null; // Aucun avis -> retourne null
+        }
+
+        $total = 0;
+        foreach ($this->avis as $avi) {
+            $total += $avi->getNote();
+        }
+
+        return round($total / count($this->avis), 1);
+    }
+
+    public function getCredits(): int
+    {
+        return $this->credits;
+    }
+
+    public function setCredits(int $credits): static
+    {
+        $this->credits = $credits;
+        return $this;
+    }
+
+
 
     /**
      * @return Collection<int, \App\Entity\Voiture>

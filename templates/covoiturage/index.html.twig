@@ -7,32 +7,27 @@
 	<main class="container py-4">
 		<section class="search-section">
 			<h2>Covoiturage</h2>
-			<form method="get" action="{{ path('app_covoiturage') }}" class="row g-3">
-
+			<form
+				method="get" action="{{ path('app_covoiturage') }}" class="row g-3">
+				<!-- Filtres de recherche -->
 				<div class="col-md-3 mb-4">
 					<input type="text" name="lieu_depart" class="form-control" placeholder="Départ" value="{{ app.request.get('lieu_depart') }}">
 				</div>
-
 				<div class="col-md-3 mb-4">
 					<input type="text" name="lieu_arrivee" class="form-control" placeholder="Arrivée" value="{{ app.request.get('lieu_arrivee') }}">
 				</div>
-
 				<div class="col-md-3 mb-4">
 					<input type="date" name="date" class="form-control" value="{{ app.request.get('date') }}">
 				</div>
-
 				<div class="col-md-3 mb-4">
 					<button class="btn btn-success w-100">Rechercher</button>
 				</div>
-
 				<div class="col-md-2 mb-4">
 					<input type="number" name="prix_max" class="form-control" placeholder="Prix max (€)" value="{{ app.request.get('prix_max') }}">
 				</div>
-
 				<div class="col-md-2 mb-4">
 					<input type="number" name="duree_max" class="form-control" placeholder="Durée max (min)" value="{{ app.request.get('duree_max') }}">
 				</div>
-
 				<div class="col-md-2 mb-4">
 					<select name="note_min" class="form-control">
 						<option value="">Note min</option>
@@ -42,24 +37,18 @@
 						{% endfor %}
 					</select>
 				</div>
-
 				<div class="col-md-2 form-check mt-2 d-flex align-items-center mb-4">
 					<input class="form-check-input" type="checkbox" name="ecologique" value="1" {% if app.request.get('ecologique') %} checked {% endif %}>
 					<label class="form-check-label ms-2">Écologique</label>
 				</div>
-
 			</form>
-
-
 		</section>
 
 		<section class="results-section mt-4">
 			<h3>Trajets disponibles</h3>
 
 			{% for trajet in trajets %}
-				<div class="card p-3 mb-3" data-prix="{{ trajet.prixPersonne }}" data-note="{{ trajet.voiture and trajet.voiture.note is defined ? trajet.voiture.note : 4 }}" data-eco="{{ trajet.voiture and trajet.voiture.isEcologique is defined and trajet.voiture.isEcologique ? '1' : '0' }}" data-duree="{% set duree = trajet.heureDepart.diff(trajet.heureArrivee) %}{{ duree.h * 60 + duree.i }}">
-
-
+				<div class="card p-3 mb-3">
 					<div class="row align-items-center">
 						<div class="col-auto">
 							<img src="{{ asset('images/avatar.png') }}" alt="Avatar">
@@ -79,29 +68,51 @@
 									({{ trajet.heureDepart.diff(trajet.heureArrivee).h }}h{{ trajet.heureDepart.diff(trajet.heureArrivee).i }})
 								</small>
 							</div>
-                            <div>
-                                {{ trajet.voiture and trajet.voiture.type is defined ? trajet.voiture.type : 'Voiture' }}
-                                -
-                                {% if trajet.nbPlace == 0 %}
-                                    <span class="badge bg-danger">COMPLET</span>
-                                {% else %}
-                                    {{ trajet.nbPlace }}
-                                    place{{ trajet.nbPlace > 1 ? 's' : '' }}
-                                {% endif %}
-                            </div>
-
-
+							<div>
+								{{ trajet.voiture and trajet.voiture.type is defined ? trajet.voiture.type : 'Voiture' }}
+								-
+								{% if trajet.nbPlace == 0 %}
+									<span class="badge bg-danger">COMPLET</span>
+								{% else %}
+									{{ trajet.nbPlace }}
+									place{{ trajet.nbPlace > 1 ? 's' : '' }}
+								{% endif %}
+							</div>
 						</div>
 						<div class="col-auto text-right">
 							<div class="h5">{{ trajet.prixPersonne|number_format(2, ',', '.') }}
 								€</div>
-                            <a href="{{ path('covoiturage_show', { id: trajet.id }) }}" class="btn btn-outline-secondary btn-sm">Détails</a>
-                            <form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
-                            <button class="btn btn-success btn-sm mt-2" {% if trajet.nbPlace == 0 %} disabled {% endif %}>
-                                Participer
-                            </button>
 
-                            </form>
+							<a href="{{ path('covoiturage_show', { id: trajet.id }) }}" class="btn btn-outline-secondary btn-sm">Détails</a>
+
+							<button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#confirmParticipationModal{{ trajet.id }}" {% if trajet.nbPlace == 0 %} disabled {% endif %}>
+								Participer
+							</button>
+
+							{# Modal de confirmation #}
+							<div class="modal fade" id="confirmParticipationModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmParticipationLabel{{ trajet.id }}" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="confirmParticipationLabel{{ trajet.id }}">Confirmer la participation</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+										</div>
+										<div class="modal-body">
+											Participer à ce trajet vous coûtera
+											<strong>{{ trajet.prixPersonne|number_format(2, ',', '.') }}
+												crédits</strong>.<br>
+											Voulez-vous vraiment continuer ?
+										</div>
+										<div class="modal-footer">
+										<form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
+											<input type="hidden" name="_token" value="{{ csrf_token('participer_' ~ trajet.id) }}">
+											<button type="submit" class="btn btn-success">Confirmer</button>
+										</form>
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+										</div>
+									</div>
+								</div>
+							</div>
 
 						</div>
 					</div>
@@ -111,5 +122,5 @@
 			{% endfor %}
 		</section>
 	</main>
-
 {% endblock %}
+

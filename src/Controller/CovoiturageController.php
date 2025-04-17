@@ -38,24 +38,35 @@ class CovoiturageController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Vérifie que l'utilisateur est bien connecté et a le rôle "ROLE_CHAUFFEUR"
         if (!$user || !in_array('ROLE_CHAUFFEUR', $user->getRoles())) {
-            $this->addFlash('danger', 'Accès réservé aux chauffeurs.');
+            $this->addFlash('danger', 'Vous devez être chauffeur pour créer un trajet.');
+            return $this->redirectToRoute('app_profil');
+        }
+
+        // Vérifier les crédits
+        if ($user->getCredits() < 2) {
+            $this->addFlash('danger', 'Vous n\'avez pas assez de crédits pour créer un trajet. (2 crédits requis)');
             return $this->redirectToRoute('app_profil');
         }
 
         $trajet = new Covoiturage();
         $form = $this->createForm(CovoiturageType::class, $trajet, [
-            'user' => $this->getUser()
+            'user' => $this->getUser(), // ✅ Passe l'utilisateur connecté ici !
         ]);
+
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $trajet->setConducteur($user);
+
+            // Retirer 2 crédits
+            $user->setCredits($user->getCredits() - 2);
+
             $em->persist($trajet);
             $em->flush();
 
-            $this->addFlash('success', 'Trajet créé avec succès ✅');
+            $this->addFlash('success', 'Trajet créé avec succès ✅ (2 crédits ont été déduits)');
             return $this->redirectToRoute('app_profil');
         }
 
@@ -63,6 +74,7 @@ class CovoiturageController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
 
 
     #[Route('/profil/historique', name: 'app_historique')]
@@ -161,18 +173,30 @@ class CovoiturageController extends AbstractController
             $this->addFlash('danger', 'Ce trajet est complet.');
         } elseif ($covoiturage->getConducteur() === $user) {
             $this->addFlash('danger', 'Vous êtes le conducteur de ce trajet.');
+        } elseif ($user->getCredits() < $covoiturage->getPrixPersonne()) {
+            $this->addFlash('danger', 'Vous n\'avez pas assez de crédits pour participer à ce trajet.');
         } else {
+            // Déduire le prix demandé par le chauffeur
+            $prix = $covoiturage->getPrixPersonne();
+            $user->setCredits($user->getCredits() - $prix);
+
+            // Ajouter le passager
             $covoiturage->addPassager($user);
+
+            // Diminuer le nombre de places
             $covoiturage->setNbPlace($covoiturage->getNbPlace() - 1);
 
+            $em->persist($user);
             $em->persist($covoiturage);
             $em->flush();
 
-            $this->addFlash('success', 'Vous avez rejoint ce trajet 🚗');
+            $this->addFlash('success', 'Vous avez rejoint ce trajet 🚗 (' . $prix . ' crédits ont été utilisés)');
         }
 
         return $this->redirectToRoute('app_covoiturage');
     }
+
+
 
     #[Route('/covoiturage/annuler/{id}', name: 'covoiturage_annuler')]
     public function annulerParticipation(Covoiturage $covoiturage, EntityManagerInterface $em): Response
