@@ -117,17 +117,39 @@ class CovoiturageController extends AbstractController
 
 
     #[Route('/profil/historique', name: 'app_historique')]
-    public function historique(): Response
+    public function historique(CovoiturageRepository $repo): Response
     {
         $user = $this->getUser();
-        $trajetsConducteur = $user->getCovoituragesConduits();
-        $trajetsPassager = $user->getCovoituragesEnPassager();
+
+        // Trajets terminés ou annulés en tant que conducteur
+        $trajetsConducteur = $repo->createQueryBuilder('c')
+            ->where('c.conducteur = :user')
+            ->andWhere('c.date_depart < :now OR c.statut = :annule')
+            ->setParameter('user', $user)
+            ->setParameter('now', new \DateTime())
+            ->setParameter('annule', 'Annulé')
+            ->orderBy('c.date_depart', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        // Trajets terminés ou annulés en tant que passager
+        $trajetsPassager = $repo->createQueryBuilder('c')
+            ->join('c.passagers', 'p')
+            ->where('p = :user')
+            ->andWhere('c.date_depart < :now OR c.statut = :annule')
+            ->setParameter('user', $user)
+            ->setParameter('now', new \DateTime())
+            ->setParameter('annule', 'Annulé')
+            ->orderBy('c.date_depart', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('profil/historique.html.twig', [
             'trajetsConducteur' => $trajetsConducteur,
             'trajetsPassager' => $trajetsPassager,
         ]);
     }
+
 
     #[Route('/profil/mes-trajets', name: 'app_mes_trajets')]
     public function trajetsAVenir(CovoiturageRepository $repo): Response

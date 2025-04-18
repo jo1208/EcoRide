@@ -4,8 +4,7 @@
 {% endblock %}
 
 {% block body %}
-{% include 'profil/_profil_layout.html.twig'  with { user: app.user } %}
-
+	{% include 'profil/_profil_layout.html.twig' with { user: app.user } %}
 
 	<div class="container py-5" style="max-width: 800px;">
 		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle" style="background-color: #FBF8F7;">
@@ -17,7 +16,8 @@
 
 			{% if trajetsConducteur is not empty %}
 				<h4 class="text-success mb-3">
-					<i class="bi bi-steering-wheel me-2"></i>En tant que conducteur</h4>
+					<i class="bi bi-steering-wheel me-2"></i>En tant que conducteur
+				</h4>
 				<div class="list-group mb-4">
 					{% for trajet in trajetsConducteur %}
 						<div class="list-group-item list-group-item-action mb-2 border rounded">
@@ -39,14 +39,18 @@
 								{{ trajet.prixPersonne|number_format(2, ',', '.') }}
 								€
 							</div>
+							{% if trajet.statut == 'Annulé' %}
+								<span class="badge bg-danger mt-2">Annulé</span>
+							{% endif %}
 						</div>
 					{% endfor %}
 				</div>
 			{% endif %}
 
 			{% if trajetsPassager is not empty %}
-				<h4 class="text-success mb-3">
-					<i class="bi bi-person-fill me-2"></i>En tant que passager</h4>
+				<h4 class="text-primary mb-3">
+					<i class="bi bi-person-fill me-2"></i>En tant que passager
+				</h4>
 				<div class="list-group">
 					{% for trajet in trajetsPassager %}
 						<div class="list-group-item list-group-item-action mb-2 border rounded">
@@ -66,6 +70,9 @@
 								Conducteur :
 								{{ trajet.conducteur.pseudo }}
 							</div>
+							{% if trajet.statut == 'Annulé' %}
+								<span class="badge bg-danger mt-2">Annulé</span>
+							{% endif %}
 						</div>
 					{% endfor %}
 				</div>
