@@ -1,53 +1,59 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil
+{% block title %}Modifier mes Préférences
 {% endblock %}
 
 {% block body %}
-{% include 'profil/_profil_layout.html.twig' %}
+	{% include 'profil/_profil_layout.html.twig' %}
 
 	<div class="container py-5" style="max-width: 700px;">
-		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle" style="background-color: #FBF8F7;">
-			<h2 class="text-center mb-4 text-success">Modifier mes préférences</h2>
+		<div class="bg-white p-5 rounded-3 shadow border border-success-subtle" style="background-color: #f9fcf9;">
+			<h2 class="text-center mb-4 text-success">Modifier mes Préférences</h2>
 
 			{% for message in app.flashes('success') %}
-				<div class="alert alert-success text-center">
+				<div class="alert alert-success alert-dismissible fade show text-center" role="alert">
 					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
 				</div>
 			{% endfor %}
 
-			<script>
-				setTimeout(function () {
-                const alert = document.querySelector('.alert');
-                if (alert) {
-                alert.classList.remove('show');
-                alert.classList.add('fade');
-                setTimeout(() => alert.remove(), 300);
-                }
-                }, 3000);
-			</script>
-
 			{{ form_start(form) }}
-			<div class="form-check mb-3">
-				{{ form_widget(form.fumeur, {'attr': {'class': 'form-check-input'}}) }}
-				{{ form_label(form.fumeur, null, {'label_attr': {'class': 'form-check-label ms-2'}}) }}
-			</div>
-			<div class="form-check mb-3">
-				{{ form_widget(form.animal, {'attr': {'class': 'form-check-input'}}) }}
-				{{ form_label(form.animal, null, {'label_attr': {'class': 'form-check-label ms-2'}}) }}
-			</div>
-			<div class="form-check mb-3">
-				{{ form_widget(form.musique, {'attr': {'class': 'form-check-input'}}) }}
-				{{ form_label(form.musique, null, {'label_attr': {'class': 'form-check-label ms-2'}}) }}
-			</div>
-            <div class="mb-3">
-                {{ form_label(form.autres) }}
-                {{ form_widget(form.autres, {'attr': {'class': 'form-control'}}) }}
-            </div>
 
-			<div class="text-center mt-4">
-				<button type="submit" class="btn btn-success px-4">Enregistrer</button>
-				<a href="{{ path('app_preference') }}" class="btn btn-outline-secondary ms-2">Annuler</a>
+			<div class="form-check mb-4">
+				{{ form_widget(form.fumeur, {'attr': {'class': 'form-check-input'}}) }}
+				<label class="form-check-label ms-2" for="{{ form.fumeur.vars.id }}">
+					Accepte les fumeurs 🚬
+				</label>
+			</div>
+
+			<div class="form-check mb-4">
+				{{ form_widget(form.animal, {'attr': {'class': 'form-check-input'}}) }}
+				<label class="form-check-label ms-2" for="{{ form.animal.vars.id }}">
+					Accepte les animaux 🐶
+				</label>
+			</div>
+
+			<div class="form-check mb-4">
+				{{ form_widget(form.musique, {'attr': {'class': 'form-check-input'}}) }}
+				<label class="form-check-label ms-2" for="{{ form.musique.vars.id }}">
+					Accepte la musique 🎵
+				</label>
+			</div>
+
+			<div class="mb-4">
+				{{ form_label(form.autres, 'Autres précisions', {'label_attr': {'class': 'form-label'}}) }}
+				{{ form_widget(form.autres, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Par ex: Pas d’odeurs fortes, climatisation souhaitée...'}}) }}
+			</div>
+
+			<div class="d-flex justify-content-center gap-3 mt-4">
+				<button type="submit" class="btn btn-success px-4">
+					<i class="bi bi-check-circle me-2"></i>
+					Enregistrer
+				</button>
+				<a href="{{ path('app_preference') }}" class="btn btn-outline-secondary px-4">
+					<i class="bi bi-x-circle me-2"></i>
+					Annuler
+				</a>
 			</div>
 
 			{{ form_end(form) }}

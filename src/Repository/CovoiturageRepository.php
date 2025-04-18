@@ -21,9 +21,11 @@ class CovoiturageRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('c')
             ->leftJoin('c.Voiture', 'v')
             ->addSelect('v')
-            ->where('c.date_depart >= :today') // ✅ N'afficher que les trajets futurs
+            ->where('c.date_depart >= :today')
+            ->andWhere('c.statut IS NULL OR c.statut != :annule') // ✅ Ne pas afficher les trajets annulés
             ->setParameter('today', new \DateTime())
-            ->orderBy('c.date_depart', 'ASC'); // ✅ Tri du plus proche au plus lointain
+            ->setParameter('annule', 'Annulé')
+            ->orderBy('c.date_depart', 'ASC');
 
         if (!empty($filters['lieu_depart'])) {
             $qb->andWhere('c.lieu_depart LIKE :lieu_depart')
@@ -63,7 +65,9 @@ class CovoiturageRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->where('c.date_depart >= :now')
             ->andWhere('c.nb_place > 0')
+            ->andWhere('c.statut IS NULL OR c.statut != :annule') // ✅ Important aussi ici !
             ->setParameter('now', new \DateTime())
+            ->setParameter('annule', 'Annulé')
             ->orderBy('c.date_depart', 'ASC')
             ->setMaxResults(1)
             ->getQuery()

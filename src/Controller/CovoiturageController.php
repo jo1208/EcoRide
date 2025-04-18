@@ -32,31 +32,31 @@ class CovoiturageController extends AbstractController
 
         if ($filters['lieu_depart'] && $filters['lieu_arrivee'] && $filters['date']) {
             $trajets = $repo->findWithFilters($filters);
+        }
 
-            // ✅ Filtrage durée_max en PHP
-            if (!empty($filters['duree_max'])) {
-                $trajets = array_filter($trajets, function ($trajet) use ($filters) {
-                    $depart = $trajet->getHeureDepart();
-                    $arrivee = $trajet->getHeureArrivee();
+        // ✅ Filtrage durée_max en PHP
+        if (!empty($filters['duree_max'])) {
+            $trajets = array_filter($trajets, function ($trajet) use ($filters) {
+                $depart = $trajet->getHeureDepart();
+                $arrivee = $trajet->getHeureArrivee();
 
-                    if (!$depart || !$arrivee) {
-                        return false;
-                    }
-
-                    $minutesDepart = ($depart->format('H') * 60) + $depart->format('i');
-                    $minutesArrivee = ($arrivee->format('H') * 60) + $arrivee->format('i');
-                    $duree = $minutesArrivee - $minutesDepart;
-
-                    return $duree <= $filters['duree_max'];
-                });
-            }
-
-            // ✅ Si aucun trajet, proposer une nouvelle date
-            if (empty($trajets)) {
-                $firstAvailable = $repo->findFirstAvailable();
-                if ($firstAvailable) {
-                    $propositionNouvelleDate = $firstAvailable->getDateDepart();
+                if (!$depart || !$arrivee) {
+                    return false;
                 }
+
+                $minutesDepart = ($depart->format('H') * 60) + $depart->format('i');
+                $minutesArrivee = ($arrivee->format('H') * 60) + $arrivee->format('i');
+                $duree = $minutesArrivee - $minutesDepart;
+
+                return $duree <= $filters['duree_max'];
+            });
+        }
+
+        // ✅ Si aucun trajet, proposer une nouvelle date
+        if (empty($trajets)) {
+            $firstAvailable = $repo->findFirstAvailable();
+            if ($firstAvailable) {
+                $propositionNouvelleDate = $firstAvailable->getDateDepart();
             }
         } else {
             $formIncomplete = true;

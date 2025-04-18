@@ -33,6 +33,11 @@ class VoitureType extends AbstractType
                     new NotBlank(['message' => 'Le modèle est obligatoire.']),
                 ],
             ])
+            ->add('marque', TextType::class, [
+                'constraints' => [
+                    new NotBlank(['message' => 'Le marque est obligatoire.']),
+                ],
+            ])
             ->add('couleur', TextType::class, [
                 'constraints' => [
                     new NotBlank(['message' => 'La couleur est obligatoire.']),
