@@ -159,7 +159,7 @@
 			{% else %}
 				<p class="text-center">Aucun trajet trouvé.</p>
 
-				{% if propositionNouvelleDate %}
+{% if propositionNouvelleDate and app.request.get('lieu_depart') and app.request.get('lieu_arrivee') and app.request.get('date') %}
 					<div class="alert alert-info text-center mt-3">
 						🚗 Aucun trajet trouvé pour votre recherche, mais un trajet est disponible le
 						<strong>{{ propositionNouvelleDate|date('d/m/Y') }}</strong>.<br>

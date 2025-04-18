@@ -69,7 +69,11 @@
 								Conducteur :
 								{{ trajet.conducteur.pseudo }}
 							</div>
-<a href="{{ path('covoiturage_annuler', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm">Annuler</a>
+							<form method="post" action="{{ path('app_annuler_trajet_passager', { id: trajet.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir quitter ce covoiturage ?');">
+								<input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ trajet.id) }}">
+								<button class="btn btn-danger btn-sm">Se désinscrire</button>
+							</form>
+
 
 						</div>
 					</div>

@@ -223,17 +223,39 @@ class CovoiturageController extends AbstractController
     {
         $user = $this->getUser();
 
+        // Sécurité : vérifier si l'utilisateur participe à ce trajet
         if (!$trajet->getPassagers()->contains($user)) {
-            $this->addFlash('danger', 'Vous ne participez pas à ce trajet.');
+            $this->addFlash('danger', 'Vous n\'êtes pas inscrit à ce trajet.');
             return $this->redirectToRoute('app_mes_trajets');
         }
 
+        $prix = $trajet->getPrixPersonne();
+        $conducteur = $trajet->getConducteur();
+
+        // ✅ Rendre les crédits au passager
+        $user->setCredits($user->getCredits() + $prix);
+
+        // ✅ Retirer les crédits du conducteur
+        if ($conducteur) {
+            $conducteur->setCredits($conducteur->getCredits() - $prix);
+            $em->persist($conducteur);
+        }
+
+        // ✅ Retirer l'utilisateur de la liste des passagers
         $trajet->removePassager($user);
+
+        // ✅ Remettre une place disponible
+        $trajet->setNbPlace($trajet->getNbPlace() + 1);
+
+        // Sauvegarder tout ça
+        $em->persist($user);
+        $em->persist($trajet);
         $em->flush();
 
-        $this->addFlash('success', 'Vous avez quitté le trajet avec succès ✅');
+        $this->addFlash('success', '🚗 Vous êtes désinscrit du trajet et vos crédits ont été remboursés.');
         return $this->redirectToRoute('app_mes_trajets');
     }
+
 
     #[Route('/covoiturage/{id}/participer', name: 'app_participer_covoiturage', methods: ['POST'])]
     public function participer(Covoiturage $covoiturage, EntityManagerInterface $em): Response
