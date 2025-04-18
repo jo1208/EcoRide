@@ -35,9 +35,12 @@
 									{{ trajet.nbPlace > 0 ? '🟢 Disponible' : '🔴 Complet' }}
 								</span>
 							</div>
-                            <a href="{{ path('covoiturage_annuler', { id: trajet.id }) }}" class="btn btn-outline-danger btn-sm mt-2" onclick="return confirm('Êtes-vous sûr de vouloir annuler votre participation ?');">
-                                Annuler ma participation
-                            </a>
+<form method="post" action="{{ path('app_annuler_trajet_conducteur', { id: trajet.id }) }}">
+	<input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ trajet.id) }}">
+	<button type="submit" class="btn btn-danger btn-sm">Annuler</button>
+</form>
+
+
 
 						</div>
 					</div>

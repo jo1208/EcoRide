@@ -138,8 +138,10 @@ class CovoiturageController extends AbstractController
         $trajetsConducteur = $repo->createQueryBuilder('c')
             ->where('c.conducteur = :user')
             ->andWhere('c.date_depart >= :now')
+            ->andWhere('(c.statut IS NULL OR c.statut != :annule)')
             ->setParameter('user', $user)
             ->setParameter('now', new \DateTime())
+            ->setParameter('annule', 'Annulé')
             ->orderBy('c.date_depart', 'ASC')
             ->getQuery()
             ->getResult();
@@ -149,8 +151,10 @@ class CovoiturageController extends AbstractController
             ->join('c.passagers', 'p')
             ->where('p = :user')
             ->andWhere('c.date_depart >= :now')
+            ->andWhere('(c.statut IS NULL OR c.statut != :annule)')
             ->setParameter('user', $user)
             ->setParameter('now', new \DateTime())
+            ->setParameter('annule', 'Annulé')
             ->orderBy('c.date_depart', 'ASC')
             ->getQuery()
             ->getResult();
@@ -167,17 +171,30 @@ class CovoiturageController extends AbstractController
     {
         $user = $this->getUser();
 
+        // Vérifier que l'utilisateur est bien le conducteur du trajet
         if ($trajet->getConducteur() !== $user) {
-            $this->addFlash('danger', 'Vous ne pouvez pas annuler ce trajet.');
+            $this->addFlash('danger', 'Accès interdit.');
             return $this->redirectToRoute('app_mes_trajets');
         }
 
-        $em->remove($trajet);
+        // Mettre le statut du trajet à "Annulé"
+        $trajet->setStatut('Annulé');
+
+        // Rendre toutes les places disponibles
+        $trajet->setNbPlace(0);
+
+        // Rembourser 2 crédits de création au chauffeur
+        $user->setCredits($user->getCredits() + 2);
+
+        // Enregistrer les modifications
+        $em->persist($trajet);
+        $em->persist($user);
         $em->flush();
 
-        $this->addFlash('success', 'Trajet annulé avec succès ✅');
+        $this->addFlash('success', 'Trajet annulé et crédits remboursés ✅');
         return $this->redirectToRoute('app_mes_trajets');
     }
+
 
     #[Route('/trajet/{id}/quitter', name: 'app_annuler_trajet_passager', methods: ['POST', 'GET'])]
     public function quitterTrajetPassager(Covoiturage $trajet, EntityManagerInterface $em): Response
