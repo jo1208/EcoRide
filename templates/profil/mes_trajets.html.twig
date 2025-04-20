@@ -35,10 +35,39 @@
 									{{ trajet.nbPlace > 0 ? '🟢 Disponible' : '🔴 Complet' }}
 								</span>
 							</div>
-<form method="post" action="{{ path('app_annuler_trajet_conducteur', { id: trajet.id }) }}">
-	<input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ trajet.id) }}">
-	<button type="submit" class="btn btn-danger btn-sm">Annuler</button>
-</form>
+							<!-- Bouton Annuler (conducteur) -->
+							<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmCancelModal{{ trajet.id }}">
+								Annuler
+							</button>
+
+							<!-- Modal Bootstrap pour confirmation -->
+							<div class="modal fade" id="confirmCancelModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmCancelLabel{{ trajet.id }}" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+
+										<div class="modal-header">
+											<h5 class="modal-title" id="confirmCancelLabel{{ trajet.id }}">Confirmer l'annulation</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+										</div>
+
+										<div class="modal-body">
+											<p>🛑 Êtes-vous sûr de vouloir annuler ce trajet ?</p>
+											<p class="text-danger">⚠️ Tous les passagers seront remboursés.</p>
+										</div>
+
+										<div class="modal-footer">
+											<form method="post" action="{{ path('app_annuler_trajet_conducteur', { id: trajet.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ trajet.id) }}">
+												<button type="submit" class="btn btn-danger">Confirmer l'annulation</button>
+											</form>
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+
 
 
 
@@ -69,10 +98,39 @@
 								Conducteur :
 								{{ trajet.conducteur.pseudo }}
 							</div>
-							<form method="post" action="{{ path('app_annuler_trajet_passager', { id: trajet.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir quitter ce covoiturage ?');">
-								<input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ trajet.id) }}">
-								<button class="btn btn-danger btn-sm">Se désinscrire</button>
-							</form>
+							<!-- Bouton Désinscrire -->
+							<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmUnsubscribeModal{{ trajet.id }}">
+								Se désinscrire
+							</button>
+
+							<!-- Modal Bootstrap -->
+							<div class="modal fade" id="confirmUnsubscribeModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmUnsubscribeLabel{{ trajet.id }}" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+
+										<div class="modal-header">
+											<h5 class="modal-title" id="confirmUnsubscribeLabel{{ trajet.id }}">Confirmer la désinscription</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+										</div>
+
+										<div class="modal-body">
+											<p>🚗 Êtes-vous sûr de vouloir vous désinscrire de ce covoiturage ?</p>
+											<p class="text-danger">⚠️ Cette action est irréversible !</p>
+										</div>
+
+										<div class="modal-footer">
+											<form method="post" action="{{ path('app_annuler_trajet_passager', { id: trajet.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ trajet.id) }}">
+												<button type="submit" class="btn btn-danger">Confirmer la désinscription</button>
+											</form>
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+
 
 
 						</div>

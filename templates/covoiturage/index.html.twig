@@ -8,13 +8,15 @@
 		<section class="search-section">
 			<h2>Covoiturage</h2>
 
-			{% if formIncomplete %}
-				<div class="alert alert-warning text-center">
-					⚠️ Veuillez remplir le lieu de départ, le lieu d'arrivée et la date pour lancer une recherche.
-				</div>
-			{% endif %}
+			<div id="alertFormIncomplete" class="alert alert-warning text-center d-none" role="alert">
+				⚠️ Merci de remplir lieu de départ, lieu d'arrivée et date avant de chercher.
+			</div>
+
 
 			<form method="get" action="{{ path('app_covoiturage') }}" class="row g-3">
+				
+
+
 				<div class="col-md-3 mb-4">
 					<input type="text" name="lieu_depart" class="form-control" placeholder="Départ" value="{{ app.request.get('lieu_depart') }}">
 				</div>
@@ -169,5 +171,26 @@
 			{% endfor %}
 		</section>
 	</main>
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+const form = document.querySelector('.search-section form');
+const alertDiv = document.getElementById('alertFormIncomplete');
+
+form.addEventListener('submit', function (e) {
+const lieuDepart = form.querySelector('input[name="lieu_depart"]').value.trim();
+const lieuArrivee = form.querySelector('input[name="lieu_arrivee"]').value.trim();
+const date = form.querySelector('input[name="date"]').value.trim();
+
+if (! lieuDepart || ! lieuArrivee || ! date) {
+e.preventDefault(); // Empêche l'envoi du formulaire
+alertDiv.classList.remove('d-none'); // Affiche l'alerte
+} else {
+alertDiv.classList.add('d-none'); // Cache l'alerte si tout est ok
+}
+});
+});
+</script>
+
+
 {% endblock %}
 

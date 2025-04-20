@@ -54,13 +54,16 @@ class CovoiturageController extends AbstractController
 
         // ✅ Si aucun trajet, proposer une nouvelle date
         if (empty($trajets)) {
-            $firstAvailable = $repo->findFirstAvailable();
-            if ($firstAvailable) {
-                $propositionNouvelleDate = $firstAvailable->getDateDepart();
+            if ($filters['lieu_depart'] && $filters['lieu_arrivee']) {
+                $firstAvailable = $repo->findFirstAvailableMatchingLocation($filters);
+                if ($firstAvailable) {
+                    $propositionNouvelleDate = $firstAvailable->getDateDepart();
+                }
             }
         } else {
             $formIncomplete = true;
         }
+
 
         return $this->render('covoiturage/index.html.twig', [
             'trajets' => $trajets,
@@ -193,29 +196,47 @@ class CovoiturageController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Vérifier que l'utilisateur est bien le conducteur du trajet
         if ($trajet->getConducteur() !== $user) {
             $this->addFlash('danger', 'Accès interdit.');
             return $this->redirectToRoute('app_mes_trajets');
         }
 
-        // Mettre le statut du trajet à "Annulé"
-        $trajet->setStatut('Annulé');
+        $nombrePassagers = count($trajet->getPassagers());
+        $prixParPersonne = $trajet->getPrixPersonne();
+        $totalCreditsGagnes = $nombrePassagers * $prixParPersonne;
 
-        // Rendre toutes les places disponibles
+        // ✅ Rembourser tous les passagers
+        foreach ($trajet->getPassagers() as $passager) {
+            $passager->setCredits($passager->getCredits() + $prixParPersonne);
+            $em->persist($passager);
+        }
+
+        // ✅ Rendre toutes les places disponibles
         $trajet->setNbPlace(0);
 
-        // Rembourser 2 crédits de création au chauffeur
+        // ✅ Rembourser les 2 crédits de création
         $user->setCredits($user->getCredits() + 2);
 
-        // Enregistrer les modifications
+        // ❗ Retirer les crédits gagnés sur les passagers
+        $user->setCredits($user->getCredits() - $totalCreditsGagnes);
+
+        // 🔒 Sécurité : éviter crédits négatifs
+        if ($user->getCredits() < 0) {
+            $user->setCredits(0);
+        }
+
+        // ✅ Mettre le statut du trajet à "Annulé"
+        $trajet->setStatut('Annulé');
+
         $em->persist($trajet);
         $em->persist($user);
         $em->flush();
 
-        $this->addFlash('success', 'Trajet annulé et crédits remboursés ✅');
+        $this->addFlash('success', 'Trajet annulé ✅ Les passagers sont remboursés et vos crédits gagnés ont été retirés.');
         return $this->redirectToRoute('app_mes_trajets');
     }
+
+
 
 
     #[Route('/trajet/{id}/quitter', name: 'app_annuler_trajet_passager', methods: ['POST', 'GET'])]
@@ -274,27 +295,37 @@ class CovoiturageController extends AbstractController
         } elseif ($covoiturage->getConducteur() === $user) {
             $this->addFlash('danger', 'Vous êtes le conducteur de ce trajet.');
         } elseif ($user->getCredits() < $covoiturage->getPrixPersonne()) {
-            $this->addFlash('danger', 'Vous n\'avez pas assez de crédits pour participer à ce trajet.');
+            $this->addFlash('danger', 'Vous n\'avez pas assez de crédits.');
         } else {
-            // Déduire le prix demandé par le chauffeur
             $prix = $covoiturage->getPrixPersonne();
+
+            // ✅ Le passager paye
             $user->setCredits($user->getCredits() - $prix);
 
-            // Ajouter le passager
+            // ✅ Le conducteur reçoit l'argent
+            $conducteur = $covoiturage->getConducteur();
+            if ($conducteur) {
+                $conducteur->setCredits($conducteur->getCredits() + $prix);
+                $em->persist($conducteur);
+            }
+
+            // ✅ Ajouter le passager au trajet
             $covoiturage->addPassager($user);
 
-            // Diminuer le nombre de places
+            // ✅ Diminuer le nombre de places
             $covoiturage->setNbPlace($covoiturage->getNbPlace() - 1);
 
+            // On enregistre tout ça
             $em->persist($user);
             $em->persist($covoiturage);
             $em->flush();
 
-            $this->addFlash('success', 'Vous avez rejoint ce trajet 🚗 (' . $prix . ' crédits ont été utilisés)');
+            $this->addFlash('success', '✅ Participation confirmée. ' . $prix . ' crédits utilisés.');
         }
 
-        return $this->redirectToRoute('app_covoiturage');
+        return $this->redirectToRoute('app_mes_trajets');
     }
+
 
 
 
