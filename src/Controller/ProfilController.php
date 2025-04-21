@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Form\EditProfilType;
+use App\Repository\AvisRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -84,13 +85,25 @@ class ProfilController extends AbstractController
 
 
     #[Route('/profil/avis', name: 'app_profil_avis')]
-    public function showAvis(): Response
+    public function showAvis(AvisRepository $avisRepository): Response
     {
         $user = $this->getUser();
-        $avis = $user->getAvis(); // Récupère les avis associés à l'utilisateur
+
+        // Avis reçus
+        $avisRecus = $avisRepository->findBy(
+            ['conducteur' => $user],
+            ['id' => 'DESC'] // Tri du plus récent au plus ancien
+        );
+
+        // Avis donnés
+        $avisRediges = $avisRepository->findBy(
+            ['user' => $user],
+            ['id' => 'DESC']
+        );
 
         return $this->render('profil/avis.html.twig', [
-            'avis' => $avis,
+            'avisRecus' => $avisRecus,
+            'avisRediges' => $avisRediges,
         ]);
     }
 }

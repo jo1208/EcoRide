@@ -4,32 +4,82 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container py-5">
-		<div class="bg-white p-4 rounded shadow-sm">
-			<h2 class="text-center text-success mb-4">Mes avis</h2>
+<div class="container py-5">
+	<div class="bg-white p-4 rounded shadow-sm">
 
-			{% if avis is empty %}
-				<p class="text-center text-muted">Vous n'avez reçu aucun avis pour le moment.</p>
-			{% else %}
-				<ul class="list-group">
-					{% for a in avis %}
-						<li class="list-group-item">
-							<strong>Note :</strong>
-							{{ a.note }}
-							⭐<br>
-							<strong>Commentaire :</strong>
-							{{ a.commentaire|default('Aucun commentaire') }}<br>
-							<small class="text-muted">Publié le
-								{{ a.date|date('d/m/Y') }}</small>
-						</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
+		<h2 class="text-success text-center mb-4">Avis reçus</h2>
 
-			<div class="text-center mt-4">
-				<a href="{{ path('app_profil') }}" class="btn btn-outline-success">Retour au profil</a>
-			</div>
+		{% set avisRecusValides = avisRecus|filter(a => a.statut == 'Validé') %}
+		{% set avisRecusEnAttente = avisRecus|filter(a => a.statut != 'Validé') %}
+
+		{# Avis VALIDÉS ✅ #}
+		<h4 class="mt-4 text-success">✅ Validés</h4>
+		{% if avisRecusValides is empty %}
+			<p class="text-muted">Aucun avis validé pour l'instant.</p>
+		{% else %}
+			<ul class="list-group mb-4">
+				{% for a in avisRecusValides %}
+					<li class="list-group-item">
+						⭐
+						{{ a.note }}/5
+						<br>
+						{{ a.commentaire|default('Pas de commentaire') }}
+						<br><small class="text-muted">Publié le
+							{{ a.createdAt|date('d/m/Y') }}</small>
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+
+		{# Avis EN ATTENTE ⏳ #}
+		<h4 class="mt-4 text-warning">⏳ En attente de validation</h4>
+		{% if avisRecusEnAttente is empty %}
+			<p class="text-muted">Aucun avis en attente.</p>
+		{% else %}
+			<ul class="list-group mb-4">
+				{% for a in avisRecusEnAttente %}
+					<li class="list-group-item">
+						⭐
+						{{ a.note }}/5
+						<br>
+						{{ a.commentaire|default('Pas de commentaire') }}
+						<br><small class="text-muted">Déposé le
+							{{ a.createdAt|date('d/m/Y') }}</small>
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+
+		<hr class="my-5">
+
+		<h2 class="text-primary text-center mb-4">Avis que j'ai donnés</h2>
+
+		{% if avisRediges is empty %}
+			<p class="text-muted text-center">Vous n'avez pas encore rédigé d'avis.</p>
+		{% else %}
+			<ul class="list-group">
+				{% for a in avisRediges %}
+					<li class="list-group-item">
+						🚗 À propos de
+						{{ a.conducteur ? a.conducteur.pseudo : 'conducteur inconnu' }}<br>
+						⭐
+						{{ a.note }}/5
+						<br>
+						{{ a.commentaire|default('Pas de commentaire') }}
+						<br><small class="text-muted">Déposé le
+							{{ a.createdAt|date('d/m/Y') }}</small>
+					</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+
+		<div class="text-center mt-4">
+			<a href="{{ path('app_profil') }}" class="btn btn-outline-success">Retour au profil</a>
 		</div>
+
 	</div>
+</div>
+
+
 {% endblock %}
 

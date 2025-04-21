@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Validation du trajet
+{% endblock %}
+
+{% block body %}
+	<main class="container py-5">
+		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle">
+			<h2 class="text-success text-center mb-4">Validation du trajet 🚗</h2>
+
+			<p class="text-center">
+				<strong>Trajet :</strong>
+				{{ trajet.lieuDepart }}
+				→
+				{{ trajet.lieuArrivee }}<br>
+				<strong>Date :</strong>
+				{{ trajet.dateDepart|date('d/m/Y') }}
+			</p>
+
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					{{ form_start(form) }}
+
+					<div class="mb-4 text-center">
+						{{ form_label(form.note) }}
+						<div class="d-flex justify-content-center gap-3">
+							{{ form_widget(form.note) }}
+						</div>
+						{{ form_errors(form.note) }}
+					</div>
+
+					<div class="mb-4">
+						{{ form_label(form.commentaire) }}
+						{{ form_widget(form.commentaire, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+						{{ form_errors(form.commentaire) }}
+					</div>
+
+					<div class="text-center">
+						<button class="btn btn-success">✅ Envoyer mon avis</button>
+					</div>
+
+					{{ form_end(form) }}
+				</div>
+			</div>
+		</div>
+	</main>
+{% endblock %}
+

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Avis;
 use App\Entity\Covoiturage;
+use App\Form\AvisType;
 use App\Form\CovoiturageType;
 use App\Repository\CovoiturageRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
-
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class CovoiturageController extends AbstractController
 {
@@ -320,13 +322,6 @@ class CovoiturageController extends AbstractController
             // ✅ Le passager paye
             $user->setCredits($user->getCredits() - $prix);
 
-            // ✅ Le conducteur reçoit l'argent
-            $conducteur = $covoiturage->getConducteur();
-            if ($conducteur) {
-                $conducteur->setCredits($conducteur->getCredits() + $prix);
-                $em->persist($conducteur);
-            }
-
             // ✅ Ajouter le passager au trajet
             $covoiturage->addPassager($user);
 
@@ -361,6 +356,143 @@ class CovoiturageController extends AbstractController
             'voiture' => $voiture,
             'avis' => $avis,
             'preference' => $preference,
+        ]);
+    }
+
+    #[Route('/trajet/{id}/demarrer', name: 'app_demarrer_trajet', methods: ['POST'])]
+    public function demarrerTrajet(Covoiturage $trajet, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        if ($trajet->getConducteur() !== $user) {
+            $this->addFlash('danger', 'Accès interdit.');
+            return $this->redirectToRoute('app_mes_trajets');
+        }
+
+        if ($trajet->getStatut() === 'En cours') {
+            $this->addFlash('warning', 'Le trajet est déjà démarré.');
+            return $this->redirectToRoute('app_mes_trajets');
+        }
+
+        $trajet->setStatut('En cours');
+        $em->persist($trajet);
+        $em->flush();
+
+        $this->addFlash('success', 'Trajet démarré 🚗💨');
+        return $this->redirectToRoute('app_mes_trajets');
+    }
+
+    #[Route('/trajet/{id}/arrivee', name: 'app_arrivee_trajet', methods: ['POST'])]
+    public function arriveeTrajet(Covoiturage $trajet, EntityManagerInterface $em, MailerInterface $mailer): Response
+    {
+        $user = $this->getUser();
+
+        if ($trajet->getConducteur() !== $user) {
+            $this->addFlash('danger', 'Accès interdit.');
+            return $this->redirectToRoute('app_mes_trajets');
+        }
+
+        if ($trajet->getStatut() !== 'En cours') {
+            $this->addFlash('warning', 'Vous devez d\'abord démarrer le trajet.');
+            return $this->redirectToRoute('app_mes_trajets');
+        }
+
+        $trajet->setStatut('Terminé');
+        $em->persist($trajet);
+        $em->flush();
+
+        // Envoi d'un mail aux passagers pour valider le trajet
+        foreach ($trajet->getPassagers() as $passager) {
+            $email = (new Email())
+                ->from('ecoride.dev@gmail.com')
+                ->to($passager->getEmail())
+                ->subject('Confirmez votre trajet EcoRide 🚗')
+                ->html("
+            <p>Bonjour <strong>{$passager->getPrenom()}</strong>,</p>
+            <p>Votre trajet de <strong>{$trajet->getLieuDepart()}</strong> à <strong>{$trajet->getLieuArrivee()}</strong> est terminé.</p>
+            <p>Merci de <a href=\"http://localhost:8000/trajet/{$trajet->getId()}/validation\">cliquer ici pour confirmer</a> que tout s'est bien passé sur votre espace EcoRide !</p>
+            <p>À bientôt ! 🚗</p>
+        ");
+            $mailer->send($email);
+        }
+
+
+        $this->addFlash('success', 'Trajet terminé ✅ Un email a été envoyé aux passagers.');
+        return $this->redirectToRoute('app_mes_trajets');
+    }
+
+
+    #[Route('/trajet/{id}/validation', name: 'app_valider_trajet')]
+    public function validerTrajet(Request $request, Covoiturage $trajet, EntityManagerInterface $em, TokenStorageInterface $tokenStorage): Response
+    {
+        $user = $this->getUser();
+        $request->getSession()->getFlashBag()->clear();
+
+        if (!$user) {
+            // Pas connecté : on enregistre où il voulait aller
+            $request->getSession()->set('_security.main.target_path', $request->getUri());
+
+            $this->addFlash('danger', 'Veuillez vous connecter pour valider votre trajet.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // 🛡️ ➔ SEULEMENT si l'utilisateur essaie de valider (envoyer POST)
+        if ($request->isMethod('POST') && !$trajet->getPassagers()->contains($user)) {
+            $tokenStorage->setToken(null);
+            $request->getSession()->invalidate();
+
+            $this->addFlash('danger', 'Vous avez été déconnecté pour des raisons de sécurité.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        $avis = new Avis();
+        $form = $this->createForm(AvisType::class, $avis);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $avis->setUser($user);
+            $avis->setTrajet($trajet);
+            $avis->setConducteur($trajet->getConducteur());
+            $avis->setStatut('En attente validation');
+
+            $em->persist($avis);
+            $em->flush();
+
+            $passagers = $trajet->getPassagers();
+            $nbPassagers = count($passagers);
+
+            $nbAvis = $em->getRepository(Avis::class)
+                ->createQueryBuilder('a')
+                ->select('count(a.id)')
+                ->where('a.trajet = :trajet')
+                ->andWhere('a.statut = :statut')
+                ->setParameter('trajet', $trajet)
+                ->setParameter('statut', 'En attente validation')
+                ->getQuery()
+                ->getSingleScalarResult();
+
+            if ($nbAvis >= $nbPassagers) {
+                $conducteur = $trajet->getConducteur();
+                $creditsGagnes = $trajet->getPrixPersonne() * $nbPassagers;
+
+                $conducteur->setCredits($conducteur->getCredits() + $creditsGagnes);
+                $trajet->setStatut('Terminé');
+
+                $em->persist($conducteur);
+                $em->persist($trajet);
+                $em->flush();
+
+                $this->addFlash('success', 'Tous les passagers ont validé ! Crédits versés au conducteur 🚗💸');
+            } else {
+                $this->addFlash('success', 'Merci pour votre avis ! ✅');
+            }
+
+            return $this->redirectToRoute('app_profil');
+        }
+
+        return $this->render('covoiturage/validation.html.twig', [
+            'trajet' => $trajet,
+            'form' => $form->createView(),
         ]);
     }
 }

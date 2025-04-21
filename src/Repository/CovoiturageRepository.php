@@ -22,9 +22,8 @@ class CovoiturageRepository extends ServiceEntityRepository
             ->leftJoin('c.Voiture', 'v')
             ->addSelect('v')
             ->where('c.date_depart >= :today')
-            ->andWhere('c.statut IS NULL OR c.statut != :annule') // ✅ Ne pas afficher les trajets annulés
+            ->andWhere('c.statut IS NULL') // ✅ Ne pas afficher les trajets annulés
             ->setParameter('today', (new \DateTime())->setTime(0, 0))
-            ->setParameter('annule', 'Annulé')
             ->orderBy('c.date_depart', 'ASC');
 
         if (!empty($filters['lieu_depart'])) {

@@ -25,6 +25,16 @@ class Avis
     #[ORM\ManyToOne(inversedBy: 'avis')]
     private ?user $user = null;
 
+    #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $conducteur = null;
+
+    #[ORM\ManyToOne(targetEntity: Covoiturage::class, inversedBy: 'avis')]
+    private ?Covoiturage $trajet = null;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +84,42 @@ class Avis
     public function setUser(?user $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTrajet(): ?Covoiturage
+    {
+        return $this->trajet;
+    }
+
+    public function setTrajet(?Covoiturage $trajet): static
+    {
+        $this->trajet = $trajet;
+
+        return $this;
+    }
+
+    public function getConducteur(): ?User
+    {
+        return $this->conducteur;
+    }
+
+    public function setConducteur(?User $conducteur): self
+    {
+        $this->conducteur = $conducteur;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
