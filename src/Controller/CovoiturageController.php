@@ -10,6 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
 
 class CovoiturageController extends AbstractController
 {
@@ -158,6 +161,7 @@ class CovoiturageController extends AbstractController
     public function trajetsAVenir(CovoiturageRepository $repo): Response
     {
         $user = $this->getUser();
+        $now = new \DateTimeImmutable('today');
 
         // Trajets à venir comme conducteur
         $trajetsConducteur = $repo->createQueryBuilder('c')
@@ -165,7 +169,7 @@ class CovoiturageController extends AbstractController
             ->andWhere('c.date_depart >= :now')
             ->andWhere('(c.statut IS NULL OR c.statut != :annule)')
             ->setParameter('user', $user)
-            ->setParameter('now', new \DateTime())
+            ->setParameter('now', $now)
             ->setParameter('annule', 'Annulé')
             ->orderBy('c.date_depart', 'ASC')
             ->getQuery()
@@ -178,7 +182,7 @@ class CovoiturageController extends AbstractController
             ->andWhere('c.date_depart >= :now')
             ->andWhere('(c.statut IS NULL OR c.statut != :annule)')
             ->setParameter('user', $user)
-            ->setParameter('now', new \DateTime())
+            ->setParameter('now', $now)
             ->setParameter('annule', 'Annulé')
             ->orderBy('c.date_depart', 'ASC')
             ->getQuery()
@@ -192,7 +196,7 @@ class CovoiturageController extends AbstractController
     }
 
     #[Route('/trajet/{id}/annuler', name: 'app_annuler_trajet_conducteur', methods: ['POST', 'GET'])]
-    public function annulerTrajetConducteur(Covoiturage $trajet, EntityManagerInterface $em): Response
+    public function annulerTrajetConducteur(Covoiturage $trajet, EntityManagerInterface $em, MailerInterface $mailer): Response
     {
         $user = $this->getUser();
 
@@ -209,7 +213,21 @@ class CovoiturageController extends AbstractController
         foreach ($trajet->getPassagers() as $passager) {
             $passager->setCredits($passager->getCredits() + $prixParPersonne);
             $em->persist($passager);
+
+            $email = (new Email())
+                ->from('ecoride.dev@gmail.com')
+                ->to($passager->getEmail())
+                ->subject('🚗 Annulation de votre covoiturage')
+                ->html("
+                <p>Bonjour <strong>{$passager->getPrenom()}</strong>,</p>
+                <p>Votre trajet <strong>{$trajet->getLieuDepart()}</strong> → <strong>{$trajet->getLieuArrivee()}</strong> prévu le <strong>{$trajet->getDateDepart()->format('d/m/Y')}</strong> a été annulé par le conducteur.</p>
+                <p>Vos crédits ont été remboursés automatiquement.</p>
+                <p>Merci de votre confiance sur EcoRide 🌿</p>
+            ");
+
+            $mailer->send($email);
         }
+
 
         // ✅ Rendre toutes les places disponibles
         $trajet->setNbPlace(0);
@@ -329,29 +347,6 @@ class CovoiturageController extends AbstractController
 
 
 
-    #[Route('/covoiturage/annuler/{id}', name: 'covoiturage_annuler')]
-    public function annulerParticipation(Covoiturage $covoiturage, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
-
-        if ($covoiturage->getPassagers()->contains($user)) {
-            $covoiturage->removePassager($user);
-            $covoiturage->setNbPlace(($covoiturage->getNbPlace() ?? 0) + 1);
-
-            // 🔍 Debug : vérifier les données avant la sauvegarde
-
-
-            $em->persist($covoiturage);
-            $em->flush();
-
-            $this->addFlash('success', 'Vous avez annulé votre participation. ✅');
-        } else {
-            $this->addFlash('danger', 'Vous ne participez pas à ce trajet.');
-        }
-
-        return $this->redirectToRoute('app_mes_trajets');
-    }
-
     #[Route('/covoiturage/{id}', name: 'covoiturage_show')]
     public function show(Covoiturage $covoiturage): Response
     {
@@ -367,5 +362,21 @@ class CovoiturageController extends AbstractController
             'avis' => $avis,
             'preference' => $preference,
         ]);
+    }
+
+
+
+    #[Route('/test-email', name: 'app_test_email')]
+    public function testEmail(MailerInterface $mailer): Response
+    {
+        $email = (new Email())
+            ->from('ecoride.dev@gmail.com') // <- Expéditeur GMAIL
+            ->to('jonathan.pina1208@gmail.com') // <- Toi ou un autre email
+            ->subject('Test Email via Gmail ✅')
+            ->html('<p>cest bon ca marche</p>');
+
+        $mailer->send($email);
+
+        return new Response('Email envoyé ! Vérifie ta boîte ');
     }
 }
