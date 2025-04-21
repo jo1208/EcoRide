@@ -363,20 +363,4 @@ class CovoiturageController extends AbstractController
             'preference' => $preference,
         ]);
     }
-
-
-
-    #[Route('/test-email', name: 'app_test_email')]
-    public function testEmail(MailerInterface $mailer): Response
-    {
-        $email = (new Email())
-            ->from('ecoride.dev@gmail.com') // <- Expéditeur GMAIL
-            ->to('jonathan.pina1208@gmail.com') // <- Toi ou un autre email
-            ->subject('Test Email via Gmail ✅')
-            ->html('<p>cest bon ca marche</p>');
-
-        $mailer->send($email);
-
-        return new Response('Email envoyé ! Vérifie ta boîte ');
-    }
 }
