@@ -61,20 +61,6 @@ class CovoiturageRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findFirstAvailable(): ?Covoiturage
-    {
-        return $this->createQueryBuilder('c')
-            ->where('c.date_depart >= :now')
-            ->andWhere('c.nb_place > 0')
-            ->andWhere('c.statut IS NULL OR c.statut != :annule') // ✅ Important aussi ici !
-            ->setParameter('now', new \DateTime())
-            ->setParameter('annule', 'Annulé')
-            ->orderBy('c.date_depart', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
     public function findFirstAvailableMatchingLocation(array $filters): ?Covoiturage
     {
         return $this->createQueryBuilder('c')
@@ -82,11 +68,10 @@ class CovoiturageRepository extends ServiceEntityRepository
             ->andWhere('c.lieu_arrivee = :lieu_arrivee')
             ->andWhere('c.date_depart > :today')
             ->andWhere('c.nb_place > 0')
-            ->andWhere('c.statut IS NULL OR c.statut != :annule')
+            ->andWhere('c.statut IS NULL')
             ->setParameter('lieu_depart', $filters['lieu_depart'])
             ->setParameter('lieu_arrivee', $filters['lieu_arrivee'])
             ->setParameter('today', new \DateTime())
-            ->setParameter('annule', 'Annulé')
             ->orderBy('c.date_depart', 'ASC')
             ->setMaxResults(1)
             ->getQuery()

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Service\AvisService;
 
 
 class ProfilController extends AbstractController
@@ -89,16 +90,16 @@ class ProfilController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Avis reçus
+        // Avis reçus (trie les avis reçus par date de création, du plus récent au plus ancien)
         $avisRecus = $avisRepository->findBy(
             ['conducteur' => $user],
-            ['id' => 'DESC'] // Tri du plus récent au plus ancien
+            ['createdAt' => 'DESC'] // Tri par date de création
         );
 
-        // Avis donnés
+        // Avis donnés (trie les avis donnés par date de création, du plus récent au plus ancien)
         $avisRediges = $avisRepository->findBy(
             ['user' => $user],
-            ['id' => 'DESC']
+            ['createdAt' => 'DESC'] // Tri par date de création
         );
 
         return $this->render('profil/avis.html.twig', [
