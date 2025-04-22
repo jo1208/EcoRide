@@ -247,25 +247,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getNote(): ?float
-    {
-        return $this->note;
-    }
-    public function getNoteMoyenne(): ?float
-    {
-        $avis = $this->getAvisConducteur(); // On suppose que tu as fait la relation OneToMany "avisConducteur"
 
-        if (count($avis) === 0) {
-            return null;
-        }
-
-        $total = 0;
-        foreach ($avis as $avisItem) {
-            $total += $avisItem->getNote();
-        }
-
-        return round($total / count($avis), 1);
-    }
 
 
     public function getCredits(): int
@@ -369,5 +351,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getAvisConducteur(): Collection
     {
         return $this->avisConducteur;
+    }
+
+
+    public function getNote(): ?float
+    {
+        return $this->note;
+    }
+    public function getNoteMoyenne(): ?float
+    {
+        $avis = $this->getAvisConducteur(); // On suppose que tu as fait la relation OneToMany "avisConducteur"
+
+        if (count($avis) === 0) {
+            return null;
+        }
+
+        $total = 0;
+        foreach ($avis as $avisItem) {
+            $total += $avisItem->getNote();
+        }
+
+        return round($total / count($avis), 1);
     }
 }

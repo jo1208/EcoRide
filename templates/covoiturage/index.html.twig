@@ -66,7 +66,13 @@
 								<strong>Conducteur :</strong>
 								{{ trajet.conducteur.pseudo }}
 								(⭐
-								{{ trajet.conducteur.note|default('Aucune Note') }}/5)</div>
+								{% if trajet.conducteur.getNoteMoyenne() is not null %}
+									{{ trajet.conducteur.getNoteMoyenne() }}/5
+								{% else %}
+									Aucune note
+								{% endif %}
+								)
+							</div>
 							<div>
 								<strong>Date :</strong>
 								{{ trajet.dateDepart|date('d/m/Y') }}</div>
