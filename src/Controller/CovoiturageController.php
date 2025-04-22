@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Avis;
+
 
 use App\Entity\Covoiturage;
+use App\Entity\Avis;
 use App\Form\AvisType;
 use App\Form\CovoiturageType;
+use App\Repository\AvisRepository;
 use App\Repository\CovoiturageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -344,21 +346,25 @@ class CovoiturageController extends AbstractController
 
 
     #[Route('/covoiturage/{id}', name: 'covoiturage_show')]
-    public function show(Covoiturage $covoiturage): Response
+    public function show(Covoiturage $covoiturage, AvisRepository $avisRepository): Response
     {
         $conducteur = $covoiturage->getConducteur();
         $voiture = $covoiturage->getVoiture();
-        $avis = $conducteur->getAvis();
+
+        // Récupérer les avis où le conducteur est le conducteur actuel
+        $avis = $avisRepository->findBy(['conducteur' => $conducteur]);
+
         $preference = $conducteur->getPreference();
 
         return $this->render('covoiturage/show.html.twig', [
             'covoiturage' => $covoiturage,
             'conducteur' => $conducteur,
             'voiture' => $voiture,
-            'avis' => $avis,
+            'avis' => $avis, // ce sera une liste d'avis
             'preference' => $preference,
         ]);
     }
+
 
     #[Route('/trajet/{id}/demarrer', name: 'app_demarrer_trajet', methods: ['POST'])]
     public function demarrerTrajet(Covoiturage $trajet, EntityManagerInterface $em): Response
