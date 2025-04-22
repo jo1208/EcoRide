@@ -38,7 +38,7 @@ class CovoiturageRepository extends ServiceEntityRepository
 
         if (!empty($filters['date'])) {
             $date = new \DateTime($filters['date']);
-            $date->setTime(0, 0); // Mets aussi à 00:00 pour bien comparer
+            $date->setTime(0, 0);
             $qb->andWhere('c.date_depart = :date')
                 ->setParameter('date', $date);
         }
@@ -48,18 +48,30 @@ class CovoiturageRepository extends ServiceEntityRepository
                 ->setParameter('prix_max', $filters['prix_max']);
         }
 
-        if (!empty($filters['note_min'])) {
-            $qb->join('c.conducteur', 'u')
-                ->andWhere('u.note >= :note_min')
-                ->setParameter('note_min', $filters['note_min']);
-        }
-
         if (!empty($filters['ecologique'])) {
             $qb->andWhere('v.ecologique = true');
         }
 
-        return $qb->getQuery()->getResult();
+        // 👉 On récupère d'abord tous les covoiturages filtrés "classiques"
+        $covoiturages = $qb->getQuery()->getResult();
+
+        // 👉 Maintenant, filtrage PHP pour la note du conducteur
+        if (!empty($filters['note_min'])) {
+            $noteMin = (float) $filters['note_min'];
+
+            $covoiturages = array_filter($covoiturages, function ($covoiturage) use ($noteMin) {
+                $conducteur = $covoiturage->getConducteur();
+                if (!$conducteur) {
+                    return false;
+                }
+                $noteMoyenne = $conducteur->getNoteMoyenne();
+                return $noteMoyenne !== null && $noteMoyenne >= $noteMin;
+            });
+        }
+
+        return $covoiturages;
     }
+
 
     public function findFirstAvailableMatchingLocation(array $filters): ?Covoiturage
     {
