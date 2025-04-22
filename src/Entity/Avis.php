@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AvisRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
 class Avis
@@ -23,7 +24,7 @@ class Avis
     private ?string $statut = null;
 
     #[ORM\ManyToOne(inversedBy: 'avis')]
-    private ?user $user = null;
+    private ?User $user = null;
 
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeInterface $createdAt = null;
@@ -76,12 +77,12 @@ class Avis
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 

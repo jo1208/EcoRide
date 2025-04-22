@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Trajets problématiques
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<h1>🚨 Trajets problématiques</h1>
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Numéro du trajet</th>
+					<th>Conducteur</th>
+					<th>Participants</th>
+					<th>Date départ</th>
+					<th>Date arrivée</th>
+					<th>Lieu</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for trajet in covoiturages %}
+					<tr>
+						<td>{{ trajet.id }}</td>
+						<td>{{ trajet.conducteur.pseudo }}
+							({{ trajet.conducteur.email }})</td>
+						<td>
+							{% for passager in trajet.passagers %}
+								{{ passager.pseudo }}
+								({{ passager.email }})<br>
+							{% endfor %}
+						</td>
+						<td>{{ trajet.date_depart|date('d/m/Y H:i') }}</td>
+						<td>{{ trajet.date_arrivee|date('d/m/Y H:i') }}</td>
+						<td>{{ trajet.lieu_depart }}
+							➔
+							{{ trajet.lieu_arrivee }}</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="6" class="text-center">Aucun trajet problématique trouvé.</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}
+

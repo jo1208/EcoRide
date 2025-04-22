@@ -1,0 +1,68 @@
+{% extends 'employee/_employee_layout.html.twig' %}
+
+{% block title %}Espace Employé - Avis en attente
+{% endblock %}
+
+{% block employee_content %}
+	<div class="bg-white p-4 rounded shadow-sm" style="border-left: 5px solid #3ba66b;">
+		<h4 class="fw-bold mb-4">📝 Avis en attente de validation</h4>
+
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success text-center">{{ message }}</div>
+		{% endfor %}
+		{% for message in app.flashes('warning') %}
+			<div class="alert alert-warning text-center">{{ message }}</div>
+		{% endfor %}
+
+		<table class="table table-hover">
+			<thead class="thead-light">
+				<tr>
+					<th>ID</th>
+					<th>Note</th>
+					<th>Commentaire</th>
+					<th>Passager</th>
+					<th>Conducteur</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for avis in avisList %}
+					<tr>
+						<td>{{ avis.id }}</td>
+						<td>{{ avis.note }}/5</td>
+						<td>{{ avis.commentaire }}</td>
+						<td>
+							{% if avis.user %}
+								{{ avis.user.pseudo }}
+								({{ avis.user.email }})
+							{% else %}
+								<span class="text-danger">Utilisateur inconnu</span>
+							{% endif %}
+						</td>
+						<td>
+							{% if avis.conducteur %}
+								{{ avis.conducteur.pseudo }}
+								({{ avis.conducteur.email }})
+							{% else %}
+								<span class="text-danger">Conducteur inconnu</span>
+							{% endif %}
+						</td>
+						<td class="d-flex gap-2">
+							<form method="post" action="{{ path('review_validate', { id: avis.id }) }}">
+								<button class="btn btn-outline-success btn-sm">Valider</button>
+							</form>
+							<form method="post" action="{{ path('review_refuse', { id: avis.id }) }}">
+								<button class="btn btn-outline-danger btn-sm">Refuser</button>
+							</form>
+						</td>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="6" class="text-center">Aucun avis en attente.</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}
+
