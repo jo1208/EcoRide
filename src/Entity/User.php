@@ -64,6 +64,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private int $credits = 20;
 
+    #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Avis::class)]
+    private Collection $avisConducteur;
+
 
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Voiture::class, cascade: ['persist', 'remove'])]
@@ -250,17 +253,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function getNoteMoyenne(): ?float
     {
-        if ($this->avis->isEmpty()) {
-            return null; // Aucun avis -> retourne null
+        $avis = $this->getAvisConducteur(); // On suppose que tu as fait la relation OneToMany "avisConducteur"
+
+        if (count($avis) === 0) {
+            return null;
         }
 
         $total = 0;
-        foreach ($this->avis as $avi) {
-            $total += $avi->getNote();
+        foreach ($avis as $avisItem) {
+            $total += $avisItem->getNote();
         }
 
-        return round($total / count($this->avis), 1);
+        return round($total / count($avis), 1);
     }
+
 
     public function getCredits(): int
     {
@@ -355,5 +361,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         $this->preference = $preference;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Avis>
+     */
+    public function getAvisConducteur(): Collection
+    {
+        return $this->avisConducteur;
     }
 }

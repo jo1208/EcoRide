@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-
+use App\Entity\Covoiturage;
 use App\Form\EditProfilType;
 use App\Repository\AvisRepository;
 use Doctrine\ORM\EntityManagerInterface;

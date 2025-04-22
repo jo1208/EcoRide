@@ -6,21 +6,24 @@
 		<h2 class="mt-3">{{ app.user.pseudo }}</h2>
         <div class="d-flex justify-content-center align-items-center gap-2">
             <span class="fs-5">
-            <span class="text-success fs-4">★</span>
-                {% if app.user.getNoteMoyenne() is not null %}
-                    {{ app.user.getNoteMoyenne() }}/5 –
-                {% else %}
-                    Aucune note –
-                {% endif %}
-                <a href="{{ path('app_profil_avis', { id: app.user.id }) }}" class="text-decoration-none text-success">
-                    {{ app.user.avis|length }}
-                    {{ app.user.avis|length == 1 ? 'avis' : 'avis' }}
-                </a>
-                <p>
-                    <strong>Crédits :</strong>
-                    {{ app.user.credits }}
-                    crédits</p>
-            </span>
+<span class="text-success fs-4">★</span>
+{% if app.user.getNoteMoyenne() is not null %}
+	{{ app.user.getNoteMoyenne() }}/5 –
+{% else %}
+	Aucune note –
+{% endif %}
+
+<a href="{{ path('app_profil_avis') }}" class="text-decoration-none text-success">
+	{{ app.user.getAvisConducteur|length }}
+	{{ app.user.getAvisConducteur|length == 1 ? 'avis' : 'avis' }}
+</a>
+<p>
+	<strong>Crédits :</strong>
+	{{ app.user.credits }}
+	crédits
+</p>
+
+
         </div>
 
 
