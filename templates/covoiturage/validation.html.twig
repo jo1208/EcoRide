@@ -29,6 +29,22 @@
 						{{ form_errors(form.note) }}
 					</div>
 
+				<!-- ✅ Nouveau bloc pour trajetBienPasse -->
+				<div class="mb-4">
+					<label class="form-label fw-bold text-success d-block mb-3">Le trajet s'est-il bien passé ?</label>
+
+					<div class="d-flex justify-content-center gap-5">
+						{{ form_widget(form.trajetBienPasse, {
+							'attr': {
+								'class': 'form-check-input'
+							}
+						}) }}
+					</div>
+
+					<div class="text-danger text-center mt-2">
+						{{ form_errors(form.trajetBienPasse) }}
+					</div>
+				</div>
 					<div class="mb-4">
 						{{ form_label(form.commentaire) }}
 						{{ form_widget(form.commentaire, {'attr': {'class': 'form-control', 'rows': 4}}) }}

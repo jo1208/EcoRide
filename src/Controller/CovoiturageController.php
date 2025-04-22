@@ -461,6 +461,7 @@ class CovoiturageController extends AbstractController
             $avis->setTrajet($trajet);
             $avis->setConducteur($trajet->getConducteur());
             $avis->setStatut('En attente validation');
+            $avis->setCreatedAt(new \DateTime());
 
             $em->persist($avis);
             $em->flush();

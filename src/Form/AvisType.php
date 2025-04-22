@@ -29,6 +29,19 @@ class AvisType extends AbstractType
                     'class' => 'd-flex gap-3', // ✅ Ajoute un espace entre les boutons
                 ],
             ])
+            ->add('trajetBienPasse', ChoiceType::class, [
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false,
+                ],
+                'expanded' => true,  // radio boutons
+                'multiple' => false,
+                'label' => 'Le trajet s\'est-il bien passé ?',
+                'data' => true,  // ✅ valeur par défaut = Oui
+                'attr' => [
+                    'class' => 'd-flex gap-3',
+                ],
+            ])
             ->add('commentaire', TextareaType::class, [
                 'label' => 'Ton commentaire',
                 'attr' => [

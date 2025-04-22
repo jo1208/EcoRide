@@ -23,6 +23,9 @@ class Avis
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $trajetBienPasse = true;
+
     #[ORM\ManyToOne(inversedBy: 'avis')]
     private ?User $user = null;
 
@@ -121,6 +124,18 @@ class Avis
     public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isTrajetBienPasse(): bool
+    {
+        return $this->trajetBienPasse;
+    }
+
+    public function setTrajetBienPasse(bool $trajetBienPasse): static
+    {
+        $this->trajetBienPasse = $trajetBienPasse;
 
         return $this;
     }
