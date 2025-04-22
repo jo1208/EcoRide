@@ -113,10 +113,16 @@
 							<div class="h5">{{ trajet.prixPersonne|number_format(2, ',', '.') }}
 								€</div>
 
-							<a href="{{ path('covoiturage_show', { id: trajet.id }) }}" class="btn btn-outline-secondary btn-sm">Détails</a>
-
 							{% set user = app.user %}
 							{% set creditsOk = user and (user.credits >= trajet.prixPersonne) %}
+
+							<a href="{% if trajet.nbPlace == 0 or user is null or not creditsOk %}#{% else %}{{ path('covoiturage_show', { id: trajet.id }) }}{% endif %}" class="btn btn-outline-secondary btn-sm {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}">
+								Détails
+							</a>
+							
+							{% set user = app.user %}
+							{% set creditsOk = user and (user.credits >= trajet.prixPersonne) %}
+							
 
 							<button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#confirmParticipationModal{{ trajet.id }}" {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}>
 								Participer
