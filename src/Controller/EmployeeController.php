@@ -14,15 +14,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class EmployeeController extends AbstractController
 {
 
-
     #[Route('/covoiturages/problematiques', name: 'covoits_problematiques')]
-    public function problematicCovoits(CovoiturageRepository $repo): Response
+    public function problematicCovoits(AvisRepository $avisRepo): Response
     {
-        $covoits = $repo->findWithRefusedAvis(); // Cette fonction on va la créer juste après
+        $avisProblemes = $avisRepo->findTrajetsProblemes(); // ✅ méthode dans AvisRepository
+
         return $this->render('employee/covoits_problematiques.html.twig', [
-            'covoiturages' => $covoits,
+            'avisProblemes' => $avisProblemes,
         ]);
     }
+
 
 
     // 📝 Liste des avis en attente
