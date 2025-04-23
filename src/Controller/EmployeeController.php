@@ -4,13 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Avis;
 use App\Repository\AvisRepository;
-use App\Repository\CovoiturageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
 
 #[Route('/employee')]
+#[IsGranted('ROLE_EMPLOYE')]
 class EmployeeController extends AbstractController
 {
 
