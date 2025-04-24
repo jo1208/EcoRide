@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\EmployeType;
+use App\Repository\CovoiturageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,6 +45,64 @@ class AdminController extends AbstractController
 
         return $this->render('admin/employes.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/statistiques', name: 'admin_stats')]
+    public function statistiques(Request $request, CovoiturageRepository $repo): Response
+    {
+        $periode = $request->query->get('range', '30'); // Ex: 7, 30, all
+        $covoiturages = $repo->findAll(); // On prend tout
+
+        $stats = [];
+        $revenus = [];
+
+        $nbJours = $periode === 'all' ? null : (int) $periode;
+        $limite = $nbJours ? new \DateTime("-$nbJours days") : null;
+
+        foreach ($covoiturages as $trajet) {
+            if ($trajet->getStatut() === 'Annulé') {
+                continue;
+            }
+
+            $dateDepart = $trajet->getDateDepart()?->format('Y-m-d');
+            $datePaiement = $trajet->getCreatedAt()?->format('Y-m-d');
+
+            if (!$dateDepart || !$datePaiement) {
+                continue;
+            }
+
+            // ➕ Graphique 1 : Nombre de trajets (filtrés par date de départ)
+            if (!$nbJours || new \DateTime($dateDepart) >= $limite) {
+                $stats[$dateDepart] = ($stats[$dateDepart] ?? 0) + 1;
+            }
+
+            // ➕ Graphique 2 : Crédits générés (filtrés par date de création/paiement)
+            if (!$nbJours || new \DateTime($datePaiement) >= $limite) {
+                $revenus[$datePaiement] = ($revenus[$datePaiement] ?? 0) + 2;
+            }
+        }
+
+        ksort($stats);
+        ksort($revenus);
+
+        $allDates = array_unique(array_merge(array_keys($stats), array_keys($revenus)));
+        sort($allDates); // trie les dates
+
+        // on remplit les valeurs manquantes avec 0
+        $finalStats = [];
+        $finalRevenus = [];
+
+        foreach ($allDates as $date) {
+            $finalStats[] = $stats[$date] ?? 0;
+            $finalRevenus[] = $revenus[$date] ?? 0;
+        }
+
+        return $this->render('admin/statistiques.html.twig', [
+            'labels' => $allDates,
+            'stats_values' => $finalStats,
+            'revenus_values' => $finalRevenus,
+            'periode' => $periode,
         ]);
     }
 }

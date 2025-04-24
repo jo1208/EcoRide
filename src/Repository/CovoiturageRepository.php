@@ -89,4 +89,28 @@ class CovoiturageRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    public function getCreditsParJour(): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select("FUNCTION('DATE', c.date_depart) AS jour, COUNT(c.id) * 2 AS total")
+            ->groupBy('jour')
+            ->orderBy('jour', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+    // On récupère tous les trajets terminés avec leurs passagers
+    public function getCovoituragesTermines(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.passagers', 'p')
+            ->addSelect('p')
+            ->where('c.statut = :statut')
+            ->setParameter('statut', 'Terminé')
+            ->orderBy('c.date_depart', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -23,14 +23,10 @@
 <a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_employes' %}active text-success{% else %}text-success{% endif %}" href="{{ path('admin_employes') }}">
 	👥 Gérer les employés
 </a>
-
-
-
-					
-				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_stats' %}active text-success{% else %}text-success{% endif %}" href="#">
+<a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_stats' %}active text-success{% else %}text-success{% endif %}" href="{{ path('admin_stats') }}">
+
 					📊 Statistiques
 				</a>
 			</li>

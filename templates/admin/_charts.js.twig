@@ -1,0 +1,69 @@
+const labels =
+{{ labels|json_encode|raw }};
+const dataStats =
+{{ stats_values|json_encode|raw }};
+const dataRevenus =
+{{ revenus_values|json_encode|raw }};
+
+new Chart(document.getElementById('chartCovoiturages'), {
+	type: 'bar',
+	data: {
+		labels: labels,
+		datasets: [{
+			label: 'Covoiturages par jour',
+			data: dataStats,
+			backgroundColor: '#3ba66b'
+		}]
+	},
+	options: {
+		responsive: true,
+		scales: {
+			x: {
+				title: {
+					display: true,
+					text: 'Date'
+				}
+			},
+			y: {
+				beginAtZero: true,
+				title: {
+					display: true,
+					text: 'Nombre de trajets'
+				}
+			}
+		}
+	}
+});
+
+new Chart(document.getElementById('chartRevenus'), {
+	type: 'line',
+	data: {
+		labels: labels,
+		datasets: [{
+			label: 'Crédits générés (€)',
+			data: dataRevenus,
+			borderColor: '#198754',
+			fill: false,
+			tension: 0.1
+		}]
+	},
+	options: {
+		responsive: true,
+		scales: {
+			x: {
+				title: {
+					display: true,
+					text: 'Date'
+				}
+			},
+			y: {
+				beginAtZero: true,
+				title: {
+					display: true,
+					text: 'Crédits'
+				}
+			}
+		}
+	}
+});
+

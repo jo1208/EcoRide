@@ -109,6 +109,7 @@ class CovoiturageController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $trajet->setConducteur($user);
+            $trajet->setCreatedAt(new \DateTime());
 
             // Retirer 2 crédits
             $user->setCredits($user->getCredits() - 2);

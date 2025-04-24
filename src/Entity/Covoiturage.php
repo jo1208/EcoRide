@@ -43,6 +43,9 @@ class Covoiturage
     #[ORM\Column]
     private ?float $prix_personne = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $createdAt = null;
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $conducteur = null;
@@ -193,6 +196,17 @@ class Covoiturage
     public function setVoiture(?Voiture $Voiture): static
     {
         $this->Voiture = $Voiture;
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
         return $this;
     }
 }
