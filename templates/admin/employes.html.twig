@@ -1,0 +1,71 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block admin_content %}
+	<div class="col-md-8 offset-md-2">
+		<div class="card shadow-sm border-0">
+			<div class="card-header bg-success text-white text-center rounded-top">
+				<h4 class="mb-0">➕ Ajouter un nouvel employé</h4>
+			</div>
+			<div class="card-body p-4">
+
+				{{ form_start(form) }}
+
+				<div class="form-group mb-3">
+					{{ form_label(form.prenom) }}
+					{{ form_widget(form.prenom, { 'attr': { 'class': 'form-control' } }) }}
+					{{ form_errors(form.prenom) }}
+				</div>
+
+				<div class="form-group mb-3">
+					{{ form_label(form.nom) }}
+					{{ form_widget(form.nom, { 'attr': { 'class': 'form-control' } }) }}
+					{{ form_errors(form.nom) }}
+				</div>
+
+				<div class="form-group mb-3">
+					{{ form_label(form.adresse) }}
+					{{ form_widget(form.adresse, { 'attr': { 'class': 'form-control' } }) }}
+					{{ form_errors(form.adresse) }}
+				</div>
+
+				<div class="form-group mb-3">
+					{{ form_label(form.pseudo) }}
+					{{ form_widget(form.pseudo, { 'attr': { 'class': 'form-control' } }) }}
+					{{ form_errors(form.pseudo) }}
+				</div>
+
+				<div class="form-group mb-3">
+					{{ form_label(form.dateNaissance) }}
+					{{ form_widget(form.dateNaissance, { 'attr': { 'class': 'form-control' } }) }}
+					{{ form_errors(form.dateNaissance) }}
+				</div>
+
+				<div class="form-group mb-3">
+					{{ form_label(form.email) }}
+					{{ form_widget(form.email, { 'attr': { 'class': 'form-control' } }) }}
+					{{ form_errors(form.email) }}
+				</div>
+
+				<div class="form-group mb-3">
+					{{ form_label(form.telephone) }}
+					{{ form_widget(form.telephone, { 'attr': { 'class': 'form-control' } }) }}
+					{{ form_errors(form.telephone) }}
+				</div>
+
+				<div class="form-group mb-4">
+					{{ form_label(form.password) }}
+					{{ form_widget(form.password, { 'attr': { 'class': 'form-control' } }) }}
+					{{ form_errors(form.password) }}
+				</div>
+
+				<div class="text-center">
+					<button class="btn btn-success px-4">✅ Créer l’employé</button>
+				</div>
+
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+

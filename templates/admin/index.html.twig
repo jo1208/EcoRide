@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div
+		class="container my-4" style="background-color: #FBF8F7; border-radius: 15px; padding: 30px;">
+		<!-- Header Admin -->
+		<div class="text-center mb-4">
+			<img src="{{ asset('images/admin-avatar.png') }}" alt="Admin" width="120" class="rounded-circle">
+			<h2 class="mt-3 text-dark">Espace Administrateur 👑</h2>
+		</div>
+
+		<!-- Flash Messages -->
+		{% for message in app.flashes('danger') %}
+			<div class="alert alert-danger text-center">{{ message }}</div>
+		{% endfor %}
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success text-center">{{ message }}</div>
+		{% endfor %}
+
+		<!-- Navigation onglets -->
+		<ul class="nav nav-tabs justify-content-center mb-4 border-bottom border-success">
+			<li class="nav-item">
+<a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_employes' %}active text-success{% else %}text-success{% endif %}" href="{{ path('admin_employes') }}">
+	👥 Gérer les employés
+</a>
+
+
+
+					
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_stats' %}active text-success{% else %}text-success{% endif %}" href="#">
+					📊 Statistiques
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_credits' %}active text-success{% else %}text-success{% endif %}" href="#">
+					💰 Crédits versés
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link {% if app.request.attributes.get('_route') starts with 'admin_users' %}active text-success{% else %}text-success{% endif %}" href="#">
+					❌ Comptes suspendus
+				</a>
+			</li>
+		</ul>
+
+		<!-- Ici s'affiche le contenu spécifique admin -->
+		{% block admin_content %}
+			<div class="text-center mt-4">
+				<p class="text-muted">Bienvenue dans le back-office administrateur. Utilisez les onglets ci-dessus pour naviguer.</p>
+			</div>
+		{% endblock %}
+	</div>
+{% endblock %}
+
+
+
