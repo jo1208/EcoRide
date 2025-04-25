@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class EditProfilType extends AbstractType
 {
@@ -30,16 +31,10 @@ class EditProfilType extends AbstractType
             ->add('email', TextType::class)
             ->add('telephone', TextType::class)
             ->add('adresse', TextType::class)
-            ->add('date_naissance', DateType::class, [
+            ->add('dateNaissance', DateType::class, [
                 'widget' => 'single_text',
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez renseigner votre date de naissance.',
-                    ]),
-                    new LessThan([
-                        'value' => 'today',
-                        'message' => 'La date de naissance n\'est pas valide.',
-                    ]),
+                    new Assert\LessThan('today'),
                 ],
             ])
             ->add('isChauffeur', CheckboxType::class, [

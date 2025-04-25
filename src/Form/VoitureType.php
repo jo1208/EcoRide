@@ -17,11 +17,7 @@ class VoitureType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('marque', null, [
-                'constraints' => [
-                    new NotBlank(['message' => 'Veuillez renseigner la marque du véhicule.']), // ✅ Nouveau champ obligatoire
-                ],
-            ])
+
 
             ->add('immatriculation', TextType::class, [
                 'constraints' => [

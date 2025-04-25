@@ -57,6 +57,7 @@ class Covoiturage
     private Collection $passagers;
 
     #[ORM\ManyToOne(inversedBy: 'covoiturages')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Voiture $Voiture = null;
 
     public function __construct()
