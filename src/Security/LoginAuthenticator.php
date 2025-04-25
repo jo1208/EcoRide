@@ -15,6 +15,10 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use App\Entity\User;
+
+
 
 class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -22,16 +26,31 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator,
+        private \App\Repository\UserRepository $userRepository // ✅ injecter ici
+    ) {}
 
     public function authenticate(Request $request): Passport
     {
         $email = $request->getPayload()->getString('email');
-
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 
         return new Passport(
-            new UserBadge($email),
+            new UserBadge($email, function ($userIdentifier) {
+                // ⚠️ On vérifie ici si le compte est suspendu
+                $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
+
+                if (!$user) {
+                    throw new CustomUserMessageAuthenticationException('Utilisateur non trouvé.');
+                }
+
+                if ($user->isSuspended()) {
+                    throw new CustomUserMessageAuthenticationException('⚠️ Votre compte est suspendu.');
+                }
+
+                return $user;
+            }),
             new PasswordCredentials($request->getPayload()->getString('password')),
             [
                 new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
@@ -39,6 +58,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
             ]
         );
     }
+
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {

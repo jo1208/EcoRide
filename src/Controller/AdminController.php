@@ -105,4 +105,35 @@ class AdminController extends AbstractController
             'periode' => $periode,
         ]);
     }
+
+    #[Route('/admin/suspend/{id}', name: 'admin_suspend_user', methods: ['POST'])]
+    public function suspendUser(User $user, EntityManagerInterface $em): Response
+    {
+        $user->setIsSuspended(true);
+        $em->flush();
+
+        $this->addFlash('warning', 'Compte suspendu avec succès.');
+        return $this->redirectToRoute('admin_users'); // 🧭 à adapter selon ta page de gestion des utilisateurs
+    }
+
+    #[Route('/admin/reactivate/{id}', name: 'admin_reactivate_user')]
+    public function reactivateUser(User $user, EntityManagerInterface $em): Response
+    {
+        $user->setIsSuspended(false);
+        $em->flush();
+
+        $this->addFlash('success', 'Compte réactivé avec succès.');
+        return $this->redirectToRoute('admin_users');
+    }
+
+
+    #[Route('/admin/users', name: 'admin_users')]
+    public function users(EntityManagerInterface $em): Response
+    {
+        $users = $em->getRepository(User::class)->findAll();
+
+        return $this->render('admin/users.html.twig', [
+            'users' => $users,
+        ]);
+    }
 }

@@ -52,6 +52,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $pseudo = null;
 
     #[ORM\Column(type: 'boolean')]
+    private bool $isSuspended = false;
+
+    #[ORM\Column(type: 'boolean')]
     private bool $isChauffeur = false;
 
     #[ORM\Column(type: 'boolean')]
@@ -372,5 +375,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return round($total / count($avis), 1);
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->isSuspended;
+    }
+
+    public function setIsSuspended(bool $isSuspended): static
+    {
+        $this->isSuspended = $isSuspended;
+        return $this;
     }
 }

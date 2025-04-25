@@ -1,0 +1,59 @@
+
+{% extends 'admin/index.html.twig' %}
+
+{% block admin_content %}
+	<h4 class="text-center mb-4">❌ Comptes utilisateurs</h4>
+
+	<table class="table table-striped table-hover">
+		<thead class="table-success">
+			<tr>
+				<th>ID</th>
+				<th>Nom</th>
+				<th>Email</th>
+				<th>Rôle</th>
+<th>Status / Action</th>
+
+
+			</tr>
+		</thead>
+		<tbody>
+			{% for user in users %}
+				<tr>
+					<td>{{ user.id }}</td>
+					<td>{{ user.prenom }}
+						{{ user.nom }}</td>
+					<td>{{ user.email }}</td>
+					<td>
+						{% if 'ROLE_ADMIN' in user.roles %}
+							Admin
+						{% elseif 'ROLE_EMPLOYE' in user.roles %}
+							Employé
+						{% else %}
+							Utilisateur
+						{% endif %}
+					</td>
+<td>
+	{% if user.isSuspended %}
+		<span class="badge bg-danger me-2">Suspendu</span>
+		<form method="post" action="{{ path('admin_reactivate_user', { id: user.id }) }}" class="d-inline" onsubmit="return confirm('Réactiver ce compte ?')">
+			<button class="btn btn-success btn-sm">Réactiver</button>
+		</form>
+	{% else %}
+		<span class="badge bg-success me-2">Actif</span>
+		<form method="post" action="{{ path('admin_suspend_user', { id: user.id }) }}" class="d-inline" onsubmit="return confirm('Suspendre ce compte ?')">
+			<button class="btn btn-warning btn-sm">Suspendre</button>
+		</form>
+	{% endif %}
+</td>
+
+
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="6" class="text-center text-muted">Aucun utilisateur trouvé.</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
+
