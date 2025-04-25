@@ -113,4 +113,16 @@ class CovoiturageRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getTotalCreditsGagnes(): int
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->select('COUNT(c.id) as total')
+            ->where('c.statut IS NULL OR c.statut != :annule')
+            ->setParameter('annule', 'Annulé');
+
+        $result = $qb->getQuery()->getSingleScalarResult();
+
+        return (int) $result * 2; // 2 crédits par trajet
+    }
 }

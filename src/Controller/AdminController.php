@@ -136,4 +136,14 @@ class AdminController extends AbstractController
             'users' => $users,
         ]);
     }
+
+    #[Route('/admin/credits', name: 'admin_credits')]
+    public function credits(CovoiturageRepository $repo): Response
+    {
+        $totalCredits = $repo->getTotalCreditsGagnes();
+
+        return $this->render('admin/credits.html.twig', [
+            'totalCredits' => $totalCredits,
+        ]);
+    }
 }
