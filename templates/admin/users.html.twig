@@ -1,4 +1,3 @@
-
 {% extends 'admin/index.html.twig' %}
 
 {% block admin_content %}
@@ -11,9 +10,7 @@
 				<th>Nom</th>
 				<th>Email</th>
 				<th>Rôle</th>
-<th>Status / Action</th>
-
-
+				<th>Status / Action</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -32,21 +29,19 @@
 							Utilisateur
 						{% endif %}
 					</td>
-<td>
-	{% if user.isSuspended %}
-		<span class="badge bg-danger me-2">Suspendu</span>
-		<form method="post" action="{{ path('admin_reactivate_user', { id: user.id }) }}" class="d-inline" onsubmit="return confirm('Réactiver ce compte ?')">
-			<button class="btn btn-success btn-sm">Réactiver</button>
-		</form>
-	{% else %}
-		<span class="badge bg-success me-2">Actif</span>
-		<form method="post" action="{{ path('admin_suspend_user', { id: user.id }) }}" class="d-inline" onsubmit="return confirm('Suspendre ce compte ?')">
-			<button class="btn btn-warning btn-sm">Suspendre</button>
-		</form>
-	{% endif %}
-</td>
-
-
+					<td>
+						{% if user.isSuspended %}
+							<span class="badge bg-danger me-2">Suspendu</span>
+							<button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-user-id="{{ user.id }}" data-action="reactivate" data-username="{{ user.prenom }} {{ user.nom }}">
+								Réactiver
+							</button>
+						{% else %}
+							<span class="badge bg-success me-2">Actif</span>
+							<button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-user-id="{{ user.id }}" data-action="suspend" data-username="{{ user.prenom }} {{ user.nom }}">
+								Suspendre
+							</button>
+						{% endif %}
+					</td>
 				</tr>
 			{% else %}
 				<tr>
@@ -55,5 +50,59 @@
 			{% endfor %}
 		</tbody>
 	</table>
+
+	{# Modal Bootstrap #}
+<!-- Modal de confirmation (style unifié) -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="confirmModalLabel">Confirmation de l’action</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+			</div>
+			<div class="modal-body">
+				<p id="confirmText">
+					Voulez-vous vraiment effectuer cette action sur ce compte ?
+				</p>
+			</div>
+			<div class="modal-footer">
+				<form method="post" id="confirmForm">
+					<input type="hidden" name="_token" value="{{ csrf_token('admin_user_action') }}">
+					<button type="submit" class="btn btn-success">Confirmer</button>
+				</form>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}
+
+{# 💡 Ce bloc doit être en dehors de admin_content #}
+{% block javascripts %}
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const modal = document.getElementById('confirmModal');
+const form = document.getElementById('confirmForm');
+const text = document.getElementById('confirmText');
+
+modal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+const userId = button.getAttribute('data-user-id');
+const action = button.getAttribute('data-action');
+const name = button.getAttribute('data-username');
+
+let path = '';
+if (action === 'suspend') {
+text.innerText = `Voulez-vous suspendre le compte de ${name} ?`;
+path = '{{ path("admin_suspend_user", { id: "__ID__" }) }}';
+} else {
+text.innerText = `Voulez-vous réactiver le compte de ${name} ?`;
+path = '{{ path("admin_reactivate_user", { id: "__ID__" }) }}';
+} form.setAttribute('action', path.replace('__ID__', userId));
+});
+});
+	</script>
 {% endblock %}
 

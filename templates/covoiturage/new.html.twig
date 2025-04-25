@@ -13,22 +13,27 @@
 		</div>
 
 
-		{{ form_start(form) }}
-		<div class="row g-3">
-			{% for field in form %}
-				<div class="col-md-6">
-					{{ form_label(field) }}
-					{{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
-					{{ form_errors(field) }}
-				</div>
-			{% endfor %}
-		</div>
+{{ form_start(form) }}
+<div class="row g-3">
+	{% for field in form %}
+		{% if field.vars.name != '_token' %}
+			<div class="col-md-6">
+				{{ form_label(field) }}
+				{{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(field) }}
+			</div>
+		{% endif %}
+	{% endfor %}
 
-		<div class="mt-4">
-			<button type="submit" class="btn btn-success">Ajouter</button>
-			<a href="{{ path('app_profil') }}" class="btn btn-secondary">Annuler</a>
-		</div>
-		{{ form_end(form) }}
+	{{ form_row(form._token) }}
+</div>
+
+<div class="mt-4">
+	<button type="submit" class="btn btn-success">Ajouter</button>
+	<a href="{{ path('app_profil') }}" class="btn btn-secondary">Annuler</a>
+</div>
+{{ form_end(form) }}
+
 	</div>
 {% endblock %}
 
