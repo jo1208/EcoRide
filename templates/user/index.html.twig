@@ -9,6 +9,14 @@
 			<div class="col-md-6 mb-4">
 				<div class="form-section inscription p-4 bg-light rounded shadow-sm">
 					<h1 class="text-center text-success">Inscription</h1>
+					{% for child in form %}
+						{% for error in child.vars.errors %}
+							<div class="alert alert-danger">
+								{{ error.message }}
+							</div>
+						{% endfor %}
+					{% endfor %}
+
 					{{ form_start(form, {'attr': {'class': 'form' }}) }}
 
 					<div class="mb-3">
@@ -19,12 +27,21 @@
 					<div class="mb-3">
 						{{ form_label(form.email, null, {'attr': {'class': 'form-label text-success'}}) }}
 						{{ form_widget(form.email, {'attr': {'class': 'form-control border-success'}}) }}
+
+
 					</div>
 
-					<div class="mb-3">
-						{{ form_label(form.password, null, {'attr': {'class': 'form-label text-success'}}) }}
-						{{ form_widget(form.password, {'attr': {'class': 'form-control border-success'}}) }}
+
+
+					<div class="form-group mb-3">
+						{{ form_label(form.password) }}
+						{{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+						<div class="text-danger mt-1">
+							{{ form_errors(form.password) }}
+						</div>
+
 					</div>
+
 
 					<div class="mb-3">
 						{{ form_label(form.nom, null, {'attr': {'class': 'form-label text-success'}}) }}
@@ -39,6 +56,12 @@
 					<div class="mb-3">
 						{{ form_label(form.telephone, null, {'attr': {'class': 'form-label text-success'}}) }}
 						{{ form_widget(form.telephone, {'attr': {'class': 'form-control border-success'}}) }}
+						<div class="text-danger mt-1">
+							{{ form_errors(form.telephone) }}
+						</div>
+						
+
+
 					</div>
 
 					<div class="mb-3">
@@ -47,15 +70,15 @@
 					</div>
 
 					<div class="mb-3">
-						{{ form_label(form.date_naissance, null, {'attr': {'class': 'form-label text-success'}}) }}
-						{{ form_widget(form.date_naissance, {'attr': {'class': 'form-control border-success'}}) }}
+						{{ form_label(form.date_naissance) }}
+						{{ form_widget(form.date_naissance, { 'attr': {'class': 'form-control'} }) }}
+
+						{% if form_errors(form.date_naissance) %}
+							<div class="text-danger mt-1">
+								{{ form_errors(form.date_naissance) }}
+							</div>
+						{% endif %}
 					</div>
-
-
-
-
-
-
 
 
 					<div class="d-grid gap-2">

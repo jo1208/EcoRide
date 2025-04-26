@@ -1,0 +1,49 @@
+{% extends 'employee/_employee_layout.html.twig' %}
+
+{% block title %}🚨 Trajets Problématiques
+{% endblock %}
+
+{% block employee_content %}
+	<div class="bg-white p-4 rounded shadow-sm" style="border-left: 5px solid #e3342f;">
+		<h4 class="fw-bold mb-4 text-danger text-center">🚨 Trajets problématiques</h4>
+
+		{% if avisProblemes is empty %}
+			<div class="alert alert-success text-center">
+				Aucun trajet problématique actuellement. 🎉
+			</div>
+		{% else %}
+			<table class="table table-hover">
+				<thead class="thead-light">
+					<tr>
+						<th># Trajet</th>
+						<th>Passager</th>
+						<th>Conducteur</th>
+						<th>Date départ</th>
+						<th>Date arrivée</th>
+						<th>Lieu départ</th>
+						<th>Lieu arrivée</th>
+						<th>Commentaire du problème</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for avis in avisProblemes %}
+						<tr>
+							<td>{{ avis.trajet.id }}</td>
+							<td>{{ avis.user.pseudo }}
+								({{ avis.user.email }})</td>
+							<td>{{ avis.conducteur.pseudo }}
+								({{ avis.conducteur.email }})</td>
+							<td>{{ avis.trajet.dateDepart ? avis.trajet.dateDepart|date('d/m/Y') : 'Non précisé' }}</td>
+							<td>{{ avis.trajet.dateArrivee ? avis.trajet.dateArrivee|date('d/m/Y') : 'Non précisé' }}</td>
+							<td>{{ avis.trajet.lieuDepart }}</td>
+							<td>{{ avis.trajet.lieuArrivee }}</td>
+							<td>{{ avis.commentaire }}</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endif %}
+	</div>
+{% endblock %}
+
+

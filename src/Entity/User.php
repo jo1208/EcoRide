@@ -11,9 +11,11 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Voiture;
 use App\Entity\Preference;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
+#[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -42,14 +44,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $date_naissance = null;
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTimeInterface $date_naissance = null;
 
     #[ORM\Column(type: Types::BLOB, nullable: true)]
     private $photo = null;
 
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $isSuspended = false;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isChauffeur = false;
@@ -60,6 +65,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $note = null;
+
+    #[ORM\Column(type: 'integer')]
+    private int $credits = 20;
+
+    #[ORM\OneToMany(mappedBy: 'conducteur', targetEntity: Avis::class)]
+    private Collection $avisConducteur;
+
+
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Voiture::class, cascade: ['persist', 'remove'])]
     private Collection $voitures;
@@ -182,14 +195,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getDateNaissance(): ?string
+    public function getDateNaissance(): ?\DateTimeInterface
     {
         return $this->date_naissance;
     }
 
-    public function setDateNaissance(string $date_naissance): static
+    public function setDateNaissance(?\DateTimeInterface $date_naissance): self
     {
         $this->date_naissance = $date_naissance;
+
         return $this;
     }
 
@@ -238,10 +252,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getNote(): ?float
+
+
+
+    public function getCredits(): int
     {
-        return $this->note;
+        return $this->credits;
     }
+
+    public function setCredits(int $credits): static
+    {
+        $this->credits = $credits;
+        return $this;
+    }
+
+
 
     /**
      * @return Collection<int, \App\Entity\Voiture>
@@ -322,6 +347,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         $this->preference = $preference;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Avis>
+     */
+    public function getAvisConducteur(): Collection
+    {
+        return $this->avisConducteur;
+    }
+
+
+    public function getNote(): ?float
+    {
+        return $this->note;
+    }
+    public function getNoteMoyenne(): ?float
+    {
+        $avis = $this->getAvisConducteur(); // On suppose que tu as fait la relation OneToMany "avisConducteur"
+
+        if (count($avis) === 0) {
+            return null;
+        }
+
+        $total = 0;
+        foreach ($avis as $avisItem) {
+            $total += $avisItem->getNote();
+        }
+
+        return round($total / count($avis), 1);
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->isSuspended;
+    }
+
+    public function setIsSuspended(bool $isSuspended): static
+    {
+        $this->isSuspended = $isSuspended;
         return $this;
     }
 }

@@ -2,14 +2,16 @@
 
 namespace App\Controller;
 
-
+use App\Entity\Covoiturage;
 use App\Form\EditProfilType;
+use App\Repository\AvisRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Service\AvisService;
 
 
 class ProfilController extends AbstractController
@@ -24,7 +26,7 @@ class ProfilController extends AbstractController
         }
 
         return $this->render('profil/index.html.twig', [
-            'user' => $user,
+            'user' => $this->getUser(),
         ]);
     }
 
@@ -61,16 +63,48 @@ class ProfilController extends AbstractController
         $user = $this->getUser();
         $roles = $request->request->all('roles');
 
-        // Si l'utilisateur coche "chauffeur" mais n'a pas de voiture
-        if (in_array('ROLE_CHAUFFEUR', $roles) && $user->getVoitures()->isEmpty()) {
-            $this->addFlash('danger', 'Vous devez enregistrer au moins un véhicule pour devenir chauffeur.');
-            return $this->redirectToRoute('app_profil');
+        // Vérifier que s'il veut devenir chauffeur, il a bien une voiture ET des préférences
+        if (in_array('ROLE_CHAUFFEUR', $roles)) {
+            if ($user->getVoitures()->isEmpty()) {
+                $this->addFlash('danger', '🚗 Vous devez enregistrer au moins un véhicule pour devenir chauffeur.');
+                return $this->redirectToRoute('app_profil');
+            }
+
+            if (!$user->getPreference()) {
+                $this->addFlash('danger', '⚙️ Vous devez compléter vos préférences de conducteur pour devenir chauffeur.');
+                return $this->redirectToRoute('app_profil');
+            }
         }
 
+        // Tout est OK ✅ On met à jour les rôles
         $user->setRoles($roles);
         $em->flush();
 
-        $this->addFlash('success', 'Rôles mis à jour avec succès ✅');
+        $this->addFlash('success', 'Vos rôles ont été mis à jour avec succès ✅');
         return $this->redirectToRoute('app_profil');
+    }
+
+
+    #[Route('/profil/avis', name: 'app_profil_avis')]
+    public function showAvis(AvisRepository $avisRepository): Response
+    {
+        $user = $this->getUser();
+
+        // Avis reçus (trie les avis reçus par date de création, du plus récent au plus ancien)
+        $avisRecus = $avisRepository->findBy(
+            ['conducteur' => $user],
+            ['createdAt' => 'DESC'] // Tri par date de création
+        );
+
+        // Avis donnés (trie les avis donnés par date de création, du plus récent au plus ancien)
+        $avisRediges = $avisRepository->findBy(
+            ['user' => $user],
+            ['createdAt' => 'DESC'] // Tri par date de création
+        );
+
+        return $this->render('profil/avis.html.twig', [
+            'avisRecus' => $avisRecus,
+            'avisRediges' => $avisRediges,
+        ]);
     }
 }

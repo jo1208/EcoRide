@@ -6,23 +6,34 @@
 {% block body %}
 	<div class="container mt-5">
 		<h2 class="mb-4">Créer un nouveau trajet</h2>
-
-		{{ form_start(form) }}
-		<div class="row g-3">
-			{% for field in form %}
-				<div class="col-md-6">
-					{{ form_label(field) }}
-					{{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
-					{{ form_errors(field) }}
-				</div>
-			{% endfor %}
+		<div class="alert alert-info text-center">
+			ℹ️ Lors de la création d'un trajet,
+			<strong>2 crédits</strong>
+			seront déduits de votre compte pour le bon fonctionnement de la plateforme.
 		</div>
 
-		<div class="mt-4">
-			<button type="submit" class="btn btn-success">Ajouter</button>
-			<a href="{{ path('app_profil') }}" class="btn btn-secondary">Annuler</a>
-		</div>
-		{{ form_end(form) }}
+
+{{ form_start(form) }}
+<div class="row g-3">
+	{% for field in form %}
+		{% if field.vars.name != '_token' %}
+			<div class="col-md-6">
+				{{ form_label(field) }}
+				{{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+				{{ form_errors(field) }}
+			</div>
+		{% endif %}
+	{% endfor %}
+
+	{{ form_row(form._token) }}
+</div>
+
+<div class="mt-4">
+	<button type="submit" class="btn btn-success">Ajouter</button>
+	<a href="{{ path('app_profil') }}" class="btn btn-secondary">Annuler</a>
+</div>
+{{ form_end(form) }}
+
 	</div>
 {% endblock %}
 

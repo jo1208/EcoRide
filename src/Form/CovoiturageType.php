@@ -36,7 +36,8 @@ class CovoiturageType extends AbstractType
                 'class' => Voiture::class,
                 'choice_label' => 'modele',
                 'choices' => $user ? $user->getVoitures() : [],
-                'placeholder' => $user ? 'Sélectionnez un véhicule' : 'Veuillez vous connecter',
+                'placeholder' => $user && count($user->getVoitures()) > 0 ? 'Sélectionnez un véhicule' : '⚠️ Vous devez d\'abord enregistrer un véhicule',
+                'required' => true,
             ]);
     }
 

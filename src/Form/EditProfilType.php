@@ -3,12 +3,16 @@
 namespace App\Form;
 
 use App\Entity\User;
+use PHPUnit\Framework\Constraint\LessThan;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class EditProfilType extends AbstractType
 {
@@ -27,7 +31,12 @@ class EditProfilType extends AbstractType
             ->add('email', TextType::class)
             ->add('telephone', TextType::class)
             ->add('adresse', TextType::class)
-            ->add('dateNaissance', TextType::class)
+            ->add('dateNaissance', DateType::class, [
+                'widget' => 'single_text',
+                'constraints' => [
+                    new Assert\LessThan('today'),
+                ],
+            ])
             ->add('isChauffeur', CheckboxType::class, [
                 'label' => 'Je souhaite être chauffeur',
                 'required' => false,

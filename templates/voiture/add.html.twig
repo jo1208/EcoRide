@@ -6,7 +6,7 @@
 {% block body %}
 {% include 'profil/_profil_layout.html.twig' %}
 
-{% include 'profil/_profil_layout.html.twig' %}
+
 
 	<div class="container mt-5">
 		<h1 class="mb-4">Ajouter un véhicule</h1>
@@ -16,6 +16,10 @@
 			{{ form_label(form.modele) }}
 			{{ form_widget(form.modele, {'attr': {'class': 'form-control'}}) }}
 		</div>
+        <div class="mb-3">
+            {{ form_label(form.marque) }}
+            {{ form_widget(form.marque, {'attr': {'class': 'form-control'}}) }}
+        </div>
 		<div class="mb-3">
 			{{ form_label(form.immatriculation) }}
 			{{ form_widget(form.immatriculation, {'attr': {'class': 'form-control'}}) }}

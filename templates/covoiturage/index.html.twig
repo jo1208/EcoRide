@@ -7,20 +7,25 @@
 	<main class="container py-4">
 		<section class="search-section">
 			<h2>Covoiturage</h2>
+
+			<div id="alertFormIncomplete" class="alert alert-warning text-center d-none" role="alert">
+				⚠️ Merci de remplir lieu de départ, lieu d'arrivée et date avant de chercher.
+			</div>
+
+
 			<form method="get" action="{{ path('app_covoiturage') }}" class="row g-3">
+				
+
 
 				<div class="col-md-3 mb-4">
 					<input type="text" name="lieu_depart" class="form-control" placeholder="Départ" value="{{ app.request.get('lieu_depart') }}">
 				</div>
-
 				<div class="col-md-3 mb-4">
 					<input type="text" name="lieu_arrivee" class="form-control" placeholder="Arrivée" value="{{ app.request.get('lieu_arrivee') }}">
 				</div>
-
 				<div class="col-md-3 mb-4">
 					<input type="date" name="date" class="form-control" value="{{ app.request.get('date') }}">
 				</div>
-
 				<div class="col-md-3 mb-4">
 					<button class="btn btn-success w-100">Rechercher</button>
 				</div>
@@ -28,11 +33,9 @@
 				<div class="col-md-2 mb-4">
 					<input type="number" name="prix_max" class="form-control" placeholder="Prix max (€)" value="{{ app.request.get('prix_max') }}">
 				</div>
-
 				<div class="col-md-2 mb-4">
 					<input type="number" name="duree_max" class="form-control" placeholder="Durée max (min)" value="{{ app.request.get('duree_max') }}">
 				</div>
-
 				<div class="col-md-2 mb-4">
 					<select name="note_min" class="form-control">
 						<option value="">Note min</option>
@@ -42,74 +45,164 @@
 						{% endfor %}
 					</select>
 				</div>
-
 				<div class="col-md-2 form-check mt-2 d-flex align-items-center mb-4">
 					<input class="form-check-input" type="checkbox" name="ecologique" value="1" {% if app.request.get('ecologique') %} checked {% endif %}>
 					<label class="form-check-label ms-2">Écologique</label>
 				</div>
-
 			</form>
-
-
 		</section>
 
 		<section class="results-section mt-4">
 			<h3>Trajets disponibles</h3>
 
 			{% for trajet in trajets %}
-				<div class="card p-3 mb-3" data-prix="{{ trajet.prixPersonne }}" data-note="{{ trajet.voiture and trajet.voiture.note is defined ? trajet.voiture.note : 4 }}" data-eco="{{ trajet.voiture and trajet.voiture.isEcologique is defined and trajet.voiture.isEcologique ? '1' : '0' }}" data-duree="{% set duree = trajet.heureDepart.diff(trajet.heureArrivee) %}{{ duree.h * 60 + duree.i }}">
-
-
+				<div class="card p-3 mb-3">
 					<div class="row align-items-center">
 						<div class="col-auto">
-							<img src="{{ asset('images/avatar.png') }}" alt="Avatar">
+							<img src="{{ asset('images/avatar.png') }}" alt="Avatar" class="rounded" width="60">
 						</div>
 						<div class="col">
 							<div>
-								<strong>{{ trajet.dateDepart|date('d/m/Y') }}</strong>
+								<strong>Conducteur :</strong>
+								{{ trajet.conducteur.pseudo }}
+								(⭐
+								{% if trajet.conducteur.getNoteMoyenne() is not null %}
+									{{ trajet.conducteur.getNoteMoyenne() }}/5
+								{% else %}
+									Aucune note
+								{% endif %}
+								)
 							</div>
-							<div>{{ trajet.lieuDepart }}
+							<div>
+								<strong>Date :</strong>
+								{{ trajet.dateDepart|date('d/m/Y') }}</div>
+							<div>
+								<strong>Trajet :</strong>
+								{{ trajet.lieuDepart }}
 								-
 								{{ trajet.lieuArrivee }}</div>
 							<div>
+								<strong>Horaire :</strong>
 								{{ trajet.heureDepart|date('H:i') }}
 								-
 								{{ trajet.heureArrivee|date('H:i') }}
-								<small class="text-muted">
-									({{ trajet.heureDepart.diff(trajet.heureArrivee).h }}h{{ trajet.heureDepart.diff(trajet.heureArrivee).i }})
-								</small>
+								<small class="text-muted">({{ trajet.heureDepart.diff(trajet.heureArrivee).h }}h{{ trajet.heureDepart.diff(trajet.heureArrivee).i }})</small>
 							</div>
-                            <div>
-                                {{ trajet.voiture and trajet.voiture.type is defined ? trajet.voiture.type : 'Voiture' }}
-                                -
-                                {% if trajet.nbPlace == 0 %}
-                                    <span class="badge bg-danger">COMPLET</span>
-                                {% else %}
-                                    {{ trajet.nbPlace }}
-                                    place{{ trajet.nbPlace > 1 ? 's' : '' }}
-                                {% endif %}
-                            </div>
-
-
+							<div>
+								<strong>Véhicule :</strong>
+								{{ trajet.voiture.modele ?? 'Non précisé' }}
+								-
+								<strong>Écologique :</strong>
+								{% if trajet.voiture and trajet.voiture.ecologique %}
+									Oui ⚡
+								{% else %}
+									Non
+								{% endif %}
+							</div>
+							<div>
+								{% if trajet.nbPlace == 0 %}
+									<span class="badge bg-danger">COMPLET</span>
+								{% else %}
+									{{ trajet.nbPlace }}
+									place{{ trajet.nbPlace > 1 ? 's' : '' }}
+								{% endif %}
+							</div>
 						</div>
+
 						<div class="col-auto text-right">
 							<div class="h5">{{ trajet.prixPersonne|number_format(2, ',', '.') }}
 								€</div>
-                            <a href="{{ path('covoiturage_show', { id: trajet.id }) }}" class="btn btn-outline-secondary btn-sm">Détails</a>
-                            <form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
-                            <button class="btn btn-success btn-sm mt-2" {% if trajet.nbPlace == 0 %} disabled {% endif %}>
-                                Participer
-                            </button>
 
-                            </form>
+							{% set user = app.user %}
+							{% set creditsOk = user and (user.credits >= trajet.prixPersonne) %}
+
+							<a href="{% if trajet.nbPlace == 0 or user is null or not creditsOk %}#{% else %}{{ path('covoiturage_show', { id: trajet.id }) }}{% endif %}" class="btn btn-outline-secondary btn-sm {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}">
+								Détails
+							</a>
+							
+							{% set user = app.user %}
+							{% set creditsOk = user and (user.credits >= trajet.prixPersonne) %}
+							
+
+							<button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#confirmParticipationModal{{ trajet.id }}" {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}>
+								Participer
+							</button>
+
+							{% if user is null %}
+								<div class="text-danger small mt-2">
+									❌ Vous devez
+									<a href="{{ path('app_login') }}" class="text-success text-decoration-underline">vous connecter</a>
+									ou
+									<a href="{{ path('app_user') }}" class="text-success text-decoration-underline">créer un compte</a>
+									pour participer.
+								</div>
+							{% elseif not creditsOk %}
+								<div class="text-danger small mt-2">
+									❌ Vous n'avez pas assez de crédits pour ce trajet.
+								</div>
+							{% endif %}
+
+							<!-- Modal de confirmation -->
+							<div class="modal fade" id="confirmParticipationModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmParticipationLabel{{ trajet.id }}" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="confirmParticipationLabel{{ trajet.id }}">Confirmer la participation</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+										</div>
+										<div class="modal-body">
+											Participer à ce trajet vous coûtera
+											<strong>{{ trajet.prixPersonne|number_format(2, ',', '.') }}
+												crédits</strong>.<br>
+											Voulez-vous vraiment continuer ?
+										</div>
+										<div class="modal-footer">
+											<form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('participer_' ~ trajet.id) }}">
+												<button type="submit" class="btn btn-success">Confirmer</button>
+											</form>
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+										</div>
+									</div>
+								</div>
+							</div>
 
 						</div>
 					</div>
 				</div>
 			{% else %}
-				<p>Aucun trajet trouvé.</p>
+				<p class="text-center">Aucun trajet trouvé.</p>
+
+{% if propositionNouvelleDate and app.request.get('lieu_depart') and app.request.get('lieu_arrivee') and app.request.get('date') %}
+					<div class="alert alert-info text-center mt-3">
+						🚗 Aucun trajet trouvé pour votre recherche, mais un trajet est disponible le
+						<strong>{{ propositionNouvelleDate|date('d/m/Y') }}</strong>.<br>
+						Essayez d'adapter votre date ou vos filtre pour trouver votre voyage !
+					</div>
+				{% endif %}
 			{% endfor %}
 		</section>
 	</main>
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+const form = document.querySelector('.search-section form');
+const alertDiv = document.getElementById('alertFormIncomplete');
+
+form.addEventListener('submit', function (e) {
+const lieuDepart = form.querySelector('input[name="lieu_depart"]').value.trim();
+const lieuArrivee = form.querySelector('input[name="lieu_arrivee"]').value.trim();
+const date = form.querySelector('input[name="date"]').value.trim();
+
+if (! lieuDepart || ! lieuArrivee || ! date) {
+e.preventDefault(); // Empêche l'envoi du formulaire
+alertDiv.classList.remove('d-none'); // Affiche l'alerte
+} else {
+alertDiv.classList.add('d-none'); // Cache l'alerte si tout est ok
+}
+});
+});
+</script>
+
 
 {% endblock %}
+

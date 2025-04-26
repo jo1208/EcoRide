@@ -47,8 +47,6 @@
                     <p>
                         <strong>Électrique :</strong>
                         {{ voiture.ecologique ? 'Oui ⚡' : 'Non' }}</p>
-
-
 					<p>
 						<strong>Couleur :</strong>
 						{{ voiture.couleur }}</p>
@@ -103,13 +101,46 @@
 				<p class="text-muted">Aucun avis pour ce conducteur.</p>
 			{% endif %}
 
-			<!-- Bouton Participer -->
-			{% if covoiturage.nbPlace > 0 %}
-				<div class="text-center mt-4">
-<a href="{{ path('app_participer_covoiturage', { id: covoiturage.id }) }}" class="btn btn-success btn-lg">Participer à ce trajet</a>
 
+
+
+
+{% if covoiturage.nbPlace > 0 %}
+	<div
+		class="text-center mt-4">
+		<!-- Bouton pour ouvrir le modal -->
+		<button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#confirmParticipationModal">
+			Participer
+		</button>
+	</div>
+
+	<!-- Modal de confirmation -->
+	<div class="modal fade" id="confirmParticipationModal" tabindex="-1" aria-labelledby="confirmParticipationModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="confirmParticipationModalLabel">Confirmation de participation</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
 				</div>
-			{% endif %}
+				<div class="modal-body">
+					Participer à ce trajet va déduire
+					<strong>{{ covoiturage.prixPersonne|number_format(2, ',', '.') }}</strong>
+					crédits.
+					<br>Confirmez-vous votre participation ?
+				</div>
+				<div class="modal-footer">
+					<form method="post" action="{{ path('app_participer_covoiturage', { id: covoiturage.id }) }}">
+						<input type="hidden" name="_token" value="{{ csrf_token('participer_' ~ covoiturage.id) }}">
+						<button type="submit" class="btn btn-success">Confirmer</button>
+					</form>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}
+
+
 		</div>
 	</main>
 {% endblock %}

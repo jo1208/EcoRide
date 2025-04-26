@@ -28,19 +28,50 @@
 							{{ voiture.ecologique ? 'Oui ✅' : 'Non ❌' }}</p>
 					</div>
 
-					<div class="text-end">
-						<a href="{{ path('app_voiture_edit', { id: voiture.id }) }}" class="btn btn-primary btn-sm mb-2">Modifier</a>
+<div class="d-flex flex-column align-items-end">
+	<a href="{{ path('app_voiture_edit', { id: voiture.id }) }}" class="btn btn-primary btn-sm mb-2">Modifier</a>
+	<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal{{ voiture.id }}">
+		Supprimer
+	</button>
+</div>
 
-						<form method="post" action="{{ path('app_voiture_delete', { id: voiture.id }) }}" onsubmit="return confirm('Confirmer la suppression ?');">
-							<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ voiture.id) }}">
-							<button class="btn btn-danger btn-sm">Supprimer</button>
-						</form>
-					</div>
+
+
 				</div>
 			</div>
 		{% else %}
 			<p class="text-muted">Vous n'avez encore enregistré aucun véhicule.</p>
 		{% endfor %}
+{% for voiture in voitures %}
+	<!-- ... ton code de carte ... -->
+
+	<!-- Modal de confirmation pour la suppression -->
+		<div class="modal fade" id="confirmDeleteModal{{ voiture.id }}" tabindex="-1" aria-labelledby="confirmDeleteModalLabel{{ voiture.id }}" aria-hidden="true"> <div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="confirmDeleteModalLabel{{ voiture.id }}">Confirmer la suppression</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+				</div>
+				<div class="modal-body">
+					Voulez-vous vraiment supprimer le véhicule
+					<strong>{{ voiture.modele }}</strong>
+					({{ voiture.immatriculation }}) ?
+				</div>
+<div class="modal-footer justify-content-between">
+	<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+	<form method="post" action="{{ path('app_voiture_delete', { id: voiture.id }) }}" class="mb-0">
+		<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ voiture.id) }}">
+		<button type="submit" class="btn btn-danger">Oui, supprimer</button>
+	</form>
+</div>
+
+
+			</div>
+		</div>
+	</div>
+{% endfor %}
+
+
 
 		<div class="mt-4 text-center">
 			<a href="{{ path('app_voiture_add') }}" class="btn btn-success">

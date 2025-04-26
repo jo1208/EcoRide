@@ -20,6 +20,9 @@ class Voiture
     private ?string $modele = null;
 
     #[ORM\Column(length: 255)]
+    private ?string $marque = null;
+
+    #[ORM\Column(length: 255)]
     private ?string $immatriculation = null;
 
     #[ORM\Column(length: 255)]
@@ -61,6 +64,17 @@ class Voiture
     public function setModele(string $modele): static
     {
         $this->modele = $modele;
+        return $this;
+    }
+
+    public function getMarque(): ?string
+    {
+        return $this->marque;
+    }
+
+    public function setMarque(string $marque): static
+    {
+        $this->marque = $marque;
         return $this;
     }
 
