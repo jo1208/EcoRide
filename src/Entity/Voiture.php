@@ -20,10 +20,10 @@ class Voiture
     private ?string $modele = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $immatriculation = null;
+    private ?string $marque = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $energie = null;
+    private ?string $immatriculation = null;
 
     #[ORM\Column(length: 255)]
     private ?string $couleur = null;
@@ -31,13 +31,19 @@ class Voiture
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date_premiere_immatriculation = null;
 
-    #[ORM\ManyToOne(inversedBy: 'Voiture')]
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $ecologique = false;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $nb_place = null;
+
+    #[ORM\ManyToOne(inversedBy: 'voitures')]
     private ?User $user = null;
 
     /**
      * @var Collection<int, Covoiturage>
      */
-    #[ORM\OneToMany(targetEntity: Covoiturage::class, mappedBy: 'Voiture')]
+    #[ORM\OneToMany(targetEntity: Covoiturage::class, mappedBy: 'voiture')]
     private Collection $covoiturages;
 
     public function __construct()
@@ -58,7 +64,17 @@ class Voiture
     public function setModele(string $modele): static
     {
         $this->modele = $modele;
+        return $this;
+    }
 
+    public function getMarque(): ?string
+    {
+        return $this->marque;
+    }
+
+    public function setMarque(string $marque): static
+    {
+        $this->marque = $marque;
         return $this;
     }
 
@@ -70,7 +86,6 @@ class Voiture
     public function setImmatriculation(string $immatriculation): static
     {
         $this->immatriculation = $immatriculation;
-
         return $this;
     }
 
@@ -82,7 +97,6 @@ class Voiture
     public function setEnergie(string $energie): static
     {
         $this->energie = $energie;
-
         return $this;
     }
 
@@ -94,7 +108,6 @@ class Voiture
     public function setCouleur(string $couleur): static
     {
         $this->couleur = $couleur;
-
         return $this;
     }
 
@@ -103,10 +116,31 @@ class Voiture
         return $this->date_premiere_immatriculation;
     }
 
-    public function setDatePremiereImmatriculation(\DateTimeInterface $date_premiere_immatriculation): static
+    public function setDatePremiereImmatriculation(\DateTimeInterface $date): static
     {
-        $this->date_premiere_immatriculation = $date_premiere_immatriculation;
+        $this->date_premiere_immatriculation = $date;
+        return $this;
+    }
 
+    public function isEcologique(): ?bool
+    {
+        return $this->ecologique;
+    }
+
+    public function setEcologique(bool $ecologique): static
+    {
+        $this->ecologique = $ecologique;
+        return $this;
+    }
+
+    public function getNbPlace(): ?int
+    {
+        return $this->nb_place;
+    }
+
+    public function setNbPlace(?int $nb_place): static
+    {
+        $this->nb_place = $nb_place;
         return $this;
     }
 
@@ -118,7 +152,6 @@ class Voiture
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -143,7 +176,6 @@ class Voiture
     public function removeCovoiturage(Covoiturage $covoiturage): static
     {
         if ($this->covoiturages->removeElement($covoiturage)) {
-            // set the owning side to null (unless already changed)
             if ($covoiturage->getVoiture() === $this) {
                 $covoiturage->setVoiture(null);
             }

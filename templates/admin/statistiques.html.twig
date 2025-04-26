@@ -1,0 +1,47 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block admin_content %}
+	<h4 class="text-center mb-4">📊 Statistiques</h4>
+
+
+
+
+<form method="get" class="text-center mb-4">
+	<label for="range" class="me-2 fw-bold">Afficher sur :</label>
+	<select name="range" id="range" class="form-select d-inline-block w-auto">
+		<option value="7" {{ periode == '7' ? 'selected' : '' }}>7 jours</option>
+		<option value="30" {{ periode == '30' ? 'selected' : '' }}>30 jours</option>
+		<option value="90" {{ periode == '90' ? 'selected' : '' }}>3 mois</option>
+		<option value="365" {{ periode == '365' ? 'selected' : '' }}>1 an</option>
+		<option value="all" {{ periode == 'all' ? 'selected' : '' }}>Tout</option>
+	</select>
+	<button class="btn btn-success btn-sm ms-2">OK</button>
+</form>
+
+<div class="card shadow-sm mb-4">
+	<div class="card-body">
+		<h5 class="text-center text-success mb-3">📈 Covoiturages par jour</h5>
+		<canvas id="chartCovoiturages" width="800" height="300" class="w-100"></canvas>
+	</div>
+</div>
+
+<div class="card shadow-sm mb-4">
+	<div class="card-body">
+		<h5 class="text-center text-success mb-3">💰 Crédits générés par jour</h5>
+		<canvas id="chartRevenus" width="800" height="300" class="w-100"></canvas>
+	</div>
+</div>
+
+
+
+{% block javascripts %}
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+{% include 'admin/_charts.js.twig' %}
+});
+	</script>
+{% endblock %}
+
+
+{% endblock %}
+

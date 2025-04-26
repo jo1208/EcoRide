@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détail du trajet
+{% endblock %}
+
+{% block body %}
+	<div class="container py-5">
+		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle">
+			<h2 class="text-success mb-4 text-center">Détail du trajet 🚗</h2>
+
+			<div class="mb-4">
+				<p>
+					<strong>Date :</strong>
+					{{ trajet.dateDepart|date('d/m/Y') }}</p>
+				<p>
+					<strong>Départ :</strong>
+					{{ trajet.lieuDepart }}</p>
+				<p>
+					<strong>Arrivée :</strong>
+					{{ trajet.lieuArrivee }}</p>
+				<p>
+					<strong>Heure :</strong>
+					{{ trajet.heureDepart|date('H:i') }}
+					-
+					{{ trajet.heureArrivee|date('H:i') }}</p>
+				<p>
+					<strong>Places restantes :</strong>
+					{{ trajet.nbPlace }}</p>
+			</div>
+
+			<h4 class="text-success">Liste des passagers :</h4>
+
+			{% if passagers is empty %}
+				<p class="text-muted">Aucun passager inscrit pour l'instant.</p>
+			{% else %}
+				<ul class="list-group">
+					{% for passager in passagers %}
+						<li class="list-group-item d-flex justify-content-between align-items-center">
+							{{ passager.pseudo }}
+							<span class="badge bg-primary">{{ passager.email }}</span>
+						</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+
+			<div class="text-center mt-4">
+				<a href="{{ path('app_mes_trajets') }}" class="btn btn-outline-secondary">⬅ Retour à mes trajets</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+

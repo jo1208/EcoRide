@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div
+		class="container my-4" style="background-color: #FBF8F7; border-radius: 15px; padding: 30px;">
+		<!-- Header Employé -->
+		<div class="text-center mb-4">
+			<img src="{{ asset('images/employe-avatar.png') }}" alt="Employé" width="120" class="rounded-circle">
+			<h2 class="mt-3">Espace Employé</h2>
+		</div>
+
+		<!-- Flash Messages -->
+		{% for message in app.flashes('danger') %}
+			<div class="alert alert-danger text-center">{{ message }}</div>
+		{% endfor %}
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success text-center">{{ message }}</div>
+		{% endfor %}
+
+		<!-- Navigation onglets -->
+		<ul class="nav nav-tabs justify-content-center mb-4 border-bottom border-success">
+			<li class="nav-item">
+				<a class="nav-link {% if app.request.attributes.get('_route') starts with 'reviews' %}active text-success{% else %}text-success{% endif %}" href="{{ path('reviews_pending') }}">
+					Avis à valider
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link {% if app.request.attributes.get('_route') starts with 'covoits' %}active text-success{% else %}text-success{% endif %}" href="{{ path('covoits_problematiques') }}">
+					Trajets problématiques
+				</a>
+			</li>
+		</ul>
+
+		<!-- Ici s'affiche le contenu spécifique employé -->
+		{% block employee_content %}{% endblock %}
+	</div>
+{% endblock %}
+

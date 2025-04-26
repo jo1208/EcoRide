@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil
+{% endblock %}
+
+{% block body %}
+{% include 'profil/_profil_layout.html.twig' %}
+
+		<!-- Bloc information -->
+		<div class="bg-white p-4 rounded shadow-sm" style="border-left: 5px solid #3ba66b;">
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h4 class="mb-0 fw-bold">Information personelle</h4>
+                <a href="{{ path('app_profil_edit') }}" class="btn btn-outline-success btn-sm px-3">Modifier</a>
+			</div>
+			<div class="row">
+				<div class="col-md-1 text-center">
+					<i class="bi bi-person-circle" style="font-size: 3rem; color: #3ba66b;"></i>
+				</div>
+				<div class="col-md-11">
+					<p>
+						<strong>Pseudo :</strong>
+						{{ user.pseudo }}</p>
+					<p>
+						<strong>Nom :</strong>
+						{{ user.nom }}</p>
+					<p>
+						<strong>Prénom :</strong>
+						{{ user.prenom }}</p>
+					<p>
+						<strong>E-mail :</strong>
+						{{ user.email }}</p>
+					<p>
+						<strong>Téléphone :</strong>
+						{{ user.telephone }}</p>
+					<p>
+						<strong>Date de naissance :</strong>
+						{{ user.dateNaissance ? user.dateNaissance|date('d/m/Y') : 'Non renseignée' }}
+					</p>
+
+						<strong>Adresse :</strong>
+						{{ user.adresse }}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+
+

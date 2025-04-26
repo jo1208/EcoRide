@@ -1,0 +1,12 @@
+{% extends 'admin/index.html.twig' %}
+
+{% block admin_content %}
+	<h4 class="text-center mb-4">💰 Total des crédits gagnés</h4>
+
+	<div class="card shadow-sm p-4 text-center">
+		<h5>La plateforme a généré :</h5>
+		<p class="display-4 text-success fw-bold">{{ totalCredits }}
+			crédits</p>
+	</div>
+{% endblock %}
+

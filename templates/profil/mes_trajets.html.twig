@@ -1,0 +1,251 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil
+{% endblock %}
+
+{% block body %}
+{% include 'profil/_profil_layout.html.twig' %}
+
+	<div class="container py-5">
+		<div class="bg-white p-4 rounded shadow-sm border border-success-subtle">
+			<h2 class="text-success text-center mb-4">Mes trajets à venir</h2>
+
+			{# Trajets en tant que conducteur #}
+{% set trajetsConducteurActifs = trajetsConducteur|filter(trajet => trajet.statut != 'Terminé') %}
+
+
+			<h4 class="text-success mt-4">En tant que conducteur</h4>
+{% if trajetsConducteurActifs is empty %}
+	<p class="text-muted">Aucun trajet à venir.</p>
+{% else %}
+	{% for trajet in trajetsConducteurActifs %}
+
+
+
+					<div class="list-group-item mb-3 border rounded p-3">
+						<div class="d-flex justify-content-between align-items-center">
+							<div>
+								<strong>{{ trajet.dateDepart|date('d/m/Y') }}</strong>
+								|
+								{{ trajet.lieuDepart }}
+								→
+								{{ trajet.lieuArrivee }}
+								<br>
+								{{ trajet.heureDepart|date('H:i') }}
+								-
+								{{ trajet.heureArrivee|date('H:i') }}
+								<br>
+								{{ trajet.nbPlace }}
+								place(s) restante(s)
+								<span class="badge {{ trajet.nbPlace > 0 ? 'bg-success' : 'bg-danger' }} ms-2">
+									{{ trajet.nbPlace > 0 ? '🟢 Disponible' : '🔴 Complet' }}
+								</span>
+
+							{# ✅ Affichage du statut actuel du trajet #}
+							<div class="mt-2">
+								{% if trajet.statut == 'En cours' %}
+									<span class="badge bg-warning text-dark">En cours</span>
+								{% elseif trajet.statut == 'Terminé' %}
+									<span class="badge bg-success">Terminé</span>
+								{% elseif trajet.statut == 'Annulé' %}
+									<span class="badge bg-danger">Annulé</span>
+								{% else %}
+									<span class="badge bg-secondary">À venir</span>
+								{% endif %}
+							</div></div><div
+							class="text-end">
+							{# ✅ BOUTONS Démarrer / Arrivée à destination #}
+							{% if trajet.statut is null %}
+<!-- Bouton vert pour démarrer -->
+<button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmStartModal{{ trajet.id }}">
+	🚗 Démarrer
+</button>
+
+<!-- Modal Bootstrap "écolo" -->
+<div class="modal fade" id="confirmStartModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmStartLabel{{ trajet.id }}" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content border-success">
+
+			<div class="modal-header bg-success text-white">
+				<h5 class="modal-title" id="confirmStartLabel{{ trajet.id }}">Confirmer le démarrage</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+			</div>
+
+			<div class="modal-body">
+				<p>🚗 Êtes-vous sûr de vouloir démarrer ce trajet ?</p>
+				<p class="text-success">Le trajet passera en statut
+					<strong>En cours</strong>.</p>
+			</div>
+
+			<div class="modal-footer">
+				<form method="post" action="{{ path('app_demarrer_trajet', { id: trajet.id }) }}">
+					<input type="hidden" name="_token" value="{{ csrf_token('demarrer' ~ trajet.id) }}">
+					<button type="submit" class="btn btn-success">Oui, démarrer</button>
+				</form>
+				<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+								
+							{% elseif trajet.statut == 'En cours' %}
+<!-- Bouton vert pour arrivée -->
+<button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#confirmArriveModal{{ trajet.id }}">
+	🏁 Arrivée
+</button>
+
+<!-- Modal Bootstrap "écolo" -->
+<div class="modal fade" id="confirmArriveModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmArriveLabel{{ trajet.id }}" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content border-success">
+
+			<div class="modal-header bg-success text-white">
+				<h5 class="modal-title" id="confirmArriveLabel{{ trajet.id }}">Confirmer l'arrivée</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+			</div>
+
+			<div class="modal-body">
+				<p>🏁 Êtes-vous sûr que vous êtes arrivé à destination ?</p>
+				<p class="text-success">Le trajet sera marqué comme
+					<strong>Terminé</strong>.</p>
+			</div>
+
+			<div class="modal-footer">
+				<form method="post" action="{{ path('app_arrivee_trajet', { id: trajet.id }) }}">
+					<input type="hidden" name="_token" value="{{ csrf_token('arrivee' ~ trajet.id) }}">
+					<button type="submit" class="btn btn-success">Oui, arrivé</button>
+				</form>
+				<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+	
+							{% endif %}
+
+							</div>
+
+
+
+
+
+
+							<!-- Bouton Annuler (conducteur) -->
+							<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmCancelModal{{ trajet.id }}">
+								Annuler
+							</button>
+
+							<!-- Modal Bootstrap pour confirmation -->
+							<div class="modal fade" id="confirmCancelModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmCancelLabel{{ trajet.id }}" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+
+										<div class="modal-header">
+											<h5 class="modal-title" id="confirmCancelLabel{{ trajet.id }}">Confirmer l'annulation</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+										</div>
+
+										<div class="modal-body">
+											<p>🛑 Êtes-vous sûr de vouloir annuler ce trajet ?</p>
+											<p class="text-danger">⚠️ Tous les passagers seront remboursés.</p>
+										</div>
+
+										<div class="modal-footer">
+											<form method="post" action="{{ path('app_annuler_trajet_conducteur', { id: trajet.id }) }}">
+												<input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ trajet.id) }}">
+												<button type="submit" class="btn btn-danger">Confirmer l'annulation</button>
+											</form>
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% endif %}
+
+
+
+
+
+			
+{# Trajets en tant que passager #}
+<h4 class="text-primary mt-5">En tant que passager</h4>
+
+{% set trajetsActifs = trajetsPassager|filter(trajet => trajet.statut != 'Terminé') %}
+
+{% if trajetsActifs is empty %}
+	<p class="text-muted">Aucune réservation à venir.</p>
+{% else %}
+	{% for trajet in trajetsActifs %}
+		<div class="list-group-item mb-3 border rounded p-3">
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<strong>{{ trajet.dateDepart|date('d/m/Y') }}</strong>
+					|
+					{{ trajet.lieuDepart }}
+					→
+					{{ trajet.lieuArrivee }}<br>
+					{{ trajet.heureDepart|date('H:i') }}
+					-
+					{{ trajet.heureArrivee|date('H:i') }}<br>
+					Conducteur :
+					{{ trajet.conducteur.pseudo }}
+				</div>
+				<!-- Bouton Désinscrire -->
+				<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmUnsubscribeModal{{ trajet.id }}">
+					Se désinscrire
+				</button>
+
+				<!-- Modal Bootstrap -->
+				<div class="modal fade" id="confirmUnsubscribeModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmUnsubscribeLabel{{ trajet.id }}" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+
+							<div class="modal-header">
+								<h5 class="modal-title" id="confirmUnsubscribeLabel{{ trajet.id }}">Confirmer la désinscription</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+							</div>
+
+							<div class="modal-body">
+								<p>🚗 Êtes-vous sûr de vouloir vous désinscrire de ce covoiturage ?</p>
+								<p class="text-danger">⚠️ Cette action est irréversible !</p>
+							</div>
+
+							<div class="modal-footer">
+								<form method="post" action="{{ path('app_annuler_trajet_passager', { id: trajet.id }) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ trajet.id) }}">
+									<button type="submit" class="btn btn-danger">Confirmer la désinscription</button>
+								</form>
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+{% endif %}
+</div>
+{# fin du bg-white p-4 rounded shadow-sm ... #}
+</div>{# fin du container py-5 #}
+{% endblock %}
+
+
+
+

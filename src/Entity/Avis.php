@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AvisRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: AvisRepository::class)]
 class Avis
@@ -22,8 +23,21 @@ class Avis
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $trajetBienPasse = true;
+
     #[ORM\ManyToOne(inversedBy: 'avis')]
-    private ?user $user = null;
+    private ?User $user = null;
+
+    #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $conducteur = null;
+
+    #[ORM\ManyToOne(targetEntity: Covoiturage::class, inversedBy: 'avis')]
+    private ?Covoiturage $trajet = null;
+
 
     public function getId(): ?int
     {
@@ -66,14 +80,62 @@ class Avis
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?user $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getTrajet(): ?Covoiturage
+    {
+        return $this->trajet;
+    }
+
+    public function setTrajet(?Covoiturage $trajet): static
+    {
+        $this->trajet = $trajet;
+
+        return $this;
+    }
+
+    public function getConducteur(): ?User
+    {
+        return $this->conducteur;
+    }
+
+    public function setConducteur(?User $conducteur): self
+    {
+        $this->conducteur = $conducteur;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isTrajetBienPasse(): bool
+    {
+        return $this->trajetBienPasse;
+    }
+
+    public function setTrajetBienPasse(bool $trajetBienPasse): static
+    {
+        $this->trajetBienPasse = $trajetBienPasse;
 
         return $this;
     }

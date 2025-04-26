@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250401121718 extends AbstractMigration
+final class Version20250421131436 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -21,13 +21,13 @@ final class Version20250401121718 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE covoiturage ADD voiture_id INT DEFAULT NULL
+            ALTER TABLE avis ADD conducteur_id INT DEFAULT NULL
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE covoiturage ADD CONSTRAINT FK_28C79E89181A8BA FOREIGN KEY (voiture_id) REFERENCES voiture (id)
+            ALTER TABLE avis ADD CONSTRAINT FK_8F91ABF0F16F4AC6 FOREIGN KEY (conducteur_id) REFERENCES user (id)
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE INDEX IDX_28C79E89181A8BA ON covoiturage (voiture_id)
+            CREATE INDEX IDX_8F91ABF0F16F4AC6 ON avis (conducteur_id)
         SQL);
     }
 
@@ -35,13 +35,13 @@ final class Version20250401121718 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql(<<<'SQL'
-            ALTER TABLE covoiturage DROP FOREIGN KEY FK_28C79E89181A8BA
+            ALTER TABLE avis DROP FOREIGN KEY FK_8F91ABF0F16F4AC6
         SQL);
         $this->addSql(<<<'SQL'
-            DROP INDEX IDX_28C79E89181A8BA ON covoiturage
+            DROP INDEX IDX_8F91ABF0F16F4AC6 ON avis
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE covoiturage DROP voiture_id
+            ALTER TABLE avis DROP conducteur_id
         SQL);
     }
 }
