@@ -1,47 +1,12 @@
-# flyctl launch added from .gitignore
-
-###> symfony/framework-bundle ###
-.env.local
-.env.local.php
-.env.*.local
-config\secrets\prod\prod.decrypt.private.php
-public\bundles
-var
-vendor
-###< symfony/framework-bundle ###
-
-###> phpunit/phpunit ###
-phpunit.xml
-**\.phpunit.result.cache
-###< phpunit/phpunit ###
-
-###> symfony/phpunit-bridge ###
-**\.phpunit.result.cache
-phpunit.xml
-###< symfony/phpunit-bridge ###
-
-###> symfony/asset-mapper ###
-public\assets
-assets\vendor
-###< symfony/asset-mapper ###
-
-# flyctl launch added from vendor\psr\container\.gitignore
-vendor\psr\container\**\composer.lock
-vendor\psr\container\**\composer.phar
-vendor\psr\container\vendor
-
-# flyctl launch added from vendor\psr\event-dispatcher\.gitignore
-vendor\psr\event-dispatcher\vendor
-vendor\psr\event-dispatcher\**\composer.lock
-
-# flyctl launch added from vendor\sebastian\version\.gitignore
-vendor\sebastian\version\.php_cs.cache
-vendor\sebastian\version\.idea
-
-# flyctl launch added from vendor\twig\extra-bundle\.gitignore
-vendor\twig\extra-bundle\**\vendor
-vendor\twig\extra-bundle\**\var
-vendor\twig\extra-bundle\**\composer.lock
-vendor\twig\extra-bundle\**\phpunit.xml
-vendor\twig\extra-bundle\**\.phpunit.result.cache
-fly.toml
+.git
+node_modules/
+vendor/
+.env
+.env.*
+*.log
+var/
+public/uploads/
+.idea/
+.vscode/
+.DS_Store
+tests/
