@@ -1,6 +1,5 @@
 FROM php:8.2-apache
 
-# Installe les extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
     libicu-dev \
     libpq-dev \
@@ -9,29 +8,29 @@ RUN apt-get update && apt-get install -y \
     git \
     && docker-php-ext-install intl pdo pdo_mysql zip
 
-# Installe Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Active mod_rewrite pour Symfony
 RUN a2enmod rewrite
 
-# Copie ton code dans le conteneur
+# Copie Composer depuis une image composer officielle
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copie ton code
 COPY . /var/www/html/
 
-# Change DocumentRoot d'Apache vers /public
+# Change le DocumentRoot pour Symfony
 RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Configure Apache pour écouter sur 8080
+# Utiliser le port 8080
 RUN sed -i 's/80/8080/g' /etc/apache2/ports.conf /etc/apache2/sites-available/000-default.conf
 
-# Va dans ton projet et installe les dépendances Symfony
-WORKDIR /var/www/html/
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+# Permissions et config Git pour éviter erreur "dubious ownership"
+WORKDIR /var/www/html
+RUN git config --global --add safe.directory /var/www/html
 
-# Donne les bonnes permissions
-RUN chown -R www-data:www-data /var/www/html
+# Désactive les auto-scripts Symfony et autorise Composer en root
+ENV SYMFONY_SKIP_AUTO_SCRIPTS=1
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Expose le port 8080
+# Installe les dépendances sans exécuter les scripts
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
+
 EXPOSE 8080
-
-# Commande de lancement d'Apache
