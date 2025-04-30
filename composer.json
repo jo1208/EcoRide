@@ -55,7 +55,10 @@
             "symfony/runtime": true
         },
         "bump-after-update": true,
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "8.2"
+     }
     },
     "autoload": {
         "psr-4": {
@@ -84,7 +87,8 @@
             "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "Symfony\\Flex\\Flex::install"
         ],
         "post-update-cmd": [
             "@auto-scripts"
