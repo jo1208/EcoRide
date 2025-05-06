@@ -12,8 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Covoiturage
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -58,11 +59,12 @@ class Covoiturage
 
     #[ORM\ManyToOne(inversedBy: 'covoiturages')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
-    private ?Voiture $Voiture = null;
+    private ?Voiture $voiture = null;
 
     public function __construct()
     {
         $this->passagers = new ArrayCollection();
+        $this->avis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -192,11 +194,11 @@ class Covoiturage
 
     public function getVoiture(): ?Voiture
     {
-        return $this->Voiture;
+        return $this->voiture;
     }
     public function setVoiture(?Voiture $Voiture): static
     {
-        $this->Voiture = $Voiture;
+        $this->voiture = $Voiture;
         return $this;
     }
 
@@ -210,4 +212,10 @@ class Covoiturage
         $this->createdAt = $createdAt;
         return $this;
     }
+
+    /**
+     * @var Collection<int, Avis>
+     */
+    #[ORM\OneToMany(mappedBy: 'trajet', targetEntity: Avis::class, cascade: ['persist', 'remove'])]
+    private Collection $avis;
 }

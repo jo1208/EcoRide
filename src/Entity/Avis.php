@@ -10,8 +10,9 @@ use App\Entity\User;
 class Avis
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -32,8 +33,9 @@ class Avis
     #[ORM\Column(type: 'datetime', options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'avisConducteur')]
     private ?User $conducteur = null;
+
 
     #[ORM\ManyToOne(targetEntity: Covoiturage::class, inversedBy: 'avis')]
     private ?Covoiturage $trajet = null;

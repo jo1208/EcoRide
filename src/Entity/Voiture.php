@@ -12,8 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Voiture
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\GeneratedValue(strategy: "IDENTITY")]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -39,6 +39,9 @@ class Voiture
 
     #[ORM\ManyToOne(inversedBy: 'voitures')]
     private ?User $user = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $energie = null;
 
     /**
      * @var Collection<int, Covoiturage>
