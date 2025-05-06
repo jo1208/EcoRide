@@ -13,9 +13,11 @@ class Covoiturage
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "IDENTITY")]
-
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
+
+    #[ORM\ManyToOne(inversedBy: 'covoituragesConduits')]
+    private ?User $conducteur = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date_depart = null;
@@ -47,19 +49,21 @@ class Covoiturage
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?User $conducteur = null;
-
     /**
      * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'covoiturages')]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'covoituragesEnPassager')]
     private Collection $passagers;
 
     #[ORM\ManyToOne(inversedBy: 'covoiturages')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Voiture $voiture = null;
+
+    /**
+     * @var Collection<int, Avis>
+     */
+    #[ORM\OneToMany(mappedBy: 'trajet', targetEntity: Avis::class, cascade: ['persist', 'remove'])]
+    private Collection $avis;
 
     public function __construct()
     {
@@ -212,10 +216,4 @@ class Covoiturage
         $this->createdAt = $createdAt;
         return $this;
     }
-
-    /**
-     * @var Collection<int, Avis>
-     */
-    #[ORM\OneToMany(mappedBy: 'trajet', targetEntity: Avis::class, cascade: ['persist', 'remove'])]
-    private Collection $avis;
 }
