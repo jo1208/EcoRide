@@ -14,7 +14,7 @@ use App\Entity\Preference;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '"user"')]
+#[ORM\Table(name: 'users')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -75,10 +75,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Voiture::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'users', targetEntity: Voiture::class, cascade: ['persist', 'remove'])]
     private Collection $voitures;
 
-    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'users')]
     private Collection $avis;
 
     /**
