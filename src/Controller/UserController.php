@@ -18,7 +18,7 @@ class UserController extends AbstractController
         private UserPasswordHasherInterface $passwordHasher
     ) {}
 
-    #[Route('/user', name: 'app_user')]
+    #[Route('/user', name: 'app_user',  methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
         $user = new User();
