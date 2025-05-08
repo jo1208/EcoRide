@@ -25,13 +25,16 @@ class UserController extends AbstractController
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted()) {
-            dd([
-                'soumis' => true,
-                'valide' => $form->isValid(),
-                'erreurs' => (string) $form->getErrors(true, false),
-                'données' => $user,
-            ]);
+        if ($form->isSubmitted() && $form->isValid()) {
+            dd($user);
+            // Hash du mot de passe AVANT enregistrement
+            $hashedPassword = $this->passwordHasher->hashPassword($user, $user->getPassword());
+            $user->setPassword($hashedPassword);
+            $user->setCredits(20);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('user/index.html.twig', [
