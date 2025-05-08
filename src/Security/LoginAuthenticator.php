@@ -35,7 +35,8 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     {
         $email = $request->request->get('email', '');
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
-
+        $csrfToken = $request->request->get('_csrf_token');
+        dd($email, $csrfToken);
         return new Passport(
             new UserBadge($email, function ($userIdentifier) {
                 $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
