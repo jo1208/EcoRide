@@ -33,12 +33,11 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->getPayload()->getString('email');
+        $email = $request->request->get('email', '');
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 
         return new Passport(
             new UserBadge($email, function ($userIdentifier) {
-                // ⚠️ On vérifie ici si le compte est suspendu
                 $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
 
                 if (!$user) {
@@ -51,9 +50,9 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
                 return $user;
             }),
-            new PasswordCredentials($request->getPayload()->getString('password')),
+            new PasswordCredentials($request->request->get('password', '')),
             [
-                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
+                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
                 new RememberMeBadge(),
             ]
         );
