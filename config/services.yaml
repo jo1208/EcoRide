@@ -1,3 +1,6 @@
+parameters:
+  env(APP_SECRET): "08874621f9689dfd3504746d72a8590babf1cc93593e93a56a64cd2e1ffe0e36"
+
 services:
   _defaults:
     autowire: true
@@ -17,3 +20,4 @@ services:
   App\Security\UserChecker:
     tags:
       - { name: "security.user_checker", firewall: "main" } # ✅ IMPORTANT
+
