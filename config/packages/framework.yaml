@@ -6,6 +6,7 @@ framework:
     handler_id: null # Cela utilise les sessions PHP classiques
     cookie_secure: auto # Si tu utilises HTTPS
     cookie_samesite: lax # Assure-toi que les cookies sont bien envoyés
+    use_cookies: true
 when@test:
   framework:
     test: true
