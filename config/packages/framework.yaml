@@ -4,7 +4,6 @@ framework:
   csrf_protection: ~
   session:
     handler_id: null # Cela utilise les sessions PHP classiques
-    storage_id: session.storage.native
     cookie_secure: auto # Si tu utilises HTTPS
     cookie_samesite: lax # Assure-toi que les cookies sont bien envoyés
 when@test:
