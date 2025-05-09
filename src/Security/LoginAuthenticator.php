@@ -15,10 +15,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
-use App\Entity\User;
-
-
 
 class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -26,40 +22,23 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private \App\Repository\UserRepository $userRepository // ✅ injecter ici
-    ) {}
+    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->request->get('email', '');
+        $email = $request->getPayload()->getString('email');
+
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
-        $csrfToken = $request->request->get('_csrf_token'); // Récupère le token CSRF envoyé avec la requête
 
         return new Passport(
-            new UserBadge($email, function ($userIdentifier) {
-                $user = $this->userRepository->findOneBy(['email' => $userIdentifier]);
-
-                if (!$user) {
-                    throw new CustomUserMessageAuthenticationException('Utilisateur non trouvé.');
-                }
-
-                if ($user->isSuspended()) {
-                    throw new CustomUserMessageAuthenticationException('⚠️ Votre compte est suspendu.');
-                }
-
-                return $user;
-            }),
-            new PasswordCredentials($request->request->get('password', '')),
+            new UserBadge($email),
+            new PasswordCredentials($request->getPayload()->getString('password')),
             [
-                new CsrfTokenBadge('authenticate', $csrfToken),  // Vérifie le token CSRF
+                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
                 new RememberMeBadge(),
             ]
         );
     }
-
-
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
@@ -69,7 +48,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
         // For example:
         // return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        return new RedirectResponse($this->urlGenerator->generate('app_profil'));
+        return new RedirectResponse('/profil');
     }
 
     protected function getLoginUrl(Request $request): string
