@@ -28,7 +28,7 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    #[Route('/debug-csrf', name: 'debug_csrf')]
+    #[Route('/debug-csrf', name: 'debug_csrf', methods: ['GET'])]
     public function debugCsrf(CsrfTokenManagerInterface $csrfTokenManager): Response
     {
         $token = $csrfTokenManager->getToken('authenticate')->getValue();
