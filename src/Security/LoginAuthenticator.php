@@ -50,7 +50,8 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         // For example:
         // return new RedirectResponse($this->urlGenerator->generate('some_route'));
         // return new RedirectResponse('/profil');
-        return new Response('Authentication success');
+        $csrfToken = $request->request->get('_csrf_token');
+        return new Response('Token CSRF : ' . $csrfToken);
     }
 
     protected function getLoginUrl(Request $request): string
