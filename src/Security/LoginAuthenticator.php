@@ -40,8 +40,8 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         $password = $request->request->get('password');
         $csrfToken = $request->request->get('_csrf_token');  // Récupère le token CSRF
 
-        // Utilisation de isCsrfTokenValid pour valider le token CSRF
-        if (!$this->csrfTokenManager->isCsrfTokenValid('authenticate', $csrfToken)) {
+        // Utilisation de isTokenValid pour valider le token CSRF
+        if (!$this->csrfTokenManager->isTokenValid(new \Symfony\Component\Security\Csrf\CsrfToken('authenticate', $csrfToken))) {
             throw new InvalidCsrfTokenException('Invalid CSRF token');
         }
 
