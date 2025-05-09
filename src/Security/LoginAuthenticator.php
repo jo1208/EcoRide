@@ -1,68 +1,29 @@
 <?php
 
-namespace App\Security;
+namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
-use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
-use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface; // Import du gestionnaire de CSRF
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Routing\Annotation\Route;
 
-class LoginAuthenticator extends AbstractLoginFormAuthenticator
+class SecurityController extends AbstractController
 {
-    private CsrfTokenManagerInterface $csrfTokenManager;
-
-    public const LOGIN_ROUTE = 'app_login';
-
-    public function __construct(private UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager)
+    /**
+     * @Route("/login", name="app_login")
+     */
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        $this->csrfTokenManager = $csrfTokenManager;
-    }
+        // Récupère l'erreur d'authentification (si elle existe)
+        $error = $authenticationUtils->getLastAuthenticationError();
 
-    public function authenticate(Request $request): Passport
-    {
-        $email = $request->request->get('email');
-        $password = $request->request->get('password');
-        $csrfToken = $request->request->get('_csrf_token');  // Récupère le token CSRF
+        // Récupère le dernier nom d'utilisateur
+        $lastUsername = $authenticationUtils->getLastUsername();
 
-        // Affiche les tokens pour déboguer
-        error_log('Generated CSRF token: ' . $this->csrfTokenManager->getToken('authenticate')->getValue());
-        error_log('Submitted CSRF token: ' . $csrfToken);
-
-        // Valide le token CSRF
-        if (!$this->csrfTokenManager->isTokenValid(new \Symfony\Component\Security\Csrf\CsrfToken('authenticate', $csrfToken))) {
-            throw new InvalidCsrfTokenException('Invalid CSRF token');
-        }
-
-        return new Passport(
-            new UserBadge($email),
-            new PasswordCredentials($password),
-            [
-                new CsrfTokenBadge('authenticate', $csrfToken),
-                new RememberMeBadge(),
-            ]
-        );
-    }
-
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
-    {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            return new RedirectResponse($targetPath);
-        }
-
-        return new RedirectResponse('/profil');
-    }
-
-    protected function getLoginUrl(Request $request): string
-    {
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+        // Affiche la page de connexion
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
     }
 }
