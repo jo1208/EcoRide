@@ -4,7 +4,7 @@
 
 {% block body %}
 <form action="{{ path('app_login') }}" method="post">
-	{{ csrf_token('authenticate') }}
+<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 	<label for="inputEmail">Email</label>
 	<input type="email" name="_username" id="inputEmail" class="form-control" required autofocus>
 
