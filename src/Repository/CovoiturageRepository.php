@@ -19,7 +19,7 @@ class CovoiturageRepository extends ServiceEntityRepository
     public function findWithFilters(array $filters): array
     {
         $qb = $this->createQueryBuilder('c')
-            ->leftJoin('c.Voiture', 'v')
+            ->leftJoin('c.voiture', 'v')
             ->addSelect('v')
             ->where('c.date_depart >= :today')
             ->andWhere('c.statut IS NULL') // ✅ Ne pas afficher les trajets annulés
