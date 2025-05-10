@@ -335,6 +335,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->covoituragesEnPassager;
     }
 
+    public function addCovoituragesEnPassager(Covoiturage $covoiturage): static
+    {
+        if (!$this->covoituragesEnPassager->contains($covoiturage)) {
+            $this->covoituragesEnPassager->add($covoiturage);
+            $covoiturage->addPassager($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCovoituragesEnPassager(Covoiturage $covoiturage): static
+    {
+        if ($this->covoituragesEnPassager->removeElement($covoiturage)) {
+            $covoiturage->removePassager($this);
+        }
+
+        return $this;
+    }
+
     public function getPreference(): ?Preference
     {
         return $this->preference;

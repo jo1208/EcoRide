@@ -10,18 +10,21 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250508144639 extends AbstractMigration
+final class Version20250510131135 extends AbstractMigration
 {
     public function getDescription(): string
     {
         return '';
     }
 
-    public function up(Schema $schema): void {}
-
+    public function up(Schema $schema): void
+    {
+        // La table covoiturage_user existe déjà, donc on ne la recrée pas
+        // $this->addSql('CREATE TABLE ...');
+    }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE IF EXISTS preference');
+        $this->addSql('DROP TABLE IF EXISTS covoiturage_user');
     }
 }

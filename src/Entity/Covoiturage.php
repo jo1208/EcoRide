@@ -55,6 +55,7 @@ class Covoiturage
      * @var Collection<int, User>
      */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'covoituragesEnPassager')]
+    #[ORM\JoinTable(name: 'covoiturage_user')]
     private Collection $passagers;
 
     #[ORM\ManyToOne(inversedBy: 'covoiturages')]
