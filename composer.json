@@ -84,19 +84,10 @@
         "symfony/polyfill-php82": "*"
     },
     "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "importmap:install": "symfony-cmd"
-        },
-        "post-install-cmd": [
-            "@auto-scripts",
-            "Symfony\\Flex\\Flex::install"
-        ],
-        "post-update-cmd": [
-            "@auto-scripts"
-        ]
-    },
+    "auto-scripts": {},
+    "post-install-cmd": [],
+    "post-update-cmd": []
+},
     "conflict": {
         "symfony/symfony": "*"
     },
