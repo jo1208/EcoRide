@@ -5,7 +5,7 @@ use Symfony\Component\Dotenv\Dotenv;
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 // ✅ N'exécute Dotenv que si on est en développement
-if (!isset($_ENV['APP_ENV']) && file_exists(dirname(__DIR__) . '/.env')) {
+if (!isset($_ENV['APP_ENV']) && !isset($_SERVER['APP_ENV'])) {
     (new Dotenv())->bootEnv(dirname(__DIR__) . '/.env');
 }
 
