@@ -1,0 +1,92 @@
+.hero {
+    position: relative;
+    background: url('../images/image_fond.png') center center / cover no-repeat;
+    padding: 6rem 2rem 3rem 2rem;
+    color: white;
+    text-align: center;
+}
+
+.overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.search-box {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.search-box input,
+.search-box button {
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+}
+.search-box button[type="submit"] {
+    margin-bottom: 2rem;
+    
+}
+
+.search-box button {
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+}
+
+/* Responsive pour mobile */
+@media (max-width: 768px) {
+    .hero {
+        padding: 2rem 1rem;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        max-width: 90%;
+        color: white;
+    }
+
+    .overlay h1 {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .overlay p {
+        font-size: 0.95rem;
+    }
+
+    .search-box {
+        width: 100%;
+        max-width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        padding: 0 1rem;
+    }
+
+    .search-box input,
+    .search-box button {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+        width: 100%;
+    }
+
+    .search-box button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+    }
+}
