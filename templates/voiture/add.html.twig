@@ -11,33 +11,54 @@
 		<h1 class="mb-4">Ajouter un véhicule</h1>
 
 		{{ form_start(form) }}
+{% if form.vars.errors|length > 0 %}
+	<div class="alert alert-danger">
+		{{ form_errors(form) }}
+	</div>
+{% endif %}
+
+
 		<div class="mb-3">
 			{{ form_label(form.modele) }}
 			{{ form_widget(form.modele, {'attr': {'class': 'form-control'}}) }}
+{{ form_errors(form.modele) }}
+
 		</div>
 		<div class="mb-3">
 			{{ form_label(form.marque) }}
 			{{ form_widget(form.marque, {'attr': {'class': 'form-control'}}) }}
+{{ form_errors(form.marque) }}
+
 		</div>
 		<div class="mb-3">
 			{{ form_label(form.immatriculation) }}
 			{{ form_widget(form.immatriculation, {'attr': {'class': 'form-control'}}) }}
+{{ form_errors(form.immatriculation) }}
+
 		</div>
 		<div class="mb-3">
 			{{ form_label(form.couleur) }}
 			{{ form_widget(form.couleur, {'attr': {'class': 'form-control'}}) }}
+{{ form_errors(form.couleur) }}
+
 		</div>
 		<div class="mb-3">
 			{{ form_label(form.date_premiere_immatriculation) }}
 			{{ form_widget(form.date_premiere_immatriculation, {'attr': {'class': 'form-control'}}) }}
+{{ form_errors(form.date_premiere_immatriculation) }}
+
 		</div>
 		<div class="mb-3">
 			{{ form_label(form.nb_place) }}
 			{{ form_widget(form.nb_place, {'attr': {'class': 'form-control'}}) }}
+{{ form_errors(form.nb_place) }}
+
 		</div>
 		<div class="form-check mb-3">
 			{{ form_widget(form.ecologique, {'attr': {'class': 'form-check-input'}}) }}
 			{{ form_label(form.ecologique, null, {'label_attr': {'class': 'form-check-label'}}) }}
+{{ form_errors(form.ecologique) }}
+
 		</div>
 
 		<button class="btn btn-success mt-4 mb-4">Ajouter</button>
