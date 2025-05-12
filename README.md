@@ -9,7 +9,7 @@ EcoRide est une application web de covoiturage destinée aux entreprises. Elle p
 ## 🛠️ Technologies utilisées
 
 - PHP 8.2
-- Symfony 6.x
+- Symfony 7.2
 - PostgreSQL
 - Composer
 - Bootstrap 5
@@ -59,3 +59,18 @@ Rôle	Email	Mot de passe
 Admin	admin@ecoride.fr	adminpass
 Employé	employe@ecoride.fr	employepass
 Utilisateur	user@ecoride.fr	userpass
+
+
+🗄️ Base de données SQL manuelle
+Afin de démontrer la maîtrise de la base de données indépendamment des outils Symfony ou Doctrine, deux fichiers SQL ont été réalisés manuellement :
+
+sql/schema.sql : contient les instructions SQL pures pour créer l’ensemble des tables, les clés primaires et étrangères, ainsi que les contraintes nécessaires à l’application (relations OneToMany, ManyToMany, OneToOne, etc.).
+
+sql/data.sql : permet d’insérer des données de démonstration manuelles cohérentes dans toutes les tables (utilisateurs, covoiturages, véhicules, avis, préférences, etc.).
+
+Ces fichiers permettent d’installer et de tester la base sans aucune dépendance à Doctrine, et peuvent être exécutés dans n’importe quelle instance PostgreSQL avec les commandes suivantes :
+
+dropdb -U postgres ecoride
+createdb -U postgres ecoride
+psql -U postgres -d ecoride -f sql/schema.sql
+psql -U postgres -d ecoride -f sql/data.sql
