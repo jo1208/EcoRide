@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  background: url('../images/hero.jpg') center center / cover no-repeat;
+  background: url('../images/image_fond.png') center center / cover no-repeat;
   padding: 6rem 2rem 3rem 2rem;
   color: white;
   text-align: center;
@@ -85,4 +85,7 @@
     border: none;
     border-radius: 8px;
   }
+    .search-box button[type="submit"] {
+      margin-bottom: 2rem;
+    }
 }
