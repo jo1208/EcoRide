@@ -44,6 +44,7 @@ class VoitureController extends AbstractController
         $form = $this->createForm(VoitureType::class, $voiture);
 
         $form->handleRequest($request);
+        dd($form->isSubmitted(), $form->isValid());
 
         if ($form->isSubmitted() && $form->isValid()) {
             $voiture->setUser($this->getUser());
