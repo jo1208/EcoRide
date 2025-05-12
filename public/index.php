@@ -5,10 +5,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-// ✅ Ajout pour corriger le CSRF sur Heroku (proxy trust)
+// ✅ Corrige la gestion des proxys pour Heroku avec Symfony 7
 Request::setTrustedProxies(
-    ['127.0.0.1', '::1'],
-    Request::HEADER_X_FORWARDED_ALL
+    [$_SERVER['REMOTE_ADDR']],
+    Request::HEADER_FORWARDED
 );
 
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
