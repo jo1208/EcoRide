@@ -30,24 +30,32 @@
 					<button class="btn btn-success w-100">Rechercher</button>
 				</div>
 
-				<div class="col-md-2 mb-4">
-					<input type="number" name="prix_max" class="form-control" placeholder="Prix max (€)" value="{{ app.request.get('prix_max') }}">
-				</div>
-				<div class="col-md-2 mb-4">
-					<input type="number" name="duree_max" class="form-control" placeholder="Durée max (min)" value="{{ app.request.get('duree_max') }}">
-				</div>
-				<div class="col-md-2 mb-4">
-					<select name="note_min" class="form-control">
-						<option value="">Note min</option>
-						{% for i in 1..5 %}
-							<option value="{{ i }}" {% if app.request.get('note_min') == i %} selected {% endif %}>{{ i }}
-								⭐</option>
-						{% endfor %}
-					</select>
-				</div>
-				<div class="col-md-2 form-check mt-2 d-flex align-items-center mb-4">
-					<input class="form-check-input" type="checkbox" name="ecologique" value="1" {% if app.request.get('ecologique') %} checked {% endif %}>
-					<label class="form-check-label ms-2">Écologique</label>
+				<button class="btn btn-outline-secondary d-md-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilters" aria-expanded="false" aria-controls="mobileFilters">
+					🔍 Filtres avancés
+				</button>
+
+				<div class="collapse d-md-block" id="mobileFilters">
+					<div class="row">
+						<div class="col-md-2 mb-4">
+							<input type="number" name="prix_max" class="form-control" placeholder="Prix max (€)" value="{{ app.request.get('prix_max') }}">
+						</div>
+						<div class="col-md-2 mb-4">
+							<input type="number" name="duree_max" class="form-control" placeholder="Durée max (min)" value="{{ app.request.get('duree_max') }}">
+						</div>
+						<div class="col-md-2 mb-4">
+							<select name="note_min" class="form-control">
+								<option value="">Note min</option>
+								{% for i in 1..5 %}
+									<option value="{{ i }}" {% if app.request.get('note_min') == i %} selected {% endif %}>{{ i }}
+										⭐</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="col-md-2 form-check mt-2 d-flex align-items-center mb-4">
+							<input class="form-check-input" type="checkbox" name="ecologique" value="1" {% if app.request.get('ecologique') %} checked {% endif %}>
+							<label class="form-check-label ms-2">Écologique</label>
+						</div>
+					</div>
 				</div>
 			</form>
 		</section>
