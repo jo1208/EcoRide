@@ -14,7 +14,6 @@
 
 
 			<form method="get" action="{{ path('app_covoiturage') }}" class="row g-3">
-				
 
 
 				<div class="col-md-3 mb-4">
@@ -127,10 +126,10 @@
 							<a href="{% if trajet.nbPlace == 0 or user is null or not creditsOk %}#{% else %}{{ path('covoiturage_show', { id: trajet.id }) }}{% endif %}" class="btn btn-outline-secondary btn-sm {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}">
 								Détails
 							</a>
-							
+
 							{% set user = app.user %}
 							{% set creditsOk = user and (user.credits >= trajet.prixPersonne) %}
-							
+
 
 							<button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#confirmParticipationModal{{ trajet.id }}" {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}>
 								Participer
@@ -181,7 +180,7 @@
 			{% else %}
 				<p class="text-center">Aucun trajet trouvé.</p>
 
-{% if propositionNouvelleDate and app.request.get('lieu_depart') and app.request.get('lieu_arrivee') and app.request.get('date') %}
+				{% if propositionNouvelleDate and app.request.get('lieu_depart') and app.request.get('lieu_arrivee') and app.request.get('date') %}
 					<div class="alert alert-info text-center mt-3">
 						🚗 Aucun trajet trouvé pour votre recherche, mais un trajet est disponible le
 						<strong>{{ propositionNouvelleDate|date('d/m/Y') }}</strong>.<br>
@@ -191,8 +190,8 @@
 			{% endfor %}
 		</section>
 	</main>
-<script>
-	document.addEventListener('DOMContentLoaded', function () {
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
 const form = document.querySelector('.search-section form');
 const alertDiv = document.getElementById('alertFormIncomplete');
 
@@ -209,7 +208,7 @@ alertDiv.classList.add('d-none'); // Cache l'alerte si tout est ok
 }
 });
 });
-</script>
+	</script>
 
 
 {% endblock %}

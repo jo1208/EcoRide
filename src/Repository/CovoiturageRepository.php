@@ -27,12 +27,12 @@ class CovoiturageRepository extends ServiceEntityRepository
             ->orderBy('c.date_depart', 'ASC');
 
         if (!empty($filters['lieu_depart'])) {
-            $qb->andWhere('c.lieu_depart LIKE :lieu_depart')
+            $qb->andWhere('LOWER(c.lieu_depart) LIKE LOWER(:lieu_depart)')
                 ->setParameter('lieu_depart', '%' . $filters['lieu_depart'] . '%');
         }
 
         if (!empty($filters['lieu_arrivee'])) {
-            $qb->andWhere('c.lieu_arrivee LIKE :lieu_arrivee')
+            $qb->andWhere('LOWER(c.lieu_arrivee) LIKE LOWER(:lieu_arrivee)')
                 ->setParameter('lieu_arrivee', '%' . $filters['lieu_arrivee'] . '%');
         }
 
