@@ -134,25 +134,25 @@ class CovoiturageController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Trajets terminés ou annulés en tant que conducteur
+        $statutsHistorique = ['Terminé', 'Annulé'];
+
+        // ✅ Trajets comme conducteur
         $trajetsConducteur = $repo->createQueryBuilder('c')
             ->where('c.conducteur = :user')
-            ->andWhere('c.date_depart < :now OR c.statut = :annule')
+            ->andWhere('c.statut IN (:statuts)')
             ->setParameter('user', $user)
-            ->setParameter('now', new \DateTime())
-            ->setParameter('annule', 'Annulé')
+            ->setParameter('statuts', $statutsHistorique)
             ->orderBy('c.date_depart', 'DESC')
             ->getQuery()
             ->getResult();
 
-        // Trajets terminés ou annulés en tant que passager
+        // ✅ Trajets comme passager
         $trajetsPassager = $repo->createQueryBuilder('c')
             ->join('c.passagers', 'p')
             ->where('p = :user')
-            ->andWhere('c.date_depart < :now OR c.statut = :annule')
+            ->andWhere('c.statut IN (:statuts)')
             ->setParameter('user', $user)
-            ->setParameter('now', new \DateTime())
-            ->setParameter('annule', 'Annulé')
+            ->setParameter('statuts', $statutsHistorique)
             ->orderBy('c.date_depart', 'DESC')
             ->getQuery()
             ->getResult();
@@ -162,6 +162,8 @@ class CovoiturageController extends AbstractController
             'trajetsPassager' => $trajetsPassager,
         ]);
     }
+
+
 
 
     #[Route('/profil/mes-trajets', name: 'app_mes_trajets')]
