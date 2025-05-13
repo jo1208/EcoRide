@@ -7,7 +7,7 @@ framework:
     cookie_secure: auto # Si tu utilises HTTPS
     cookie_samesite: lax # Assure-toi que les cookies sont bien envoyés
     use_cookies: true
-    save_path: "%env(SESSION_SAVE_PATH)%"
+
 when@test:
   framework:
     test: true
