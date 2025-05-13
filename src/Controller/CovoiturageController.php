@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CovoiturageController extends AbstractController
 {
@@ -391,7 +392,7 @@ class CovoiturageController extends AbstractController
     }
 
     #[Route('/trajet/{id}/arrivee', name: 'app_arrivee_trajet', methods: ['POST'])]
-    public function arriveeTrajet(Covoiturage $trajet, EntityManagerInterface $em, MailerInterface $mailer): Response
+    public function arriveeTrajet(Covoiturage $trajet, EntityManagerInterface $em, MailerInterface $mailer, UrlGeneratorInterface $urlGenerator): Response
     {
         $user = $this->getUser();
 
@@ -411,16 +412,25 @@ class CovoiturageController extends AbstractController
 
         // Envoi d'un mail aux passagers pour valider le trajet
         foreach ($trajet->getPassagers() as $passager) {
+            $link = $urlGenerator->generate(
+                'app_valider_trajet',
+                ['id' => $trajet->getId()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+
+            $html = "
+                <p>Bonjour <strong>{$passager->getPrenom()}</strong>,</p>
+                <p>Votre trajet de <strong>{$trajet->getLieuDepart()}</strong> à <strong>{$trajet->getLieuArrivee()}</strong> est terminé.</p>
+                <p>Merci de <a href=\"{$link}\">cliquer ici</a> pour confirmer que tout s'est bien passé sur votre espace EcoRide !</p>
+                <p>À bientôt ! 🚗</p>
+            ";
+
             $email = (new Email())
                 ->from('ecoride.dev@gmail.com')
                 ->to($passager->getEmail())
                 ->subject('Confirmez votre trajet EcoRide 🚗')
-                ->html("
-            <p>Bonjour <strong>{$passager->getPrenom()}</strong>,</p>
-            <p>Votre trajet de <strong>{$trajet->getLieuDepart()}</strong> à <strong>{$trajet->getLieuArrivee()}</strong> est terminé.</p>
-            <p>Merci de <a href=\"http://localhost:8000/trajet/{$trajet->getId()}/validation\">cliquer ici pour confirmer</a> que tout s'est bien passé sur votre espace EcoRide !</p>
-            <p>À bientôt ! 🚗</p>
-        ");
+                ->html($html);
+
             $mailer->send($email);
         }
 
