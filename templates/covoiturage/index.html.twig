@@ -66,8 +66,12 @@
 				<div class="card p-3 mb-3">
 					<div class="row align-items-center">
 						<div class="col-auto">
-							<img src="{{ asset('images/avatar.png') }}" alt="Avatar" class="rounded" width="60">
-						</div>
+{% if trajet.conducteur.photo %}
+	<img src="data:image/jpeg;base64,{{ trajet.conducteur.photo }}" alt="Photo du conducteur" class="rounded-circle border" style="width: 60px; height: 60px; object-fit: cover;">
+{% else %}
+	<img src="{{ asset('images/avatar.png') }}" alt="Avatar par défaut" class="rounded-circle border" style="width: 60px; height: 60px; object-fit: cover;">
+{% endif %}</div>
+
 						<div class="col">
 							<div>
 								<strong>Conducteur :</strong>

@@ -47,6 +47,13 @@ class ProfilController extends AbstractController
                 $user->setPassword($hashedPassword);
             }
 
+            $photoFile = $form->get('photo')->getData();
+            if ($photoFile) {
+                $stream = fopen($photoFile->getPathname(), 'rb');
+                $user->setPhoto(stream_get_contents($stream));
+                fclose($stream);
+            }
+
             $em->flush();
             $this->addFlash('success', 'Profil mis à jour avec succès ✅');
             return $this->redirectToRoute('app_profil');

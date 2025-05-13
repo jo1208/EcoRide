@@ -9,7 +9,10 @@
 			<h2 class="text-center mb-4 text-success">Créer un compte</h2>
 
 			{{ form_start(form) }}
-
+			<div class="mb-3">
+				{{ form_label(form.photo, null, {'label_attr': {'class': 'form-label text-success'}}) }}
+				{{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+			</div>
 			<div class="mb-3">
 				{{ form_label(form.pseudo, null, {'label_attr': {'class': 'form-label text-success'}}) }}
 				{{ form_widget(form.pseudo, {'attr': {'class': 'form-control'}}) }}

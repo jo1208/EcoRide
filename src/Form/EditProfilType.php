@@ -13,12 +13,18 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class EditProfilType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('photo', FileType::class, [
+                'label' => 'Photo de profil (facultative)',
+                'mapped' => false,
+                'required' => false,
+            ])
             ->add('pseudo', TextType::class)
             ->add('plainPassword', PasswordType::class, [
                 'label' => 'Nouveau mot de passe',

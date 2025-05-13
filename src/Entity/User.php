@@ -208,8 +208,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPhoto()
+    public function getPhoto(): ?string
     {
+        if ($this->photo === null) {
+            return null;
+        }
+
+        // Vérifie que la ressource est encore ouverte
+        if (is_resource($this->photo)) {
+            rewind($this->photo); // très important pour éviter de lire à la fin
+            return base64_encode(stream_get_contents($this->photo));
+        }
+
         return $this->photo;
     }
 

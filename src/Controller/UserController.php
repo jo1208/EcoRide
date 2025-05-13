@@ -24,6 +24,7 @@ class UserController extends AbstractController
         $user = new User();
         $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
+        $file = $form->get('photo')->getData();
 
         if ($form->isSubmitted() && $form->isValid()) {
 
@@ -31,6 +32,13 @@ class UserController extends AbstractController
             $hashedPassword = $this->passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
             $user->setCredits(20);
+
+            if ($file) {
+                $stream = fopen($file->getPathname(), 'rb');
+                $user->setPhoto(stream_get_contents($stream));
+                fclose($stream);
+            }
+
             $this->entityManager->persist($user);
             $this->entityManager->flush();
 
