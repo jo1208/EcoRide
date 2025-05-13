@@ -64,7 +64,7 @@
 
 
   .hero .overlay {
-    background-color: #28a745;
+    background-color: #6cc56f;
     padding: 1.5rem 1rem;
     border-radius: 10px;
     max-width: 90%;
@@ -136,8 +136,10 @@
       .benefit {
         flex: 0 0 80%;
         scroll-snap-align: center;
+        padding-bottom: 8rem;
         margin: 0 10px;
       }
+
     
       .benefits::-webkit-scrollbar {
         display: none; /* Masque la scrollbar */
