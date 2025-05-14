@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Document\ConnectionLog;
+use Doctrine\ODM\MongoDB\DocumentManager;
 
 #[Route('/admin')]
 #[IsGranted('ROLE_ADMIN')]
@@ -144,6 +146,17 @@ class AdminController extends AbstractController
 
         return $this->render('admin/credits.html.twig', [
             'totalCredits' => $totalCredits,
+        ]);
+    }
+
+    #[Route('/admin/logs', name: 'admin_logs')]
+    public function logs(DocumentManager $dm): Response
+    {
+        $logs = $dm->getRepository(ConnectionLog::class)
+            ->findBy([], ['timestamp' => 'DESC'], 100);
+
+        return $this->render('admin/logs.html.twig', [
+            'logs' => $logs,
         ]);
     }
 }

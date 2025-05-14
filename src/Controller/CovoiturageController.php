@@ -164,8 +164,6 @@ class CovoiturageController extends AbstractController
     }
 
 
-
-
     #[Route('/profil/mes-trajets', name: 'app_mes_trajets')]
     public function trajetsAVenir(CovoiturageRepository $repo): Response
     {
