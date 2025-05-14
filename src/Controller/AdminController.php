@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Document\ConnectionLog;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/admin')]
 #[IsGranted('ROLE_ADMIN')]
@@ -149,14 +150,23 @@ class AdminController extends AbstractController
         ]);
     }
 
+
     #[Route('/admin/logs', name: 'admin_logs')]
-    public function logs(DocumentManager $dm): Response
+    public function logs(DocumentManager $dm, Request $request, PaginatorInterface $paginator): Response
     {
-        $logs = $dm->getRepository(ConnectionLog::class)
-            ->findBy([], ['timestamp' => 'DESC'], 100);
+        $query = $dm->getRepository(ConnectionLog::class)
+            ->createQueryBuilder()
+            ->sort('timestamp', 'DESC')
+            ->getQuery();
+
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1), // page actuelle
+            20 // éléments par page
+        );
 
         return $this->render('admin/logs.html.twig', [
-            'logs' => $logs,
+            'pagination' => $pagination,
         ]);
     }
 }

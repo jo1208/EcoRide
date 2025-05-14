@@ -7,15 +7,15 @@
 		<table class="table table-striped table-bordered align-middle">
 			<thead class="table-success">
 				<tr>
-					<th scope="col">ID Utilisateur</th>
-					<th scope="col">Email</th>
-					<th scope="col">Adresse IP</th>
-					<th scope="col">Statut</th>
-					<th scope="col">Horodatage</th>
+					<th>ID Utilisateur</th>
+					<th>Email</th>
+					<th>Adresse IP</th>
+					<th>Statut</th>
+					<th>Horodatage</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for log in logs %}
+				{% for log in pagination %}
 					<tr>
 						<td>{{ log.userId }}</td>
 						<td>{{ log.username }}</td>
@@ -36,6 +36,10 @@
 				{% endfor %}
 			</tbody>
 		</table>
+	</div>
+
+	<div class="d-flex justify-content-center mt-4">
+		{{ knp_pagination_render(pagination) }}
 	</div>
 {% endblock %}
 
