@@ -14,7 +14,7 @@ EcoRide est une application web de covoiturage destinée aux entreprises. Elle p
 - Composer
 - Bootstrap 5
 - JavaScript / Chart.js
-- Heroku (pour le déploiement distant)
+- Heroku (pour le déploiement distant) / MongoDB (pour les logs)
 
 ---
 
@@ -50,15 +50,15 @@ php bin/console doctrine:fixtures:load
 
 ###6. Lancer le serveur Symfony
 
-Si tu utilises l’outil Symfony CLI :
 symfony serve ou php -S localhost:8000 -t public
 
 ### Identifiants de test
 
-Rôle	Email	Mot de passe
-Admin	admin@ecoride.fr	adminpass
-Employé	employe@ecoride.fr	employepass
-Utilisateur	user@ecoride.fr	userpass
+| Rôle        | Email                  | Mot de passe   |
+|-------------|------------------------|----------------|
+| Admin       | admin@ecoride.fr       | adminpass      |
+| Employé     | employe@ecoride.fr     | employepass    |
+| Utilisateur | user@ecoride.fr        | userpass       |
 
 
 🗄️ Base de données SQL manuelle
@@ -74,3 +74,4 @@ dropdb -U postgres ecoride
 createdb -U postgres ecoride
 psql -U postgres -d ecoride -f sql/schema.sql
 psql -U postgres -d ecoride -f sql/data.sql
+```
