@@ -61,7 +61,7 @@
 
 @media (min-width: 768px) {
   .how-it-works-desktop {
-    display: none;
+    display: block;
     text-align: center;
   }
 
@@ -219,5 +219,4 @@
     font-size: 0.85rem;
     color: #333;
   }
-  
 }
