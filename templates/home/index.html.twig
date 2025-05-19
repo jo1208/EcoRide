@@ -33,13 +33,35 @@
 		<p>Nous nous engageons à promouvoir le covoiturage comme un moyen pour réduire l'empreinte carbone.</p>
 	</div>
 </section>
+	<section
+		class="how-it-works">
+		<!-- Version desktop : image complète -->
+		<div class="how-it-works-desktop">
+			<img src="{{ asset('images/image.png') }}" alt="Comment ça marche">
+		</div>
 
+		<!-- Version mobile : HTML lisible -->
+		<div class="how-it-works-mobile">
+			<h2>Comment ça marche ?</h2>
+			<p>Créez ou réservez un trajet en quelques étapes simples sur EcoRide !</p>
 
-
-<section class="how-it-works">
-<img src="{{ asset('images/image.png') }}" alt="how-it-works">
-
-
+			<div class="steps-grid">
+				{% for step in [
+			{num: 1, title: "Remplissez vos informations", desc: "Créez votre compte et renseignez votre profil..."},
+			{num: 2, title: "Recherchez un trajet disponible", desc: "Indiquez lieu de départ, arrivée, date..."},
+			{num: 3, title: "Choisissez votre trajet", desc: "Consultez les propositions de covoiturage..."},
+			{num: 4, title: "Validez votre choix", desc: "Choisissez le trajet qui vous correspond..."},
+			{num: 5, title: "Réservez votre place", desc: "Confirmez votre réservation en quelques clics..."}
+		] %}
+					<div class="step">
+						<div class="step-number">{{ step.num }}</div>
+						<h3>{{ step.title }}</h3>
+						<p>{{ step.desc }}</p>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</section>
 </section>
 
 {% endblock %}
