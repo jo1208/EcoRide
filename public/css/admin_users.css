@@ -1,0 +1,50 @@
+.user-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin: 1rem;
+    padding: 1rem;
+    font-size: 0.95rem;
+}
+
+.user-card p {
+    margin: 0.3rem 0;
+}
+
+.user-card .badge {
+    font-size: 0.75rem;
+}
+
+.user-card button {
+    font-size: 0.8rem;
+}
+
+
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    table.table {
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .modal .modal-content {
+        font-size: 0.95rem;
+    }
+
+    .btn-sm {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.4em 0.6em;
+    }
+
+    h4.text-center {
+        font-size: 1.1rem;
+    }
+}
