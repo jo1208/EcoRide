@@ -1,38 +1,38 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-	<section class="hero">
-		<div id="alert-container"></div>
-		<div class="overlay">
-			<h1>Voyager ensemble, préservez la planète</h1>
-			<p>EcoRide est une plateforme de covoiturage écologique visant à réduire l'impact environnemental des
-							                déplacements en voiture.</p>
-		</div>
-		<form class="search-box" method="get" action="{{ path('app_covoiturage') }}">
-			<input type="text" name="lieu_depart" placeholder="Départ">
-			<input type="text" name="lieu_arrivee" placeholder="Arrivée">
-			<input type="date" name="date">
-			<button type="submit">Rechercher</button>
-		</form>
-	</section>
+<section class="hero">
+	<div id="alert-container"></div>
+	<div class="overlay">
+		<h1>Voyager ensemble, préservez la planète</h1>
+		<p>EcoRide est une plateforme de covoiturage écologique visant à réduire l'impact environnemental des
+			                déplacements en voiture.</p>
+	</div>
+	<form class="search-box" method="get" action="{{ path('app_covoiturage') }}">
+		<input type="text" name="lieu_depart" placeholder="Départ">
+		<input type="text" name="lieu_arrivee" placeholder="Arrivée">
+		<input type="date" name="date">
+		<button type="submit">Rechercher</button>
+	</form>
+</section>
 
-	<section class="benefits">
-		<div class="benefit">
-			<i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
-			<h3>Sécurité</h3>
-			<p>Nous accordons une grande importance à la sécurité de notre communauté de covoitureurs.</p>
-		</div>
-		<div class="benefit">
-			<i class="fas fa-users fa-2x text-success mb-2"></i>
-			<h3>Sociable</h3>
-			<p>Permet de rencontrer d'autres personnes et de voyager dans une atmosphère conviviale.</p>
-		</div>
-		<div class="benefit">
-			<i class="fas fa-leaf fa-2x text-success mb-2"></i>
-			<h3>Écologique</h3>
-			<p>Nous nous engageons à promouvoir le covoiturage comme un moyen pour réduire l'empreinte carbone.</p>
-		</div>
-	</section>
+<section class="benefits">
+	<div class="benefit">
+		<i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+		<h3>Sécurité</h3>
+		<p>Nous accordons une grande importance à la sécurité de notre communauté de covoitureurs.</p>
+	</div>
+	<div class="benefit">
+		<i class="fas fa-users fa-2x text-success mb-2"></i>
+		<h3>Sociable</h3>
+		<p>Permet de rencontrer d'autres personnes et de voyager dans une atmosphère conviviale.</p>
+	</div>
+	<div class="benefit">
+		<i class="fas fa-leaf fa-2x text-success mb-2"></i>
+		<h3>Écologique</h3>
+		<p>Nous nous engageons à promouvoir le covoiturage comme un moyen pour réduire l'empreinte carbone.</p>
+	</div>
+</section>
 	<section
 		class="how-it-works">
 		<!-- Version desktop : image complète -->
@@ -53,13 +53,18 @@
 			{num: 4, title: "Validez votre choix", desc: "Choisissez le trajet qui vous correspond..."},
 			{num: 5, title: "Réservez votre place", desc: "Confirmez votre réservation en quelques clics..."}
 		] %}
-					<div class="step">
-						<div class="step-number">{{ step.num }}</div>
-						<h3>{{ step.title }}</h3>
-						<p>{{ step.desc }}</p>
-					</div>
+<div class="user-card">
+	<div class="step-number">{{ step.num }}</div>
+	<h3>{{ step.title }}</h3>
+	<p>{{ step.desc }}</p>
+</div>
+
+
 				{% endfor %}
 			</div>
 		</div>
 	</section>
-</section>{% endblock %}
+</section>
+
+{% endblock %}
+
