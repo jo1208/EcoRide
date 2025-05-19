@@ -53,11 +53,13 @@
 			{num: 4, title: "Validez votre choix", desc: "Choisissez le trajet qui vous correspond..."},
 			{num: 5, title: "Réservez votre place", desc: "Confirmez votre réservation en quelques clics..."}
 		] %}
-					<div class="step">
-						<div class="step-number">{{ step.num }}</div>
-						<h3>{{ step.title }}</h3>
-						<p>{{ step.desc }}</p>
-					</div>
+<div class="user-card">
+	<div class="step-number">{{ step.num }}</div>
+	<h3>{{ step.title }}</h3>
+	<p>{{ step.desc }}</p>
+</div>
+
+
 				{% endfor %}
 			</div>
 		</div>
@@ -65,3 +67,4 @@
 </section>
 
 {% endblock %}
+
