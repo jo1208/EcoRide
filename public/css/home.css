@@ -57,6 +57,12 @@
   display: none;
 }
 
+.how-it-works-mobile {
+  display: block;
+  padding: 1rem;
+  background-color: #E7F6E8;
+}
+
 
 @media (min-width: 768px) {
   .how-it-works-desktop {
