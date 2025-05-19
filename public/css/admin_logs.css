@@ -1,0 +1,16 @@
+.log-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin: 1rem;
+    font-size: 0.95rem;
+}
+
+.log-card p {
+    margin: 0.4rem 0;
+}
+
+.log-card .badge {
+    font-size: 0.75rem;
+}
