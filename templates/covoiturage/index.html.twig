@@ -63,124 +63,7 @@
 			<h3>Trajets disponibles</h3>
 
 			{% for trajet in trajets %}
-				<div class="card p-3 mb-3">
-					<div class="row align-items-center">
-						<div class="col-auto">
-{% if trajet.conducteur.photo %}
-	<img src="data:image/jpeg;base64,{{ trajet.conducteur.photo }}" alt="Photo du conducteur" class="rounded-circle border" style="width: 60px; height: 60px; object-fit: cover;">
-{% else %}
-	<img src="{{ asset('images/avatar.png') }}" alt="Avatar par défaut" class="rounded-circle border" style="width: 60px; height: 60px; object-fit: cover;">
-{% endif %}</div>
-
-						<div class="col">
-							<div>
-								<strong>Conducteur :</strong>
-								{{ trajet.conducteur.pseudo }}
-								(⭐
-								{% if trajet.conducteur.getNoteMoyenne() is not null %}
-									{{ trajet.conducteur.getNoteMoyenne() }}/5
-								{% else %}
-									Aucune note
-								{% endif %}
-								)
-							</div>
-							<div>
-								<strong>Date :</strong>
-								{{ trajet.dateDepart|date('d/m/Y') }}</div>
-							<div>
-								<strong>Trajet :</strong>
-								{{ trajet.lieuDepart }}
-								-
-								{{ trajet.lieuArrivee }}</div>
-							<div>
-								<strong>Horaire :</strong>
-								{{ trajet.heureDepart|date('H:i') }}
-								-
-								{{ trajet.heureArrivee|date('H:i') }}
-								<small class="text-muted">({{ trajet.heureDepart.diff(trajet.heureArrivee).h }}h{{ trajet.heureDepart.diff(trajet.heureArrivee).i }})</small>
-							</div>
-							<div>
-								<strong>Véhicule :</strong>
-								{{ trajet.voiture.modele ?? 'Non précisé' }}
-								-
-								<strong>Écologique :</strong>
-								{% if trajet.voiture and trajet.voiture.ecologique %}
-									Oui ⚡
-								{% else %}
-									Non
-								{% endif %}
-							</div>
-							<div>
-								{% if trajet.nbPlace == 0 %}
-									<span class="badge bg-danger">COMPLET</span>
-								{% else %}
-									{{ trajet.nbPlace }}
-									place{{ trajet.nbPlace > 1 ? 's' : '' }}
-								{% endif %}
-							</div>
-						</div>
-
-						<div class="col-auto text-right">
-							<div class="h5">{{ trajet.prixPersonne|number_format(2, ',', '.') }}
-								€</div>
-
-							{% set user = app.user %}
-							{% set creditsOk = user and (user.credits >= trajet.prixPersonne) %}
-
-							<a href="{% if trajet.nbPlace == 0 or user is null or not creditsOk %}#{% else %}{{ path('covoiturage_show', { id: trajet.id }) }}{% endif %}" class="btn btn-outline-secondary btn-sm {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}">
-								Détails
-							</a>
-
-							{% set user = app.user %}
-							{% set creditsOk = user and (user.credits >= trajet.prixPersonne) %}
-
-
-							<button type="button" class="btn btn-success btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#confirmParticipationModal{{ trajet.id }}" {% if trajet.nbPlace == 0 or user is null or not creditsOk %} disabled {% endif %}>
-								Participer
-							</button>
-
-							{% if user is null %}
-								<div class="text-danger small mt-2">
-									❌ Vous devez
-									<a href="{{ path('app_login') }}" class="text-success text-decoration-underline">vous connecter</a>
-									ou
-									<a href="{{ path('app_user') }}" class="text-success text-decoration-underline">créer un compte</a>
-									pour participer.
-								</div>
-							{% elseif not creditsOk %}
-								<div class="text-danger small mt-2">
-									❌ Vous n'avez pas assez de crédits pour ce trajet.
-								</div>
-							{% endif %}
-
-							<!-- Modal de confirmation -->
-							<div class="modal fade" id="confirmParticipationModal{{ trajet.id }}" tabindex="-1" aria-labelledby="confirmParticipationLabel{{ trajet.id }}" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="confirmParticipationLabel{{ trajet.id }}">Confirmer la participation</h5>
-											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-										</div>
-										<div class="modal-body">
-											Participer à ce trajet vous coûtera
-											<strong>{{ trajet.prixPersonne|number_format(2, ',', '.') }}
-												crédits</strong>.<br>
-											Voulez-vous vraiment continuer ?
-										</div>
-										<div class="modal-footer">
-											<form method="post" action="{{ path('app_participer_covoiturage', { id: trajet.id }) }}">
-												<input type="hidden" name="_token" value="{{ csrf_token('participer_' ~ trajet.id) }}">
-												<button type="submit" class="btn btn-success">Confirmer</button>
-											</form>
-											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-										</div>
-									</div>
-								</div>
-							</div>
-
-						</div>
-					</div>
-				</div>
+				{% include 'covoiturage/_card.html.twig' with { trajet: trajet } %}
 			{% else %}
 				<p class="text-center">Aucun trajet trouvé.</p>
 
@@ -194,25 +77,40 @@
 			{% endfor %}
 		</section>
 	</main>
-	<script>
-		document.addEventListener('DOMContentLoaded', function () {
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
 const form = document.querySelector('.search-section form');
+const resultsSection = document.querySelector('.results-section');
 const alertDiv = document.getElementById('alertFormIncomplete');
 
 form.addEventListener('submit', function (e) {
+e.preventDefault(); // 🛑 Empêche le rechargement
+
 const lieuDepart = form.querySelector('input[name="lieu_depart"]').value.trim();
 const lieuArrivee = form.querySelector('input[name="lieu_arrivee"]').value.trim();
 const date = form.querySelector('input[name="date"]').value.trim();
 
 if (! lieuDepart || ! lieuArrivee || ! date) {
-e.preventDefault(); // Empêche l'envoi du formulaire
-alertDiv.classList.remove('d-none'); // Affiche l'alerte
+alertDiv.classList.remove('d-none');
+return;
 } else {
-alertDiv.classList.add('d-none'); // Cache l'alerte si tout est ok
+alertDiv.classList.add('d-none');
 }
+
+const formData = new FormData(form);
+const queryString = new URLSearchParams(formData).toString();
+
+fetch('/covoiturage/ajax?' + queryString).then(response => response.text()).then(html => {
+resultsSection.innerHTML = `<h3>Trajets disponibles</h3>` + html;
+}).catch(error => {
+resultsSection.innerHTML = '<div class="alert alert-danger">Erreur AJAX</div>';
+console.error(error);
 });
 });
-	</script>
+});
+</script>
+
+
 
 
 {% endblock %}

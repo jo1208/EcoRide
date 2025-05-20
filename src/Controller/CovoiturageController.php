@@ -21,7 +21,34 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CovoiturageController extends AbstractController
+
+
 {
+    #[Route('/covoiturage/ajax', name: 'ajax_covoiturage', methods: ['GET'])]
+    public function ajax(Request $request, CovoiturageRepository $repo): Response
+    {
+        $filters = [
+            'lieu_depart' => $request->query->get('lieu_depart'),
+            'lieu_arrivee' => $request->query->get('lieu_arrivee'),
+            'date' => $request->query->get('date'),
+            'prix_max' => $request->query->get('prix_max'),
+            'duree_max' => $request->query->get('duree_max'),
+            'note_min' => $request->query->get('note_min'),
+            'ecologique' => $request->query->get('ecologique'),
+        ];
+
+        $trajets = [];
+
+        if ($filters['lieu_depart'] && $filters['lieu_arrivee'] && $filters['date']) {
+            $trajets = $repo->findWithFilters($filters);
+        }
+
+        return $this->render('covoiturage/_list.html.twig', [
+            'trajets' => $trajets,
+            'ajax' => true,
+        ]);
+    }
+
     #[Route('/covoiturage', name: 'app_covoiturage')]
     public function index(Request $request, CovoiturageRepository $repo): Response
     {

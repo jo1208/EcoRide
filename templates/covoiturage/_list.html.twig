@@ -1,0 +1,5 @@
+{% for trajet in trajets %}
+	{% include 'covoiturage/_card.html.twig' with { trajet: trajet } %}
+{% else %}
+	<p class="text-center">Aucun trajet trouvé.</p>
+{% endfor %}
