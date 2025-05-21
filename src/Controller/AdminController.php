@@ -15,6 +15,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Document\ConnectionLog;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 #[Route('/admin')]
 #[IsGranted('ROLE_ADMIN')]
@@ -167,6 +169,54 @@ class AdminController extends AbstractController
 
         return $this->render('admin/logs.html.twig', [
             'pagination' => $pagination,
+        ]);
+    }
+
+    #[Route('/admin/logs/{id}/delete', name: 'admin_logs_delete', methods: ['POST'])]
+    public function delete(string $id, DocumentManager $dm): Response
+    {
+        $log = $dm->getRepository(ConnectionLog::class)->find($id);
+
+        if (!$log) {
+            throw $this->createNotFoundException('Log non trouvé.');
+        }
+
+        $dm->remove($log);
+        $dm->flush();
+
+        $this->addFlash('success', '🗑️ Log supprimé.');
+        return $this->redirectToRoute('admin_logs');
+    }
+
+    #[Route('/admin/logs/{id}/edit', name: 'admin_logs_edit')]
+    public function edit(string $id, Request $request, DocumentManager $dm): Response
+    {
+        $log = $dm->getRepository(ConnectionLog::class)->find($id);
+
+        if (!$log) {
+            $this->addFlash('danger', 'Log introuvable.');
+            return $this->redirectToRoute('admin_logs');
+        }
+
+        $form = $this->createFormBuilder($log)
+            ->add('username', TextType::class, ['label' => 'Email'])
+            ->add('success', ChoiceType::class, [
+                'choices' => ['Succès' => true, 'Échec' => false],
+                'label' => 'Statut'
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $dm->flush();
+            $this->addFlash('success', 'Log mis à jour ✅');
+            return $this->redirectToRoute('admin_logs');
+        }
+
+        return $this->render('admin/logs_edit.html.twig', [
+            'form' => $form->createView(),
+            'log' => $log,
         ]);
     }
 }

@@ -16,8 +16,6 @@ class ConnectionLog
     #[MongoDB\Field(type: "string")]
     private $username;
 
-    #[MongoDB\Field(type: "string")]
-    private $ip;
 
     #[MongoDB\Field(type: "bool")]
     private $success;
@@ -40,11 +38,6 @@ class ConnectionLog
     public function getUsername(): ?string
     {
         return $this->username;
-    }
-
-    public function getIp(): ?string
-    {
-        return $this->ip;
     }
 
     public function isSuccess(): ?bool
@@ -71,11 +64,6 @@ class ConnectionLog
         return $this;
     }
 
-    public function setIp(string $ip): self
-    {
-        $this->ip = $ip;
-        return $this;
-    }
 
     public function setSuccess(bool $success): self
     {
