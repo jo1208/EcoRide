@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Voiture;
 use App\Entity\Preference;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'users')]
@@ -24,33 +25,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: "L'adresse email est obligatoire.")]
+    #[Assert\Email(message: "Veuillez saisir une adresse email valide.")]
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
     #[ORM\Column]
     private array $roles = [];
 
+    #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
+    #[Assert\Length(min: 8, minMessage: "Le mot de passe doit contenir au moins 8 caractères.")]
+    #[Assert\Regex(
+        pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/",
+        message: "Le mot de passe doit contenir au moins une majuscule, une minuscule, un  caractère spécial et un chiffre."
+    )]
     #[ORM\Column]
     private ?string $password = null;
 
+    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
+    #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
     #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
+    #[Assert\NotBlank(message: "Le numéro de téléphone est obligatoire.")]
+    #[Assert\Length(min: 10, minMessage: "Le numéro doit contenir au moins 10 chiffres.")]
     #[ORM\Column(length: 255)]
     private ?string $telephone = null;
 
+    #[Assert\NotBlank(message: "L'adresse est obligatoire.")]
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
+    #[Assert\NotNull(message: "La date de naissance est obligatoire.")]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date_naissance = null;
 
     #[ORM\Column(type: Types::BLOB, nullable: true)]
     private $photo = null;
 
+    #[Assert\NotBlank(message: "Le pseudo est obligatoire.")]
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
 
