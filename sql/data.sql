@@ -8,7 +8,7 @@ VALUES ('admin@ecoride.fr', '["ROLE_ADMIN"]', '$2y$13$EqHnXx03qwTyty5kZ5YIguC9Yj
 
 
 
--- Exemple de covoiturage
+-- covoiturage
 INSERT INTO covoiturages (
     conducteur_id, date_depart, heure_depart, lieu_depart,
     date_arrivee, heure_arrivee, lieu_arrivee, statut,

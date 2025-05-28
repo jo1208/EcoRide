@@ -56,8 +56,8 @@ class AdminController extends AbstractController
     #[Route('/admin/statistiques', name: 'admin_stats')]
     public function statistiques(Request $request, CovoiturageRepository $repo): Response
     {
-        $periode = $request->query->get('range', '30'); // Ex: 7, 30, all
-        $covoiturages = $repo->findAll(); // On prend tout
+        $periode = $request->query->get('range', '30');
+        $covoiturages = $repo->findAll();
 
         $stats = [];
         $revenus = [];
@@ -77,12 +77,12 @@ class AdminController extends AbstractController
                 continue;
             }
 
-            // ➕ Graphique 1 : Nombre de trajets (filtrés par date de départ)
+            //  Graphique 1 : Nombre de trajets (filtrés par date de départ)
             if (!$nbJours || new \DateTime($dateDepart) >= $limite) {
                 $stats[$dateDepart] = ($stats[$dateDepart] ?? 0) + 1;
             }
 
-            // ➕ Graphique 2 : Crédits générés (filtrés par date de création/paiement)
+            // Graphique 2 : Crédits générés (filtrés par date de création/paiement)
             if (!$nbJours || new \DateTime($datePaiement) >= $limite) {
                 $revenus[$datePaiement] = ($revenus[$datePaiement] ?? 0) + 2;
             }
@@ -92,9 +92,9 @@ class AdminController extends AbstractController
         ksort($revenus);
 
         $allDates = array_unique(array_merge(array_keys($stats), array_keys($revenus)));
-        sort($allDates); // trie les dates
+        sort($allDates);
 
-        // on remplit les valeurs manquantes avec 0
+
         $finalStats = [];
         $finalRevenus = [];
 
@@ -118,7 +118,7 @@ class AdminController extends AbstractController
         $em->flush();
 
         $this->addFlash('warning', 'Compte suspendu avec succès.');
-        return $this->redirectToRoute('admin_users'); // 🧭 à adapter selon ta page de gestion des utilisateurs
+        return $this->redirectToRoute('admin_users');
     }
 
     #[Route('/admin/reactivate/{id}', name: 'admin_reactivate_user')]
@@ -163,8 +163,8 @@ class AdminController extends AbstractController
 
         $pagination = $paginator->paginate(
             $query,
-            $request->query->getInt('page', 1), // page actuelle
-            20 // éléments par page
+            $request->query->getInt('page', 1),
+            20
         );
 
         return $this->render('admin/logs.html.twig', [

@@ -75,20 +75,25 @@ class CovoiturageRepository extends ServiceEntityRepository
 
     public function findFirstAvailableMatchingLocation(array $filters): ?Covoiturage
     {
-        return $this->createQueryBuilder('c')
-            ->where('c.lieu_depart = :lieu_depart')
-            ->andWhere('c.lieu_arrivee = :lieu_arrivee')
-            ->andWhere('c.date_depart > :today')
+        $date = new \DateTime($filters['date']);
+        $date->setTime(0, 0);
+
+        $qb = $this->createQueryBuilder('c')
+            ->where('LOWER(c.lieu_depart) = LOWER(:lieu_depart)')
+            ->andWhere('LOWER(c.lieu_arrivee) = LOWER(:lieu_arrivee)')
+            ->andWhere('c.date_depart >= :date')
             ->andWhere('c.nb_place > 0')
             ->andWhere('c.statut IS NULL')
             ->setParameter('lieu_depart', $filters['lieu_depart'])
             ->setParameter('lieu_arrivee', $filters['lieu_arrivee'])
-            ->setParameter('today', new \DateTime())
+            ->setParameter('date', $date)
             ->orderBy('c.date_depart', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setMaxResults(1);
+
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
+
 
     public function getCreditsParJour(): array
     {

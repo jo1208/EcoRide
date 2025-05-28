@@ -1,17 +1,13 @@
-
+document.addEventListener('DOMContentLoaded', function () {
     // Fonction pour afficher une alerte Bootstrap
     function showAlert(message, type) {
         const alertContainer = document.getElementById('alert-container');
         
-        // Créer l'élément div de l'alerte
         const alertDiv = document.createElement('div');
         alertDiv.classList.add('alert', `alert-${type}`, 'alert-dismissible', 'fade', 'show');
         alertDiv.setAttribute('role', 'alert');
-        
-        // Ajouter le message de l'alerte
         alertDiv.textContent = message;
-        
-        // Ajouter un bouton de fermeture pour l'alerte
+
         const closeButton = document.createElement('button');
         closeButton.classList.add('close');
         closeButton.setAttribute('type', 'button');
@@ -20,10 +16,8 @@
         closeButton.innerHTML = '&times;';
         alertDiv.appendChild(closeButton);
         
-        // Ajouter l'alerte au conteneur
         alertContainer.appendChild(alertDiv);
-        
-        // L'alerte disparaît après 5 secondes
+
         setTimeout(() => {
             alertDiv.classList.remove('show');
             alertDiv.addEventListener('transitionend', () => {
@@ -32,21 +26,20 @@
         }, 5000);
     }
 
-    // Ajout d'un écouteur d'événement au bouton de recherche
-    document.getElementById('searchBtn').addEventListener('click', function() {
-        // Récupérer les valeurs des champs
-        const depart = document.getElementById('depart').value;
-        const arrivee = document.getElementById('arrivee').value;
-        const date = document.getElementById('date').value;
+    // 👇 Code à exécuter une fois le DOM chargé
+    const searchBtn = document.getElementById('searchBtn');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            const depart = document.getElementById('depart').value;
+            const arrivee = document.getElementById('arrivee').value;
+            const date = document.getElementById('date').value;
 
-        // Validation : vérifier que tous les champs sont remplis
-        if (!depart || !arrivee || !date) {
-            showAlert("Veuillez remplir tous les champs avant de soumettre la recherche.", 'danger');
-        } else {
-            // Si tout est bon, afficher un message de succès
-            showAlert("Recherche en cours...", 'success');
-
-            // Exemple d'action après validation (par exemple, afficher les résultats dans la console)
-            console.log("Recherche avec :", depart, arrivee, date);
-        }
-    });
+            if (!depart || !arrivee || !date) {
+                showAlert("Veuillez remplir tous les champs avant de soumettre la recherche.", 'danger');
+            } else {
+                showAlert("Recherche en cours...", 'success');
+                console.log("Recherche avec :", depart, arrivee, date);
+            }
+        });
+    }
+});

@@ -31,9 +31,9 @@ class CovoiturageController extends AbstractController
             'lieu_depart' => $request->query->get('lieu_depart'),
             'lieu_arrivee' => $request->query->get('lieu_arrivee'),
             'date' => $request->query->get('date'),
-            'prix_max' => $request->query->get('prix_max'),
-            'duree_max' => $request->query->get('duree_max'),
-            'note_min' => $request->query->get('note_min'),
+            'prix_max' => is_numeric($request->query->get('prix_max')) ? (float)$request->query->get('prix_max') : null,
+            'duree_max' => is_numeric($request->query->get('duree_max')) ? (int)$request->query->get('duree_max') : null,
+            'note_min' => is_numeric($request->query->get('note_min')) ? (float)$request->query->get('note_min') : null,
             'ecologique' => $request->query->get('ecologique'),
         ];
 
@@ -41,6 +41,19 @@ class CovoiturageController extends AbstractController
 
         if ($filters['lieu_depart'] && $filters['lieu_arrivee'] && $filters['date']) {
             $trajets = $repo->findWithFilters($filters);
+
+            if (count($trajets) === 0) {
+
+                $prochain = $repo->findFirstAvailableMatchingLocation($filters);
+                if ($prochain) {
+                    $trajets = [$prochain];
+
+                    $dateDemandee = (new \DateTime($filters['date']))->format('d/m/Y');
+                    $dateProchaine = $prochain->getDateDepart()->format('d/m/Y');
+
+                    $request->getSession()->getFlashBag()->add('info', "Aucun trajet disponible pour le $dateDemandee. Prochain trajet disponible au plus tôt le $dateProchaine.");
+                }
+            }
         }
 
         return $this->render('covoiturage/_list.html.twig', [
@@ -48,6 +61,7 @@ class CovoiturageController extends AbstractController
             'ajax' => true,
         ]);
     }
+
 
     #[Route('/covoiturage', name: 'app_covoiturage')]
     public function index(Request $request, CovoiturageRepository $repo): Response
@@ -351,13 +365,13 @@ class CovoiturageController extends AbstractController
         } else {
             $prix = $covoiturage->getPrixPersonne();
 
-            // ✅ Le passager paye
+            // Le passager paye
             $user->setCredits($user->getCredits() - $prix);
 
-            // ✅ Ajouter le passager au trajet
+            // Ajouter le passager au trajet
             $covoiturage->addPassager($user);
 
-            // ✅ Diminuer le nombre de places
+            //  Diminuer le nombre de places
             $covoiturage->setNbPlace($covoiturage->getNbPlace() - 1);
 
             // On enregistre tout ça

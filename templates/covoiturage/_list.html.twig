@@ -1,5 +1,12 @@
+{% for message in app.session.flashBag.get('info') %}
+	<div class="alert alert-info">{{ message }}</div>
+{% endfor %}
+
+
+
 {% for trajet in trajets %}
 	{% include 'covoiturage/_card.html.twig' with { trajet: trajet } %}
 {% else %}
-	<p class="text-center">Aucun trajet trouvé.</p>
+	<p class="text-center">Aucun trajet disponible actuellement.</p>
 {% endfor %}
+

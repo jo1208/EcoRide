@@ -5,7 +5,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
-// ✅ Corriger la configuration des proxies pour Heroku
+
 Request::setTrustedProxies(
     [$_SERVER['REMOTE_ADDR']],
     Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PROTO

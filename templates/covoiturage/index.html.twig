@@ -100,6 +100,9 @@ alertDiv.classList.add('d-none');
 const formData = new FormData(form);
 const queryString = new URLSearchParams(formData).toString();
 
+console.log('Query envoyée :', queryString);
+
+
 fetch('/covoiturage/ajax?' + queryString).then(response => response.text()).then(html => {
 resultsSection.innerHTML = `<h3>Trajets disponibles</h3>` + html;
 }).catch(error => {

@@ -1,4 +1,4 @@
--- Création de la table users
+-- Table users
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(180) NOT NULL UNIQUE,
