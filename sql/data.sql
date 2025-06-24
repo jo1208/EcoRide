@@ -1,8 +1,8 @@
 -- Insertion d'users
 INSERT INTO users (email, roles, password, nom, prenom, telephone, adresse, date_naissance, pseudo, is_suspended, is_chauffeur, is_passager, note, credits)
-VALUES ('admin@ecoride.fr', '["ROLE_ADMIN"]', '$2y$13$EqHnXx03qwTyty5kZ5YIguC9YjL0C13tLpot8gfcoqYsZD70HsxYG', 'Admin', 'User', '0101010101', '1 rue du test', '1990-01-01', 'admino', FALSE, FALSE, TRUE, 5.0, 50),
-('employe@ecoride.fr', '["ROLE_EMPLOYE"]', '$2y$13$e/KKFhx.uEal./qbHCZoNeEmj924n7BYHV2s7OAUha2OMlpGdk21S', 'Jean', 'Dupont', '0202020202', '2 avenue dev', '1992-05-10', 'jeanjean', FALSE, TRUE, TRUE, 4.5, 40),
-('user@ecoride.fr', '["ROLE_USER"]', '$2y$13$9.s0y.hXMt8Op19SgYGfhu1jbyQNH7BqJViBmMyd7c1ZKdQQ7N1em', 'Marie', 'Durand', '0303030303', '3 boulevard code', '1995-09-25', 'mariedu', FALSE, FALSE, TRUE, 4.2, 30);
+VALUES ('admin@ecoride.fr', '["ROLE_ADMIN"]', '$2y$13$eKOPwJl4WEdawSG/izg.kuS.MEHoDYxAqFX44DdOskLSOYYWZcMK.', 'Admin', 'User', '0101010101', '1 rue du test', '1990-01-01', 'admino', FALSE, FALSE, TRUE, 5.0, 50),
+('employe@ecoride.fr', '["ROLE_EMPLOYE"]', '$2y$13$4qSGoizSVYVuOtEKRxhN.uCQseDobvQ2y9zsgz3twkHxXsBmfL7ii', 'Jean', 'Dupont', '0202020202', '2 avenue dev', '1992-05-10', 'jeanjean', FALSE, TRUE, TRUE, 4.5, 40),
+('user@ecoride.fr', '["ROLE_USER"]', '$2y$13$4Tnts3PobACa1CnC./P77eKtUwkKZokci1WbVgr/RHvVWz5aDehwu', 'Marie', 'Durand', '0303030303', '3 boulevard code', '1995-09-25', 'mariedu', FALSE, FALSE, TRUE, 4.2, 30);
 
 
 
@@ -15,7 +15,7 @@ INSERT INTO covoiturages (
     nb_place, prix_personne, voiture_id, created_at
 )
 VALUES (
-    2, '2025-05-15', '08:30:00', 'Paris',
+    1, 2, '2025-05-15', '08:30:00', 'Paris',
     '2025-05-15', '11:30:00', 'Lyon', 'ouvert',
     3, 15.00, NULL, NOW()
 );

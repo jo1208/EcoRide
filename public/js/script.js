@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 5000);
     }
 
-    // 👇 Code à exécuter une fois le DOM chargé
+    // Code à exécuter une fois le DOM chargé
     const searchBtn = document.getElementById('searchBtn');
     if (searchBtn) {
         searchBtn.addEventListener('click', function() {

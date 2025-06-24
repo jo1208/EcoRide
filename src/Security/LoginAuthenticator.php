@@ -52,7 +52,7 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         $log = new ConnectionLog();
         $log->setUserId(method_exists($user, 'getId') ? $user->getId() : 'unknown');
         $log->setUsername($user->getUserIdentifier());
-        // $log->setIp($request->getClientIp());
+
         $log->setSuccess(true);
         $log->setTimestamp(new \DateTime());
 

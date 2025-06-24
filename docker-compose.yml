@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: ecoride-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ecoride_new
+      POSTGRES_PASSWORD: ecoride123
+      POSTGRES_DB: ecoride_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongodb/mongodb-atlas-local:latest
+    container_name: ecoride-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  postgres_data:
+  mongodb_data:

@@ -19,4 +19,4 @@ services:
 
   App\Security\UserChecker:
     tags:
-      - { name: "security.user_checker", firewall: "main" } # ✅ IMPORTANT
+      - { name: "security.user_checker", firewall: "main" }
