@@ -51,7 +51,7 @@ class CovoiturageController extends AbstractController
                     $dateDemandee = (new \DateTime($filters['date']))->format('d/m/Y');
                     $dateProchaine = $prochain->getDateDepart()->format('d/m/Y');
 
-                    $request->getSession()->getFlashBag()->add('info', "Aucun trajet disponible pour le $dateDemandee. Prochain trajet disponible au plus tôt le $dateProchaine.");
+                    $request->getSession()->getFlashBag()->add('info', " Aucun résultat ne correspond exactement à vos filtres ou à la date du $dateDemandee. Cependant, un trajet est disponible avec des critères légèrement différents, à partir du $dateProchaine.");
                 }
             }
         }
